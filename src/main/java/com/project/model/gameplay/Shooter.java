@@ -2,8 +2,6 @@ package com.project.model.gameplay;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import com.project.function.TriFunction;
 import com.project.model.bubble.Bubble;
@@ -18,7 +16,7 @@ public class Shooter {
 
 	private ColorsCounter colorsCounter;
 
-	private  Future<?> task;
+	private Mover mover;
 
 	private List<TriFunction<Point2D, Point2D, Double, Point2D>> functions;
 
@@ -45,8 +43,7 @@ public class Shooter {
 
 		private TriFunction<Point2D, Point2D, Double, Point2D> function;
 
-		public Mover(Point2D point, Point2D coefficients,
-				TriFunction<Point2D, Point2D, Double, Point2D> function) {
+		public Mover(Point2D point, Point2D coefficients, TriFunction<Point2D, Point2D, Double, Point2D> function) {
 			this.point = point;
 			this.coefficients = coefficients;
 			this.function = function;
@@ -54,13 +51,13 @@ public class Shooter {
 
 		@Override
 		public void run() {
-			point = function.apply(point, coefficients, Bubble.getDiameter() / 2 / 3);
+			point = function.apply(point, coefficients, Bubble.getDiameter() / 6);
 			if (counter == 3) {
 				moveBubble();
 				counter = 1;
 			}
 			counter++;
-			if (task != null) {
+			if (mover != null) {
 				gameplay.getBubbleToThrow().setCenterX(point.getX());
 				gameplay.getBubbleToThrow().setCenterY(point.getY());
 				gameplay.sendBubbleChangedNotifications(gameplay.getBubbleToThrow());
@@ -77,13 +74,13 @@ public class Shooter {
 		}
 
 		private void stop() {
-			task.cancel(false);
-			task = null;
+			gameplay.getTimer().cancelTask(mover);
+			mover = null;
 		}
 
 		private Void restartTimer(Point2D point, Point2D coefficients,
 				TriFunction<Point2D, Point2D, Double, Point2D> function) {
-			task.cancel(false);
+			gameplay.getTimer().cancelTask(mover);
 			createNewTimerTask(point, coefficients, function);
 			return null;
 		}
@@ -128,7 +125,7 @@ public class Shooter {
 			gameplay.getBubbleToThrow().setCenterY(gameplay.getCenterY(coordinate.getRow()));
 			colorsCounter.increment(gameplay.getBubbleToThrow().getColor());
 			gameplay.sendBubbleChangedNotifications(gameplay.getBubbleToThrow());
-			remover.remove(coordinate);
+			new Thread(() -> remover.remove(coordinate), "RemovingThread").start();
 		}
 
 		private List<Integer> getRows(double y) {
@@ -168,7 +165,7 @@ public class Shooter {
 
 	public List<Point2D> getLinePoints(double x, double y) {
 		List<Point2D> result = new ArrayList<>();
-		if (y < gameplay.BUBBLES_HEIGHT + Bubble.getDiameter()) {
+		if (y < gameplay.BUBBLES_HEIGHT + Bubble.getDiameter() && !gameplay.getTimer().isPaused()) {
 			Point2D point = getStartPoint();
 			Point2D coefficients = getCoefficients(x, y, point);
 			TriFunction<Point2D, Point2D, Double, Point2D> function = chooseFunctionToApplay(point, coefficients);
@@ -229,9 +226,9 @@ public class Shooter {
 	}
 
 	public void throwBubble(double x, double y) {
-		if (!gameplay.isMoving() && y < gameplay.BUBBLES_HEIGHT + Bubble.getDiameter()) {
+		if (!gameplay.getFinishedProperty().get() && !gameplay.getTimer().isPaused() && !gameplay.isMoving()
+				&& y < gameplay.BUBBLES_HEIGHT + Bubble.getDiameter()) {
 			gameplay.setStartMoving();
-			;
 			Point2D point = getStartPoint();
 			Point2D coefficients = getCoefficients(x, y, point);
 			TriFunction<Point2D, Point2D, Double, Point2D> function = chooseFunctionToApplay(point, coefficients);
@@ -264,8 +261,8 @@ public class Shooter {
 
 	private void createNewTimerTask(Point2D point, Point2D coefficients,
 			TriFunction<Point2D, Point2D, Double, Point2D> function) {
-		Mover mover = new Mover(point, coefficients, function);
-		task = gameplay.getExecutor().scheduleAtFixedRate(mover, 2, 2,TimeUnit.MILLISECONDS);
+		mover = new Mover(point, coefficients, function);
+		gameplay.getTimer().schedule(mover, 2, 2);
 	}
 
 	private Point2D firstApply(Point2D point, Point2D coefficients, double value) {

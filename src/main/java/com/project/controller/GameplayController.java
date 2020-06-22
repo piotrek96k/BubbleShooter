@@ -8,6 +8,8 @@ import com.project.view.GameplayView;
 
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 public class GameplayController {
 
@@ -21,6 +23,7 @@ public class GameplayController {
 		this.gameplay = gameplay;
 		this.view = view;
 		view.setController(this);
+		view.getPane().getScene().addEventFilter(KeyEvent.KEY_PRESSED, this::handleKeyEvents);
 		initGameplay();
 		setEndGameListener();
 	}
@@ -29,21 +32,30 @@ public class GameplayController {
 		gameplay.addBubbleAddedListener(bubble -> Platform.runLater(() -> addBubble(bubble)));
 		gameplay.addBubbleChangedListener(bubble -> Platform.runLater(() -> view.updateBubble(bubble)));
 		gameplay.addBubbleRemovedListener(bubble -> Platform.runLater(() -> removeBubble(bubble)));
+		gameplay.addMoveListener(()->Platform.runLater(()->refreshLines()));
 		gameplay.init();
 	}
 
 	private void setEndGameListener() {
 		view.getPane().getScene().getWindow().setOnCloseRequest(observable -> gameplay.finishGame());
 	}
+	
+	private void handleKeyEvents(KeyEvent keyEvent) {
+		if(keyEvent.getCode().equals(KeyCode.SPACE))
+			gameplay.pauseOrResume();
+	}
 
 	private void addBubble(Bubble ball) {
 		view.addBubble(ball);
-		if (clickPoint != null)
-			view.manageLines(getLinePoints(clickPoint.getX(), clickPoint.getY()));
+		refreshLines();
 	}
 
 	private void removeBubble(Bubble ball) {
 		view.removeBubble(ball);
+		refreshLines();
+	}
+	
+	private void refreshLines() {
 		if (clickPoint != null)
 			view.manageLines(getLinePoints(clickPoint.getX(), clickPoint.getY()));
 	}

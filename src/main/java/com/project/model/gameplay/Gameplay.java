@@ -3,12 +3,12 @@ package com.project.model.gameplay;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import com.project.model.bubble.Bubble;
 import com.project.model.bubble.BubbleColor;
 import com.project.model.listener.BubbleListener;
+import com.project.model.listener.MoveListener;
+import com.project.model.timer.PausableTimer;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -51,15 +51,19 @@ public class Gameplay {
 
 	private Object locker = new Object();
 
-	private ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+	private PausableTimer timer = new PausableTimer(true);
 
 	private BooleanProperty finished = new SimpleBooleanProperty();
+
+	private Runnable goDown = new GoDown();
 
 	private List<BubbleListener> bubbleAddedListeners = new LinkedList<>();
 
 	private List<BubbleListener> bubbleRemovedListeners = new LinkedList<>();
 
 	private List<BubbleListener> bubbleChangedListeners = new LinkedList<>();
+
+	private List<MoveListener> moveListeners = new LinkedList<>();
 
 	public Gameplay(int rows, int columns, double diameter) {
 		ROWS = rows + 1;
@@ -145,12 +149,11 @@ public class Gameplay {
 		sendBubbleAddedNotifications(nextBubble);
 		setBubbleToThrow();
 		createNewTask();
+		finished.addListener(observable -> timer.cancel());
 	}
 
 	private void createNewTask() {
-		Runnable goDown = new GoDown();
-		executor.scheduleAtFixedRate(goDown, 30, 30, TimeUnit.SECONDS);
-		finished.addListener(observable -> executor.shutdownNow());
+		timer.schedule(goDown, 30_000, 30_000);
 	}
 
 	public void setBubbleToThrow() {
@@ -226,8 +229,14 @@ public class Gameplay {
 		return result;
 	}
 
+	public void pauseOrResume() {
+		if (timer.isPaused())
+			timer.resume();
+		else
+			timer.pause();
+	}
+
 	public void throwBubble(double x, double y) {
-		if (!finished.get())
 			shooter.throwBubble(x, y);
 	}
 
@@ -285,6 +294,19 @@ public class Gameplay {
 		bubbleChangedListeners.remove(listener);
 	}
 
+	public void addMoveListener(MoveListener listener) {
+		moveListeners.add(listener);
+	}
+
+	public void removeMoveListener(MoveListener listener) {
+		moveListeners.remove(listener);
+	}
+
+	public void sendMovedNotofications() {
+		for (MoveListener listener : moveListeners)
+			listener.moved();
+	}
+
 	public Bubble[][] getBubbles() {
 		return bubbles;
 	}
@@ -297,8 +319,8 @@ public class Gameplay {
 		return nextBubble;
 	}
 
-	public ScheduledThreadPoolExecutor getExecutor() {
-		return executor;
+	public PausableTimer getTimer() {
+		return timer;
 	}
 
 	public ReadOnlyBooleanProperty getFinishedProperty() {
