@@ -262,7 +262,7 @@ public class Shooter {
 	private void createNewTimerTask(Point2D point, Point2D coefficients,
 			TriFunction<Point2D, Point2D, Double, Point2D> function) {
 		mover = new Mover(point, coefficients, function);
-		gameplay.getTimer().schedule(mover, 2, 2);
+		gameplay.getTimer().schedule(mover, 2);
 	}
 
 	private Point2D firstApply(Point2D point, Point2D coefficients, double value) {

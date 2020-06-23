@@ -21,6 +21,8 @@ public class Remover {
 
 	private Coordinate coordinate;
 
+	private Object locker = new Object();
+
 	private Set<Coordinate> neighbor = new HashSet<>();
 
 	private Set<Coordinate> toDelete = new LinkedHashSet<>();
@@ -58,12 +60,44 @@ public class Remover {
 		applyOnSurroundingBubbles(consumers.get(0));
 		neighbor.clear();
 		if (counter >= 3) {
-			removeBubbles();
-			findNeighbors();
-			removeIfHanging();
-			neighbor.clear();
+			synchronized (locker) {
+				removeBubbles();
+				findNeighbors();
+				removeIfHanging();
+				neighbor.clear();
+			}
 		}
 		toDelete.clear();
+	}
+
+	private void removeBubbles() {
+		int[] counter = { 0 };
+		List<Coordinate> toDelete = new ArrayList<Coordinate>(this.toDelete);
+		Runnable[] runnable = getRemovingRunnable(toDelete, counter);
+		gameplay.getTimer().schedule(runnable[0], 40);
+		while (counter[0] != toDelete.size())
+			try {
+				locker.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+	}
+
+	private Runnable[] getRemovingRunnable(List<Coordinate> toDelete, int[] counter) {
+		Runnable[] runnable = { null };
+		runnable[0] = () -> {
+			synchronized (locker) {
+				Coordinate coordinate = toDelete.get(counter[0]++);
+				Bubble bubble = gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()];
+				gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()] = null;
+				removeBubble(bubble);
+				if (counter[0] == toDelete.size()) {
+					gameplay.getTimer().cancelTask(runnable[0]);
+					locker.notifyAll();
+				}
+			}
+		};
+		return runnable;
 	}
 
 	private void findNeighbors() {
@@ -98,52 +132,54 @@ public class Remover {
 
 	private void initDroppers(Set<Coordinate> toDrop) throws InterruptedException {
 		List<Bubble> list = new LinkedList<>();
-		toDrop.forEach(coordinate->{
+		toDrop.forEach(coordinate -> {
 			list.add(gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()]);
-			gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()]=null;
+			gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()] = null;
 		});
 		Collections.reverse(list);
 		Map<Bubble, Dropper> droppersMap = new HashMap<>();
-		for (Bubble bubble : list) {
-			droppersMap.put(bubble, new Dropper(
-					Dropper.convertHeight(bubble.getCenterY(), gameplay.BUBBLES_HEIGHT + Bubble.getDiameter())));
-			Thread.sleep(10);
+		int delay = 10;
+		for (int i = 0; i < list.size(); i++) {
+			Bubble bubble = list.get(i);
+			double startHeight = Dropper.convertHeight(bubble.getCenterY(),
+					gameplay.BUBBLES_HEIGHT + Bubble.getDiameter());
+			Dropper dropper = new Dropper(startHeight, delay + delay * i);
+			droppersMap.put(bubble, dropper);
 		}
 		dropBubbles(list, droppersMap);
 	}
 
-	private void dropBubbles(List<Bubble> toDrop, Map<Bubble, Dropper> droppersMap)
-			throws InterruptedException {
+	private void dropBubbles(List<Bubble> toDrop, Map<Bubble, Dropper> droppersMap) throws InterruptedException {
 		List<Bubble> toDelete = new LinkedList<>();
-		while (!toDrop.isEmpty()) {
-			toDelete.clear();
-			for (Bubble bubble : toDrop) {
-				Dropper dropper = droppersMap.get(bubble);
-				double height = dropper.getHeight(System.currentTimeMillis());
-				double paneHeight = Dropper.convertHeight(height, gameplay.BUBBLES_HEIGHT + Bubble.getDiameter());
-				bubble.setCenterY(paneHeight);
-				gameplay.sendBubbleChangedNotifications(bubble);
-				if (height <= Bubble.getDiameter() / 2) {
-					removeBubble(bubble);
-					toDelete.add(bubble);
+		Runnable[] runnable = { null };
+		runnable[0] = () -> {
+			synchronized (locker) {
+				moveBubbles(toDrop, droppersMap, toDelete);
+				toDrop.removeAll(toDelete);
+				if (toDrop.isEmpty()) {
+					gameplay.getTimer().cancelTask(runnable[0]);
+					locker.notifyAll();
 				}
-				Thread.sleep(1);
 			}
-			toDrop.removeAll(toDelete);
-		}
+		};
+		gameplay.getTimer().schedule(runnable[0], 10);
+		while (!toDrop.isEmpty())
+			locker.wait();
 	}
 
-	private void removeBubbles() {
-		toDelete.forEach(coordinate -> {
-			try {
-				Thread.sleep(40);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+	private void moveBubbles(List<Bubble> toDrop, Map<Bubble, Dropper> droppersMap, List<Bubble> toDelete) {
+		toDelete.clear();
+		for (Bubble bubble : toDrop) {
+			Dropper dropper = droppersMap.get(bubble);
+			double height = dropper.getHeight(System.currentTimeMillis());
+			double paneHeight = Dropper.convertHeight(height, gameplay.BUBBLES_HEIGHT + Bubble.getDiameter());
+			bubble.setCenterY(paneHeight);
+			gameplay.sendBubbleChangedNotifications(bubble);
+			if (height <= Bubble.getDiameter() / 2) {
+				removeBubble(bubble);
+				toDelete.add(bubble);
 			}
-			Bubble bubble = gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()];
-			gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()] = null;
-			removeBubble(bubble);
-		});
+		}
 	}
 
 	private void removeBubble(Bubble bubble) {

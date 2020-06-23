@@ -153,7 +153,7 @@ public class Gameplay {
 	}
 
 	private void createNewTask() {
-		timer.schedule(goDown, 30_000, 30_000);
+		timer.schedule(goDown, 30_000);
 	}
 
 	public void setBubbleToThrow() {

@@ -4,29 +4,35 @@ import com.project.model.bubble.Bubble;
 
 public class Dropper {
 
-	private long startTime;
-	
 	private double startHeight;
 	
+	private int initialDelay;
+	
+	private long startTime;
+
+	private double counter;
+
 	public Dropper(double startHeight) {
+		this(startHeight, 0);
+	}
+	
+	public Dropper(double startHeight, int initialDelay) {
 		this.startHeight = startHeight;
-		startTime = System.currentTimeMillis();
+		this.initialDelay = initialDelay;
+		startTime= System.currentTimeMillis();
 	}
-	
+
 	public double getHeight(long time) {
-		double height = startHeight-0.5*(Math.pow(getVelocity(time), 2));
-		if(height>Bubble.getDiameter()/2)
+		if(System.currentTimeMillis()<startTime+initialDelay)
+			return startHeight;
+		double height = startHeight - 0.5 * (Math.pow(counter++ / 2, 2));
+		if (height > Bubble.getDiameter() / 2)
 			return height;
-		return Bubble.getDiameter()/2;
+		return Bubble.getDiameter() / 2;
 	}
-	
-	private double getVelocity(long time) {
-		double velocity = (startTime-time)/20;
-		return velocity;
-	}
-	
+
 	public static double convertHeight(double height, double paneSize) {
-		return paneSize-height;
+		return paneSize - height;
 	}
-	
+
 }

@@ -13,11 +13,11 @@ public class PausableTimer {
 
 	private Timer timer;
 
-	private Object locker = new Object();
-
 	private Map<Runnable, Long> timesMap = new HashMap<>();
 
 	private Map<Runnable, Long> delaysMap = new HashMap<>();
+
+	private Map<Runnable, Long> initDelaysMap = new HashMap<>();
 
 	private Map<Runnable, TimerTask> timerTasks = new HashMap<>();
 
@@ -25,24 +25,26 @@ public class PausableTimer {
 		timer = new Timer(isDeamon);
 	}
 
-	public void schedule(Runnable runnable, long initDelay, long delay) {
+	public synchronized void schedule(Runnable runnable, long delay) {
 		if (isCanceled)
 			throw new IllegalStateException();
 		if (!isPaused) {
 			delaysMap.put(runnable, delay);
-			createTimerTask(runnable, initDelay, delay);
+			initDelaysMap.put(runnable, 0L);
+			createTimerTask(runnable, delay, delay);
 		}
 	}
 
-	public void cancelTask(Runnable runnable) {
-		synchronized (locker) {
-			if (isCanceled)
-				throw new IllegalStateException();
-			TimerTask timerTask = timerTasks.get(runnable);
+	public synchronized void cancelTask(Runnable runnable) {
+		if (isCanceled)
+			throw new IllegalStateException();
+		TimerTask timerTask = timerTasks.get(runnable);
+		if (timerTask != null) {
 			timerTasks.remove(runnable, timerTask);
 			timerTask.cancel();
 			timesMap.remove(runnable, timesMap.get(runnable));
 			delaysMap.remove(runnable, delaysMap.get(runnable));
+			initDelaysMap.remove(runnable, initDelaysMap.get(runnable));
 		}
 	}
 
@@ -51,61 +53,57 @@ public class PausableTimer {
 		TimerTask timerTask = new TimerTask() {
 			@Override
 			public void run() {
-				synchronized (locker) {
-					runnable.run();
-					TimerTask task = timerTasks.get(runnable);
-					if (task == null) {
-						timesMap.remove(runnable, timesMap.get(runnable));
-						return;
-					}
-					timesMap.put(runnable, System.currentTimeMillis());
+				runnable.run();
+				TimerTask task = timerTasks.get(runnable);
+				if (task == null) {
+					timesMap.remove(runnable, timesMap.get(runnable));
+					return;
 				}
+				if (initDelaysMap.get(runnable) != 0L)
+					initDelaysMap.put(runnable, 0L);
+				timesMap.put(runnable, System.currentTimeMillis());
 			}
 		};
 		timerTasks.put(runnable, timerTask);
 		timer.schedule(timerTask, initDelay, delay);
 	}
 
-	public void pause() {
-		synchronized (locker) {
-			if (isCanceled)
-				throw new IllegalStateException();
-			if (!isPaused) {
-				for (Runnable runnable : timesMap.keySet()) {
-					long time = timesMap.get(runnable);
-					timesMap.put(runnable, delaysMap.get(runnable) - (System.currentTimeMillis() - time));
-				}
-				for (TimerTask timerTask : timerTasks.values())
-					timerTask.cancel();
-				timerTasks.clear();
-				isPaused = true;
+	public synchronized void pause() {
+		if (isCanceled)
+			throw new IllegalStateException();
+		if (!isPaused) {
+			for (Runnable runnable : timesMap.keySet()) {
+				long time = timesMap.get(runnable);
+				time = (System.currentTimeMillis() - time) + initDelaysMap.get(runnable);
+				timesMap.put(runnable, time);
 			}
+			for (TimerTask timerTask : timerTasks.values())
+				timerTask.cancel();
+			timerTasks.clear();
+			isPaused = true;
 		}
 	}
 
-	public void resume() {
-		synchronized (locker) {
-			if (isCanceled)
-				throw new IllegalStateException();
-			if (isPaused) {
-				for (Runnable runnable : timesMap.keySet())
-					createTimerTask(runnable, timesMap.get(runnable), delaysMap.get(runnable));
-				isPaused = false;
+	public synchronized void resume() {
+		if (isCanceled)
+			throw new IllegalStateException();
+		if (isPaused) {
+			for (Runnable runnable : timesMap.keySet()) {
+				initDelaysMap.put(runnable, timesMap.get(runnable));
+				long time = Math.abs(delaysMap.get(runnable) - timesMap.get(runnable));
+				createTimerTask(runnable, time, delaysMap.get(runnable));
 			}
+			isPaused = false;
 		}
 	}
 
-	public boolean isPaused() {
-		synchronized (locker) {
-			return isPaused;
-		}
+	public synchronized boolean isPaused() {
+		return isPaused;
 	}
 
-	public void cancel() {
-		synchronized (locker) {
-			timer.cancel();
-			isCanceled = true;
-		}
+	public synchronized void cancel() {
+		isCanceled = true;
+		timer.cancel();
 	}
 
 }

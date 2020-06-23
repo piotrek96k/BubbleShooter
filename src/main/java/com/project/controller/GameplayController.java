@@ -25,7 +25,6 @@ public class GameplayController {
 		view.setController(this);
 		view.getPane().getScene().addEventFilter(KeyEvent.KEY_PRESSED, this::handleKeyEvents);
 		initGameplay();
-		setEndGameListener();
 	}
 
 	private void initGameplay() {
@@ -36,10 +35,6 @@ public class GameplayController {
 		gameplay.init();
 	}
 
-	private void setEndGameListener() {
-		view.getPane().getScene().getWindow().setOnCloseRequest(observable -> gameplay.finishGame());
-	}
-	
 	private void handleKeyEvents(KeyEvent keyEvent) {
 		if(keyEvent.getCode().equals(KeyCode.SPACE))
 			gameplay.pauseOrResume();
