@@ -1,4 +1,4 @@
-package com.project.model.timer;
+package com.project.timer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +9,7 @@ public class PausableTimer {
 
 	private boolean isPaused = false;
 
-	private boolean isCanceled;
+	private boolean isCanceled = false;
 
 	private Timer timer;
 

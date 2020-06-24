@@ -7,6 +7,8 @@ import java.util.Map;
 
 import com.project.controller.GameplayController;
 import com.project.model.bubble.Bubble;
+import com.project.model.bubble.OrdinaryBubble;
+import com.project.util.ImageUtil;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -17,6 +19,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -68,8 +71,14 @@ public class GameplayView {
 		double centerX = bubble.getCenterX();
 		double centerY = bubble.getCenterY();
 		double radius = Bubble.getRadius();
-		Paint paint = bubble.getColor().getPaint();
-		Circle circle = new Circle(centerX, centerY, radius, paint);
+		Circle circle;
+		if (bubble instanceof OrdinaryBubble) {
+			Paint paint = ((OrdinaryBubble) bubble).getColor().getPaint();
+			circle = new Circle(centerX, centerY, radius, paint);
+		} else {
+			circle = new Circle(centerX, centerY, radius + 2.5);
+			circle.setFill(new ImagePattern(ImageUtil.BOMB_IMAGE));
+		}
 		circlesMap.put(bubble.BUBBLE_NUMBER, circle);
 		pane.getChildren().add(circle);
 	}
@@ -84,7 +93,8 @@ public class GameplayView {
 		Circle circle = circlesMap.get(bubble.BUBBLE_NUMBER);
 		circle.setCenterX(bubble.getCenterX());
 		circle.setCenterY(bubble.getCenterY());
-		circle.setFill(bubble.getColor().getPaint());
+		if (bubble instanceof OrdinaryBubble)
+			circle.setFill(((OrdinaryBubble) bubble).getColor().getPaint());
 	}
 
 	private void setLineStyle(Line line) {

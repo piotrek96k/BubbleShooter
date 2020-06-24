@@ -11,7 +11,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import com.project.model.bubble.BombBubble;
 import com.project.model.bubble.Bubble;
+import com.project.model.bubble.OrdinaryBubble;
 
 public class Remover {
 
@@ -57,17 +59,64 @@ public class Remover {
 	}
 
 	private void findBubblesToRemove() {
-		applyOnSurroundingBubbles(consumers.get(0));
-		neighbor.clear();
-		if (counter >= 3) {
-			synchronized (locker) {
-				removeBubbles();
-				findNeighbors();
-				removeIfHanging();
-				neighbor.clear();
-			}
+		if (gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()] instanceof BombBubble) {
+			findBombedBubbles();
+		} else {
+			applyOnSurroundingBubbles(consumers.get(0));
+			neighbor.clear();
+			if (counter >= 3)
+				synchronized (locker) {
+					removeBubbles();
+					findNeighbors();
+					removeIfHanging();
+					neighbor.clear();
+				}
 		}
 		toDelete.clear();
+	}
+
+	private void findBombedBubbles() {
+		Set<Coordinate> toDelete = new LinkedHashSet<Coordinate>();
+		this.toDelete.add(coordinate);
+		for (int i = 0; i < 2; i++) {
+			findNeighbors();
+			neighbor.removeAll(toDelete);
+			this.toDelete.clear();
+			this.toDelete.addAll(neighbor);
+			toDelete.addAll(neighbor);
+			neighbor.clear();
+		}
+		this.toDelete = toDelete;
+		synchronized (locker) {
+			removeBombedBubbles();
+			findNeighbors();
+			removeIfHanging();
+			neighbor.clear();
+		}
+	}
+
+	private void removeBombedBubbles() {
+		boolean[] removed = {false};
+		Runnable[] runnable = { null };
+		runnable[0] = () -> {
+			synchronized (locker) {
+				for (Coordinate coordinate : toDelete) {
+					Bubble bubble = gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()];
+					gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()] = null;
+					removeBubble(bubble);
+				}
+				removed[0] = true;
+				gameplay.getTimer().cancelTask(runnable[0]);
+				locker.notifyAll();
+			}
+		};
+		gameplay.getTimer().schedule(runnable[0], 300);
+		while (!removed[0])
+			try {
+				locker.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 	}
 
 	private void removeBubbles() {
@@ -98,6 +147,12 @@ public class Remover {
 			}
 		};
 		return runnable;
+	}
+
+	private void removeBubble(Bubble bubble) {
+		if (bubble instanceof OrdinaryBubble)
+			colorsCounter.decrement(((OrdinaryBubble) bubble).getColor());
+		gameplay.sendBubbleRemovedNotifications(bubble);
 	}
 
 	private void findNeighbors() {
@@ -182,11 +237,6 @@ public class Remover {
 		}
 	}
 
-	private void removeBubble(Bubble bubble) {
-		colorsCounter.decrement(bubble.getColor());
-		gameplay.sendBubbleRemovedNotifications(bubble);
-	}
-
 	private void applyOnSurroundingBubbles(Consumer<Coordinate> consumer) {
 		int row = coordinate.getRow();
 		int column = coordinate.getColumn();
@@ -229,7 +279,8 @@ public class Remover {
 		if (secondBubble != null) {
 			int size = neighbor.size();
 			neighbor.add(newCoordinate);
-			if (size != neighbor.size() && firstBubble.getColor().equals(secondBubble.getColor())) {
+			if (size != neighbor.size()
+					&& ((OrdinaryBubble) firstBubble).getColor().equals(((OrdinaryBubble) secondBubble).getColor())) {
 				counter++;
 				toDelete.add(newCoordinate);
 				this.coordinate = newCoordinate;

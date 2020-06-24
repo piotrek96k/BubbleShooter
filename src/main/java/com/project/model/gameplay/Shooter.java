@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.project.function.TriFunction;
 import com.project.model.bubble.Bubble;
+import com.project.model.bubble.OrdinaryBubble;
 
 import javafx.geometry.Point2D;
 
@@ -120,10 +121,12 @@ public class Shooter {
 		}
 
 		private void addBubble(Coordinate coordinate) {
-			gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()] = gameplay.getBubbleToThrow();
-			gameplay.getBubbleToThrow().setCenterX(gameplay.getCenterX(coordinate.getRow(), coordinate.getColumn()));
-			gameplay.getBubbleToThrow().setCenterY(gameplay.getCenterY(coordinate.getRow()));
-			colorsCounter.increment(gameplay.getBubbleToThrow().getColor());
+			Bubble bubble = gameplay.getBubbleToThrow();
+			gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()] = bubble;
+			bubble.setCenterX(gameplay.getCenterX(coordinate.getRow(), coordinate.getColumn()));
+			bubble.setCenterY(gameplay.getCenterY(coordinate.getRow()));
+			if (bubble instanceof OrdinaryBubble)
+				colorsCounter.increment(((OrdinaryBubble) gameplay.getBubbleToThrow()).getColor());
 			gameplay.sendBubbleChangedNotifications(gameplay.getBubbleToThrow());
 			new Thread(() -> remover.remove(coordinate), "RemovingThread").start();
 		}

@@ -1,6 +1,6 @@
 package com.project.model.bubble;
 
-public class Bubble {
+public abstract class Bubble {
 
 	protected static double diameter;
 	
@@ -12,14 +12,12 @@ public class Bubble {
 	
 	protected double centerY;
 	
-	protected BubbleColor color;
 	
 	public final int BUBBLE_NUMBER;
 
-	public Bubble(double centerX, double centerY, BubbleColor color) {
+	public Bubble(double centerX, double centerY) {
 		this.centerX = centerX;
 		this.centerY = centerY;
-		this.color = color;
 		BUBBLE_NUMBER = ++bubblesNumber;
 	}
 	
@@ -56,14 +54,6 @@ public class Bubble {
 
 	public void setCenterY(double centerY) {
 		this.centerY = centerY;
-	}
-
-	public BubbleColor getColor() {
-		return color;
-	}
-	
-	public void setColor(BubbleColor color) {
-		this.color = color;
 	}
 
 	public static double getDiameter() {

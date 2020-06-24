@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Random;
 
 import com.project.model.bubble.Bubble;
+import com.project.model.bubble.BombBubble;
 import com.project.model.bubble.BubbleColor;
+import com.project.model.bubble.OrdinaryBubble;
 import com.project.model.listener.BubbleListener;
 import com.project.model.listener.MoveListener;
-import com.project.model.timer.PausableTimer;
+import com.project.timer.PausableTimer;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -50,6 +52,8 @@ public class Gameplay {
 	private Bubble nextBubble;
 
 	private Object locker = new Object();
+
+	private Random random = new Random();
 
 	private PausableTimer timer = new PausableTimer(true);
 
@@ -99,7 +103,7 @@ public class Gameplay {
 						moveBubblesDown();
 				}
 			};
-			Thread thread = new Thread(runnable, "goDownThread");
+			Thread thread = new Thread(runnable, "GoDownThread");
 			thread.setDaemon(true);
 			thread.start();
 		}
@@ -124,12 +128,9 @@ public class Gameplay {
 			double yCoordinate = getCenterY(0);
 			for (int j = 0; j < COLUMNS; j++) {
 				double xCoordinate = getCenterX(0, j);
-				BubbleColor color;
-				do
-					color = getRandomBubbleColor();
-				while (colorsCounter.getQuantity(color) == 0);
+				BubbleColor color = getRandomBubbleColorIfColorExists();
 				colorsCounter.increment(color);
-				bubbles[0][j] = new Bubble(xCoordinate, yCoordinate, color);
+				bubbles[0][j] = new OrdinaryBubble(xCoordinate, yCoordinate, color);
 				sendBubbleAddedNotifications(bubbles[0][j]);
 			}
 		}
@@ -145,7 +146,8 @@ public class Gameplay {
 
 	public void init() {
 		initBubbles();
-		nextBubble = new Bubble(WIDTH / 2, BUBBLES_HEIGHT + (HEIGHT - BUBBLES_HEIGHT) / 2, getRandomBubbleColor());
+		nextBubble = new OrdinaryBubble(WIDTH / 2, BUBBLES_HEIGHT + (HEIGHT - BUBBLES_HEIGHT) / 2,
+				getRandomBubbleColor());
 		sendBubbleAddedNotifications(nextBubble);
 		setBubbleToThrow();
 		createNewTask();
@@ -160,12 +162,27 @@ public class Gameplay {
 		bubbleToThrow = nextBubble;
 		bubbleToThrow.setCenterX(WIDTH / 2);
 		sendBubbleChangedNotifications(bubbleToThrow);
+		int randomNumber = random.nextInt(10);
+		if (randomNumber == 0)
+			nextBubble = new BombBubble(WIDTH / 3, BUBBLES_HEIGHT + (HEIGHT - BUBBLES_HEIGHT) / 2);
+		else {
+			BubbleColor color = getRandomBubbleColorIfColorExists();
+			nextBubble = new OrdinaryBubble(WIDTH / 3, BUBBLES_HEIGHT + (HEIGHT - BUBBLES_HEIGHT) / 2, color);
+		}
+		sendBubbleAddedNotifications(nextBubble);
+	}
+
+	private BubbleColor getRandomBubbleColorIfColorExists() {
 		BubbleColor color;
 		do
 			color = getRandomBubbleColor();
 		while (colorsCounter.getQuantity(color) == 0);
-		nextBubble = new Bubble(WIDTH / 3, BUBBLES_HEIGHT + (HEIGHT - BUBBLES_HEIGHT) / 2, color);
-		sendBubbleAddedNotifications(nextBubble);
+		return color;
+	}
+
+	public BubbleColor getRandomBubbleColor() {
+		BubbleColor[] colors = BubbleColor.values();
+		return colors[random.nextInt(colors.length)];
 	}
 
 	private void initBubbles() {
@@ -175,7 +192,7 @@ public class Gameplay {
 				double xCoordinate = getCenterX(i, j);
 				BubbleColor color = getRandomBubbleColor();
 				colorsCounter.increment(color);
-				bubbles[i][j] = new Bubble(xCoordinate, yCoordinate, color);
+				bubbles[i][j] = new OrdinaryBubble(xCoordinate, yCoordinate, color);
 				sendBubbleAddedNotifications(bubbles[i][j]);
 			}
 		}
@@ -186,12 +203,15 @@ public class Gameplay {
 			finished.set(true);
 		} else {
 			boolean changed = false;
-			while (colorsCounter.getQuantity(nextBubble.getColor()) == 0) {
-				changed = true;
-				nextBubble.setColor(getRandomBubbleColor());
+			if (nextBubble instanceof OrdinaryBubble) {
+				OrdinaryBubble bubble = (OrdinaryBubble) nextBubble;
+				while (colorsCounter.getQuantity(bubble.getColor()) == 0) {
+					changed = true;
+					bubble.setColor(getRandomBubbleColor());
+				}
+				if (changed)
+					sendBubbleChangedNotifications(nextBubble);
 			}
-			if (changed)
-				sendBubbleChangedNotifications(nextBubble);
 			setBubbleToThrow();
 		}
 		isMoving[0] = false;
@@ -237,17 +257,11 @@ public class Gameplay {
 	}
 
 	public void throwBubble(double x, double y) {
-			shooter.throwBubble(x, y);
+		shooter.throwBubble(x, y);
 	}
 
 	public List<Point2D> getLinePoints(double x, double y) {
 		return shooter.getLinePoints(x, y);
-	}
-
-	public BubbleColor getRandomBubbleColor() {
-		Random random = new Random();
-		BubbleColor[] colors = BubbleColor.values();
-		return colors[random.nextInt(colors.length)];
 	}
 
 	public void finishGame() {
