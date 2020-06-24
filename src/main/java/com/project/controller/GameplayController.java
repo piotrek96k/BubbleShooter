@@ -31,12 +31,12 @@ public class GameplayController {
 		gameplay.addBubbleAddedListener(bubble -> Platform.runLater(() -> addBubble(bubble)));
 		gameplay.addBubbleChangedListener(bubble -> Platform.runLater(() -> view.updateBubble(bubble)));
 		gameplay.addBubbleRemovedListener(bubble -> Platform.runLater(() -> removeBubble(bubble)));
-		gameplay.addMoveListener(()->Platform.runLater(()->refreshLines()));
+		gameplay.addMoveListener(() -> Platform.runLater(() -> refreshLines()));
 		gameplay.init();
 	}
 
 	private void handleKeyEvents(KeyEvent keyEvent) {
-		if(keyEvent.getCode().equals(KeyCode.SPACE))
+		if (keyEvent.getCode().equals(KeyCode.SPACE))
 			gameplay.pauseOrResume();
 	}
 
@@ -49,7 +49,7 @@ public class GameplayController {
 		view.removeBubble(ball);
 		refreshLines();
 	}
-	
+
 	private void refreshLines() {
 		if (clickPoint != null)
 			view.manageLines(getLinePoints(clickPoint.getX(), clickPoint.getY()));
@@ -57,11 +57,11 @@ public class GameplayController {
 
 	public List<Point2D> getLinePoints(double x, double y) {
 		clickPoint = new Point2D(x, y);
-		return gameplay.getLinePoints(x, y);
+		return gameplay.getShooter().getLinePoints(x, y);
 	}
 
 	public void throwBubble(double x, double y) {
-		gameplay.throwBubble(x, y);
+		gameplay.getShooter().throwBubble(x, y);
 	}
 
 	public Gameplay getModel() {

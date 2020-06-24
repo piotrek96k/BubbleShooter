@@ -19,8 +19,6 @@ public class Remover {
 
 	private Gameplay gameplay;
 
-	private ColorsCounter colorsCounter;
-
 	private Coordinate coordinate;
 
 	private Object locker = new Object();
@@ -41,13 +39,12 @@ public class Remover {
 		consumers.add(this::checkIfHanging);
 	}
 
-	public Remover(Gameplay gameplay, ColorsCounter colorsCounter) {
+	public Remover(Gameplay gameplay) {
 		this.gameplay = gameplay;
-		this.colorsCounter = colorsCounter;
 	}
 
 	public void remove(Coordinate coordinate) {
-		if (gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()] == null)
+		if (gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] == null)
 			return;
 		this.coordinate = coordinate;
 		counter = 1;
@@ -59,7 +56,7 @@ public class Remover {
 	}
 
 	private void findBubblesToRemove() {
-		if (gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()] instanceof BombBubble) {
+		if (gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] instanceof BombBubble) {
 			findBombedBubbles();
 		} else {
 			applyOnSurroundingBubbles(consumers.get(0));
@@ -101,8 +98,8 @@ public class Remover {
 		runnable[0] = () -> {
 			synchronized (locker) {
 				for (Coordinate coordinate : toDelete) {
-					Bubble bubble = gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()];
-					gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()] = null;
+					Bubble bubble = gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()];
+					gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] = null;
 					removeBubble(bubble);
 				}
 				removed[0] = true;
@@ -137,8 +134,8 @@ public class Remover {
 		runnable[0] = () -> {
 			synchronized (locker) {
 				Coordinate coordinate = toDelete.get(counter[0]++);
-				Bubble bubble = gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()];
-				gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()] = null;
+				Bubble bubble = gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()];
+				gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] = null;
 				removeBubble(bubble);
 				if (counter[0] == toDelete.size()) {
 					gameplay.getTimer().cancelTask(runnable[0]);
@@ -151,7 +148,7 @@ public class Remover {
 
 	private void removeBubble(Bubble bubble) {
 		if (bubble instanceof OrdinaryBubble)
-			colorsCounter.decrement(((OrdinaryBubble) bubble).getColor());
+			gameplay.getColorsCounter().decrement(((OrdinaryBubble) bubble).getColor());
 		gameplay.sendBubbleRemovedNotifications(bubble);
 	}
 
@@ -166,7 +163,7 @@ public class Remover {
 		toDelete.clear();
 		Set<Coordinate> toDrop = new LinkedHashSet<>();
 		neighbor.forEach(coordinate -> {
-			Bubble bubble = gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()];
+			Bubble bubble = gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()];
 			if (bubble != null && coordinate.getRow() != 0) {
 				toDelete.clear();
 				this.coordinate = coordinate;
@@ -188,8 +185,8 @@ public class Remover {
 	private void initDroppers(Set<Coordinate> toDrop) throws InterruptedException {
 		List<Bubble> list = new LinkedList<>();
 		toDrop.forEach(coordinate -> {
-			list.add(gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()]);
-			gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()] = null;
+			list.add(gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()]);
+			gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] = null;
 		});
 		Collections.reverse(list);
 		Map<Bubble, Dropper> droppersMap = new HashMap<>();
@@ -197,7 +194,7 @@ public class Remover {
 		for (int i = 0; i < list.size(); i++) {
 			Bubble bubble = list.get(i);
 			double startHeight = Dropper.convertHeight(bubble.getCenterY(),
-					gameplay.BUBBLES_HEIGHT + Bubble.getDiameter());
+					gameplay.getBubblesTab().BUBBLES_HEIGHT + Bubble.getDiameter());
 			Dropper dropper = new Dropper(startHeight, delay + delay * i);
 			droppersMap.put(bubble, dropper);
 		}
@@ -227,7 +224,7 @@ public class Remover {
 		for (Bubble bubble : toDrop) {
 			Dropper dropper = droppersMap.get(bubble);
 			double height = dropper.getHeight(System.currentTimeMillis());
-			double paneHeight = Dropper.convertHeight(height, gameplay.BUBBLES_HEIGHT + Bubble.getDiameter());
+			double paneHeight = Dropper.convertHeight(height, gameplay.getBubblesTab().BUBBLES_HEIGHT + Bubble.getDiameter());
 			bubble.setCenterY(paneHeight);
 			gameplay.sendBubbleChangedNotifications(bubble);
 			if (height <= Bubble.getDiameter() / 2) {
@@ -250,12 +247,12 @@ public class Remover {
 			if (ended)
 				return;
 		}
-		if (column < gameplay.getBubbles()[0].length - 1) {
+		if (column < gameplay.getBubblesTab().getBubbles()[0].length - 1) {
 			consumer.accept(new Coordinate(row, column + 1));
 			if (ended)
 				return;
 		}
-		if (row < gameplay.getBubbles().length - 1)
+		if (row < gameplay.getBubblesTab().getBubbles().length - 1)
 			applyOnAdjacentBubbles(consumer, 1);
 	}
 
@@ -265,17 +262,17 @@ public class Remover {
 		consumer.accept(new Coordinate(row + offset, column));
 		if (ended)
 			return;
-		int rowToCheck = row + gameplay.getRowOffset();
+		int rowToCheck = row + gameplay.getBubblesTab().getRowOffset();
 		if (rowToCheck % 2 == 0 && column > 0)
 			consumer.accept(new Coordinate(row + offset, column - 1));
-		else if (rowToCheck % 2 == 1 && column < gameplay.getBubbles()[0].length - 1)
+		else if (rowToCheck % 2 == 1 && column < gameplay.getBubblesTab().getBubbles()[0].length - 1)
 			consumer.accept(new Coordinate(row + offset, column + 1));
 	}
 
 	private void checkIfSameColor(Coordinate newCoordinate) {
 		Coordinate oldCoordinate = coordinate;
-		Bubble firstBubble = gameplay.getBubbles()[oldCoordinate.getRow()][oldCoordinate.getColumn()];
-		Bubble secondBubble = gameplay.getBubbles()[newCoordinate.getRow()][newCoordinate.getColumn()];
+		Bubble firstBubble = gameplay.getBubblesTab().getBubbles()[oldCoordinate.getRow()][oldCoordinate.getColumn()];
+		Bubble secondBubble = gameplay.getBubblesTab().getBubbles()[newCoordinate.getRow()][newCoordinate.getColumn()];
 		if (secondBubble != null) {
 			int size = neighbor.size();
 			neighbor.add(newCoordinate);
@@ -291,12 +288,12 @@ public class Remover {
 	}
 
 	private void addNeighbor(Coordinate coordinate) {
-		if (gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()] != null)
+		if (gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] != null)
 			neighbor.add(coordinate);
 	}
 
 	private void checkIfHanging(Coordinate newCoordinate) {
-		if (gameplay.getBubbles()[newCoordinate.getRow()][newCoordinate.getColumn()] != null) {
+		if (gameplay.getBubblesTab().getBubbles()[newCoordinate.getRow()][newCoordinate.getColumn()] != null) {
 			if (newCoordinate.getRow() == 0) {
 				ended = true;
 				return;

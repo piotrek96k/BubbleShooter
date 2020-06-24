@@ -53,7 +53,7 @@ public class GameplayView {
 	}
 
 	private void addRectangle() {
-		double height = controller.getModel().HEIGHT - controller.getModel().BUBBLES_HEIGHT;
+		double height = controller.getModel().getBubblesTab().HEIGHT - controller.getModel().getBubblesTab().BUBBLES_HEIGHT;
 		double startY = pane.getPrefHeight() - height;
 		Rectangle rectangle = new Rectangle(0, startY, pane.getPrefWidth(), height);
 		rectangle.setFill(Color.rgb(48, 48, 48));
@@ -61,8 +61,8 @@ public class GameplayView {
 	}
 
 	private void setPaneSize() {
-		pane.setPrefHeight(controller.getModel().HEIGHT);
-		pane.setPrefWidth(controller.getModel().WIDTH);
+		pane.setPrefHeight(controller.getModel().getBubblesTab().HEIGHT);
+		pane.setPrefWidth(controller.getModel().getBubblesTab().WIDTH);
 		pane.setMinHeight(Pane.USE_PREF_SIZE);
 		pane.setMinWidth(Pane.USE_PREF_SIZE);
 	}

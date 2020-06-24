@@ -13,10 +13,6 @@ public class Shooter {
 
 	private Gameplay gameplay;
 
-	private Remover remover;
-
-	private ColorsCounter colorsCounter;
-
 	private Mover mover;
 
 	private List<TriFunction<Point2D, Point2D, Double, Point2D>> functions;
@@ -28,10 +24,8 @@ public class Shooter {
 		functions.add(this::thirdApply);
 	}
 
-	public Shooter(Gameplay gameplay, Remover remover, ColorsCounter colorsCounter) {
+	public Shooter(Gameplay gameplay) {
 		this.gameplay = gameplay;
-		this.remover = remover;
-		this.colorsCounter = colorsCounter;
 	}
 
 	private class Mover implements Runnable {
@@ -59,9 +53,9 @@ public class Shooter {
 			}
 			counter++;
 			if (mover != null) {
-				gameplay.getBubbleToThrow().setCenterX(point.getX());
-				gameplay.getBubbleToThrow().setCenterY(point.getY());
-				gameplay.sendBubbleChangedNotifications(gameplay.getBubbleToThrow());
+				gameplay.getBubblesTab().getBubbleToThrow().setCenterX(point.getX());
+				gameplay.getBubblesTab().getBubbleToThrow().setCenterY(point.getY());
+				gameplay.sendBubbleChangedNotifications(gameplay.getBubblesTab().getBubbleToThrow());
 			}
 		}
 
@@ -89,7 +83,7 @@ public class Shooter {
 		private boolean willThereBeACollision(Point2D point) {
 			List<Coordinate> coordinates = getCoordinates(point);
 			for (Coordinate coordinate : coordinates) {
-				Bubble bubble = gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()];
+				Bubble bubble = gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()];
 				if (bubble != null || point.getY() < Bubble.getDiameter() / 2) {
 					double distance;
 					if (bubble != null)
@@ -109,7 +103,7 @@ public class Shooter {
 			Coordinate result = null;
 			double distance = Double.MAX_VALUE;
 			for (Coordinate coordinate : coordinates) {
-				if (gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()] == null) {
+				if (gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] == null) {
 					double newDistance = calculateDistance(point, coordinate);
 					if (newDistance < distance) {
 						distance = newDistance;
@@ -121,25 +115,26 @@ public class Shooter {
 		}
 
 		private void addBubble(Coordinate coordinate) {
-			Bubble bubble = gameplay.getBubbleToThrow();
-			gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()] = bubble;
-			bubble.setCenterX(gameplay.getCenterX(coordinate.getRow(), coordinate.getColumn()));
-			bubble.setCenterY(gameplay.getCenterY(coordinate.getRow()));
+			Bubble bubble = gameplay.getBubblesTab().getBubbleToThrow();
+			gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] = bubble;
+			bubble.setCenterX(gameplay.getBubblesTab().getCenterX(coordinate.getRow(), coordinate.getColumn()));
+			bubble.setCenterY(gameplay.getBubblesTab().getCenterY(coordinate.getRow()));
 			if (bubble instanceof OrdinaryBubble)
-				colorsCounter.increment(((OrdinaryBubble) gameplay.getBubbleToThrow()).getColor());
-			gameplay.sendBubbleChangedNotifications(gameplay.getBubbleToThrow());
-			new Thread(() -> remover.remove(coordinate), "RemovingThread").start();
+				gameplay.getColorsCounter()
+						.increment(((OrdinaryBubble) gameplay.getBubblesTab().getBubbleToThrow()).getColor());
+			gameplay.sendBubbleChangedNotifications(gameplay.getBubblesTab().getBubbleToThrow());
+			new Thread(() -> gameplay.getRemover().remove(coordinate), "Removing Thread").start();
 		}
 
 		private List<Integer> getRows(double y) {
-			int first = (int) ((y - Bubble.getDiameter() / 2) / gameplay.ROW_HEIGHT);
-			int second = (int) ((y + Bubble.getDiameter() / 2) / gameplay.ROW_HEIGHT);
+			int first = (int) ((y - Bubble.getDiameter() / 2) / gameplay.getBubblesTab().ROW_HEIGHT);
+			int second = (int) ((y + Bubble.getDiameter() / 2) / gameplay.getBubblesTab().ROW_HEIGHT);
 			List<Integer> result = new ArrayList<Integer>();
-			if (first >= 0 && first < gameplay.ROWS) {
+			if (first >= 0 && first < gameplay.getBubblesTab().ROWS) {
 				result.add(first);
-				if (first + 2 == second && first + 1 < gameplay.ROWS)
+				if (first + 2 == second && first + 1 < gameplay.getBubblesTab().ROWS)
 					result.add(first + 1);
-				if (second < gameplay.ROWS)
+				if (second < gameplay.getBubblesTab().ROWS)
 					result.add(second);
 			}
 			return result;
@@ -151,14 +146,14 @@ public class Shooter {
 			List<Coordinate> coordinates = new ArrayList<Coordinate>();
 			for (int row : getRows(y)) {
 				double rowOffset = 0;
-				int rowToCheck = row + gameplay.getRowOffset();
+				int rowToCheck = row + gameplay.getBubblesTab().getRowOffset();
 				if (rowToCheck % 2 == 1)
 					rowOffset = Bubble.getDiameter() / 2;
 				int column = (int) ((x - rowOffset - Bubble.getDiameter() / 2) / Bubble.getDiameter());
 				if (column >= 0)
 					coordinates.add(new Coordinate(row, column));
 				column = (int) ((x - rowOffset + Bubble.getDiameter() / 2) / Bubble.getDiameter());
-				if (column < gameplay.COLUMNS)
+				if (column < gameplay.getBubblesTab().COLUMNS)
 					coordinates.add(new Coordinate(row, column));
 			}
 			return coordinates;
@@ -168,7 +163,7 @@ public class Shooter {
 
 	public List<Point2D> getLinePoints(double x, double y) {
 		List<Point2D> result = new ArrayList<>();
-		if (y < gameplay.BUBBLES_HEIGHT + Bubble.getDiameter() && !gameplay.getTimer().isPaused()) {
+		if (y < gameplay.getBubblesTab().BUBBLES_HEIGHT + Bubble.getDiameter() && !gameplay.getTimer().isPaused()) {
 			Point2D point = getStartPoint();
 			Point2D coefficients = getCoefficients(x, y, point);
 			TriFunction<Point2D, Point2D, Double, Point2D> function = chooseFunctionToApplay(point, coefficients);
@@ -199,7 +194,7 @@ public class Shooter {
 		Coordinate coordinate = getCoordinate(point);
 		if (coordinate == null)
 			return false;
-		Bubble bubble = gameplay.getBubbles()[coordinate.getRow()][coordinate.getColumn()];
+		Bubble bubble = gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()];
 		if (bubble == null)
 			return false;
 		double distance = calculateDistance(point, coordinate);
@@ -209,28 +204,28 @@ public class Shooter {
 	}
 
 	private int getRow(double y) {
-		return (int) (y / gameplay.ROW_HEIGHT);
+		return (int) (y / gameplay.getBubblesTab().ROW_HEIGHT);
 	}
 
 	private Coordinate getCoordinate(Point2D point) {
 		double x = point.getX();
 		double y = point.getY();
 		int row = getRow(y);
-		if (row < 0 || row >= gameplay.ROWS)
+		if (row < 0 || row >= gameplay.getBubblesTab().ROWS)
 			return null;
 		double rowOffset = 0;
-		int rowToCheck = row + gameplay.getRowOffset();
+		int rowToCheck = row + gameplay.getBubblesTab().getRowOffset();
 		if (rowToCheck % 2 == 1)
 			rowOffset = Bubble.getDiameter() / 2;
 		int column = (int) ((x - rowOffset) / Bubble.getDiameter());
-		if (column < 0 || column >= gameplay.COLUMNS)
+		if (column < 0 || column >= gameplay.getBubblesTab().COLUMNS)
 			return null;
 		return new Coordinate(row, column);
 	}
 
 	public void throwBubble(double x, double y) {
-		if (!gameplay.getFinishedProperty().get() && !gameplay.getTimer().isPaused() && !gameplay.isMoving()
-				&& y < gameplay.BUBBLES_HEIGHT + Bubble.getDiameter()) {
+		if (!gameplay.isFinishedProperty().get() && !gameplay.getTimer().isPaused() && !gameplay.isMoving()
+				&& y < gameplay.getBubblesTab().BUBBLES_HEIGHT + Bubble.getDiameter()) {
 			gameplay.setStartMoving();
 			Point2D point = getStartPoint();
 			Point2D coefficients = getCoefficients(x, y, point);
@@ -240,8 +235,9 @@ public class Shooter {
 	}
 
 	private Point2D getStartPoint() {
-		double x = gameplay.WIDTH / 2;
-		double y = gameplay.BUBBLES_HEIGHT + (gameplay.HEIGHT - gameplay.BUBBLES_HEIGHT) / 2;
+		BubblesTab tab = gameplay.getBubblesTab();
+		double x = tab.WIDTH / 2;
+		double y = tab.BUBBLES_HEIGHT + (tab.HEIGHT - tab.BUBBLES_HEIGHT) / 2;
 		return new Point2D(x, y);
 	}
 
@@ -287,8 +283,8 @@ public class Shooter {
 	}
 
 	private double calculateDistance(Point2D point, Coordinate coordinate) {
-		double dx = gameplay.getCenterX(coordinate.getRow(), coordinate.getColumn()) - point.getX();
-		double dy = gameplay.getCenterY(coordinate.getRow()) - point.getY();
+		double dx = gameplay.getBubblesTab().getCenterX(coordinate.getRow(), coordinate.getColumn()) - point.getX();
+		double dy = gameplay.getBubblesTab().getCenterY(coordinate.getRow()) - point.getY();
 		double distance = Math.pow(Math.pow(dx, 2) + Math.pow(dy, 2), 0.5);
 		return distance;
 	}
@@ -303,7 +299,7 @@ public class Shooter {
 	private boolean checkIfNeedToChangePath(Point2D point) {
 		if (point.getX() <= Bubble.getDiameter() / 2)
 			return true;
-		if (point.getX() >= gameplay.WIDTH - Bubble.getDiameter() / 2)
+		if (point.getX() >= gameplay.getBubblesTab().WIDTH - Bubble.getDiameter() / 2)
 			return true;
 		return false;
 	}
@@ -316,7 +312,7 @@ public class Shooter {
 		if (point.getX() <= Bubble.getDiameter() / 2)
 			x = Bubble.getDiameter() / 2;
 		else
-			x = gameplay.WIDTH - Bubble.getDiameter() / 2;
+			x = gameplay.getBubblesTab().WIDTH - Bubble.getDiameter() / 2;
 		double y = a * x + b;
 		Point2D newPoint = new Point2D(x, y);
 		Point2D newCoefficients = new Point2D(-a, y + a * x);
