@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.project.function.TriFunction;
 import com.project.model.bubble.Bubble;
-import com.project.model.bubble.OrdinaryBubble;
+import com.project.model.bubble.ColouredBubble;
 
 import javafx.geometry.Point2D;
 
@@ -119,9 +119,11 @@ public class Shooter {
 			gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] = bubble;
 			bubble.setCenterX(gameplay.getBubblesTab().getCenterX(coordinate.getRow(), coordinate.getColumn()));
 			bubble.setCenterY(gameplay.getBubblesTab().getCenterY(coordinate.getRow()));
-			if (bubble instanceof OrdinaryBubble)
-				gameplay.getColorsCounter()
-						.increment(((OrdinaryBubble) gameplay.getBubblesTab().getBubbleToThrow()).getColor());
+			if (bubble instanceof ColouredBubble) {
+				ColouredBubble colouredBubble = (ColouredBubble) bubble;
+				for (int i = 0; i < colouredBubble.getColorsQuantity(); i++)
+					gameplay.getColorsCounter().increment(colouredBubble.getColors().get(i));
+			}
 			gameplay.sendBubbleChangedNotifications(gameplay.getBubblesTab().getBubbleToThrow());
 			new Thread(() -> gameplay.getRemover().remove(coordinate), "Removing Thread").start();
 		}

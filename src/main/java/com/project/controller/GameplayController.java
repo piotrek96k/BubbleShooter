@@ -57,11 +57,11 @@ public class GameplayController {
 
 	public List<Point2D> getLinePoints(double x, double y) {
 		clickPoint = new Point2D(x, y);
-		return gameplay.getShooter().getLinePoints(x, y);
+		return gameplay.getLinePoints(x, y);
 	}
 
 	public void throwBubble(double x, double y) {
-		gameplay.getShooter().throwBubble(x, y);
+		gameplay.throwBubble(x, y);
 	}
 
 	public Gameplay getModel() {

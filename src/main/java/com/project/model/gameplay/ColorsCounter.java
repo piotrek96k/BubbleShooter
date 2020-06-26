@@ -9,6 +9,8 @@ public class ColorsCounter {
 
 	private Map<BubbleColor, Integer> quantities;
 
+	private int activeBubblesNumber;
+
 	public ColorsCounter() {
 		quantities = new HashMap<>();
 		for (BubbleColor value : BubbleColor.values())
@@ -17,16 +19,24 @@ public class ColorsCounter {
 
 	public void increment(BubbleColor color) {
 		int value = quantities.get(color);
+		if (value == 0)
+			activeBubblesNumber++;
 		quantities.put(color, ++value);
 	}
 
 	public void decrement(BubbleColor color) {
 		int value = quantities.get(color);
+		if (value == 1)
+			activeBubblesNumber--;
 		quantities.put(color, --value);
 	}
-	
+
 	public int getQuantity(BubbleColor color) {
 		return quantities.get(color);
+	}
+
+	public int getActiveBubblesNumber() {
+		return activeBubblesNumber;
 	}
 
 	@Override

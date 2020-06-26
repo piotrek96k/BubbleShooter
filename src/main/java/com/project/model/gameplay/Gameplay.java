@@ -11,6 +11,7 @@ import com.project.timer.PausableTimer;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.geometry.Point2D;
 
 public class Gameplay {
 
@@ -53,7 +54,7 @@ public class Gameplay {
 		if (checkIfGameEnded())
 			finishGame();
 		else
-			bubblesTab.ifNeedChangeNextBubble();
+			bubblesTab.changeNextBubbleIfNeeded();
 		isMoving = false;
 		synchronized (bubblesTab.getLocker()) {
 			if (bubblesTab.isWaiting())
@@ -86,6 +87,16 @@ public class Gameplay {
 		timer.cancel();
 		System.out.println("Koniec Gry");
 		finished.set(true);
+	}
+
+	public void throwBubble(double x, double y) {
+		synchronized (bubblesTab.getLocker()) {
+			shooter.throwBubble(x, y);
+		}
+	}
+
+	public List<Point2D> getLinePoints(double x, double y) {
+		return shooter.getLinePoints(x, y);
 	}
 
 	private void sendNotifications(List<BubbleListener> listeners, Bubble bubble) {

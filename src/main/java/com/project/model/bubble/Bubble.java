@@ -12,7 +12,6 @@ public abstract class Bubble {
 	
 	protected double centerY;
 	
-	
 	public final int BUBBLE_NUMBER;
 
 	public Bubble(double centerX, double centerY) {

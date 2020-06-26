@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 
 import com.project.model.bubble.BombBubble;
 import com.project.model.bubble.Bubble;
-import com.project.model.bubble.OrdinaryBubble;
+import com.project.model.bubble.ColouredBubble;
 
 public class Remover {
 
@@ -34,7 +34,7 @@ public class Remover {
 	private boolean ended;
 
 	{
-		consumers.add(this::checkIfSameColor);
+		consumers.add(this::repeatOnSameColorBubbles);
 		consumers.add(this::addNeighbor);
 		consumers.add(this::checkIfHanging);
 	}
@@ -93,7 +93,7 @@ public class Remover {
 	}
 
 	private void removeBombedBubbles() {
-		boolean[] removed = {false};
+		boolean[] removed = { false };
 		Runnable[] runnable = { null };
 		runnable[0] = () -> {
 			synchronized (locker) {
@@ -147,8 +147,11 @@ public class Remover {
 	}
 
 	private void removeBubble(Bubble bubble) {
-		if (bubble instanceof OrdinaryBubble)
-			gameplay.getColorsCounter().decrement(((OrdinaryBubble) bubble).getColor());
+		if (bubble instanceof ColouredBubble) {
+			ColouredBubble colouredBubble = (ColouredBubble) bubble;
+			for (int i = 0; i < colouredBubble.getColorsQuantity(); i++)
+				gameplay.getColorsCounter().decrement(colouredBubble.getColors().get(i));
+		}
 		gameplay.sendBubbleRemovedNotifications(bubble);
 	}
 
@@ -224,7 +227,8 @@ public class Remover {
 		for (Bubble bubble : toDrop) {
 			Dropper dropper = droppersMap.get(bubble);
 			double height = dropper.getHeight(System.currentTimeMillis());
-			double paneHeight = Dropper.convertHeight(height, gameplay.getBubblesTab().BUBBLES_HEIGHT + Bubble.getDiameter());
+			double paneHeight = Dropper.convertHeight(height,
+					gameplay.getBubblesTab().BUBBLES_HEIGHT + Bubble.getDiameter());
 			bubble.setCenterY(paneHeight);
 			gameplay.sendBubbleChangedNotifications(bubble);
 			if (height <= Bubble.getDiameter() / 2) {
@@ -269,22 +273,31 @@ public class Remover {
 			consumer.accept(new Coordinate(row + offset, column + 1));
 	}
 
-	private void checkIfSameColor(Coordinate newCoordinate) {
+	private void repeatOnSameColorBubbles(Coordinate newCoordinate) {
 		Coordinate oldCoordinate = coordinate;
 		Bubble firstBubble = gameplay.getBubblesTab().getBubbles()[oldCoordinate.getRow()][oldCoordinate.getColumn()];
 		Bubble secondBubble = gameplay.getBubblesTab().getBubbles()[newCoordinate.getRow()][newCoordinate.getColumn()];
-		if (secondBubble != null) {
+		if (secondBubble != null && checkIfSameColour(firstBubble, secondBubble)) {
+			toDelete.add(newCoordinate);
 			int size = neighbor.size();
 			neighbor.add(newCoordinate);
-			if (size != neighbor.size()
-					&& ((OrdinaryBubble) firstBubble).getColor().equals(((OrdinaryBubble) secondBubble).getColor())) {
+			if (size != neighbor.size()) {
 				counter++;
-				toDelete.add(newCoordinate);
 				this.coordinate = newCoordinate;
 				applyOnSurroundingBubbles(consumers.get(0));
 				this.coordinate = oldCoordinate;
 			}
 		}
+	}
+
+	private boolean checkIfSameColour(Bubble firstBubble, Bubble secondBubble) {
+		ColouredBubble firstColouredBubble = (ColouredBubble) firstBubble;
+		ColouredBubble secondColouredBubble = (ColouredBubble) secondBubble;
+		for (int i = 0; i < firstColouredBubble.getColorsQuantity(); i++)
+			for (int j = 0; j < secondColouredBubble.getColorsQuantity(); j++)
+				if (firstColouredBubble.getColors().get(i).equals(secondColouredBubble.getColors().get(j)))
+					return true;
+		return false;
 	}
 
 	private void addNeighbor(Coordinate coordinate) {
