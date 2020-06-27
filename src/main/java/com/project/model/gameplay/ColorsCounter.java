@@ -20,8 +20,6 @@ public class ColorsCounter {
 
 	public void increment(BubbleColor color) {
 		int value = quantities.get(color);
-//		if (value == 0)
-//			activeBubblesNumber++;
 		quantities.put(color, ++value);
 	}
 

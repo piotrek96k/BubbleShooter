@@ -11,7 +11,11 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.ImagePattern;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Paint;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Circle;
 
 public class CirclePainter {
@@ -31,6 +35,13 @@ public class CirclePainter {
 			paintTwoColors();
 		else
 			paintThreeColours();
+	}
+	
+	public static  Paint getLinearGradientPaint(Color color) {
+		Color firstColor = color.brighter();
+		Color secondColor = color.darker();
+		Stop[] stops = { new Stop(0.35, firstColor), new Stop(0.8, secondColor) };
+		return new LinearGradient(0.0, 0.0, 1.0, 1.0, true, CycleMethod.NO_CYCLE, stops);
 	}
 
 	private void paintGhost() {

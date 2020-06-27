@@ -9,6 +9,7 @@ import com.project.model.bubble.BombBubble;
 import com.project.model.bubble.Bubble;
 import com.project.model.bubble.BubbleColor;
 import com.project.model.bubble.ColouredBubble;
+import com.project.model.bubble.DestroyingBubble;
 import com.project.model.bubble.TransparentBubble;
 
 public class BubblesTab {
@@ -169,10 +170,12 @@ public class BubblesTab {
 		double randomNumber = random.nextDouble();
 		if (randomNumber <= 0.1) {
 			randomNumber = random.nextDouble();
-			if (randomNumber <= 0.33)
+			if (randomNumber <= 0.49)
 				return new BombBubble(centerX, centerY);
-			else
+			else if (randomNumber <= 0.98)
 				return new TransparentBubble(centerX, centerY, getRandomBubbleColorIfColorExists());
+			else
+				return new DestroyingBubble(centerX, centerY);
 		} else
 			return getColouredBubble(centerX, centerY, probability, supplier);
 	}

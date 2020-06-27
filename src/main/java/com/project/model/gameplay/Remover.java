@@ -62,7 +62,8 @@ public class Remover {
 	}
 
 	public boolean shouldBeAReaction(Coordinate coordinate, boolean isTransparent) {
-		if(!(gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] instanceof ColouredBubble))
+		if (!(gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate
+				.getColumn()] instanceof ColouredBubble))
 			return false;
 		this.coordinate = coordinate;
 		counter = 1;
@@ -76,6 +77,17 @@ public class Remover {
 		if (counter >= getNumberToCheck(isTransparent))
 			return true;
 		return false;
+	}
+
+	public void removeHangers(Set<Coordinate> deleted) {
+		toDelete = deleted;
+		synchronized (locker) {
+		findNeighbors();
+		removeIfHanging();
+		}
+		neighbor.clear();
+		toDelete.clear();
+		gameplay.setStopMoving();
 	}
 
 	private void findBubblesToRemove(boolean isTransparent) {

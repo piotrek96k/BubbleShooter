@@ -1,12 +1,15 @@
 package com.project.model.gameplay;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.project.function.TriFunction;
 import com.project.model.bubble.Bubble;
 import com.project.model.bubble.BubbleColor;
 import com.project.model.bubble.ColouredBubble;
+import com.project.model.bubble.DestroyingBubble;
 import com.project.model.bubble.TransparentBubble;
 
 import javafx.geometry.Point2D;
@@ -38,6 +41,8 @@ public class Shooter {
 
 		private int counter = 1;
 
+		Set<Coordinate> deleted = new LinkedHashSet<Coordinate>();
+
 		private TriFunction<Point2D, Point2D, Double, Point2D> function;
 
 		public Mover(Point2D point, Point2D coefficients, TriFunction<Point2D, Point2D, Double, Point2D> function) {
@@ -50,7 +55,10 @@ public class Shooter {
 		public void run() {
 			point = function.apply(point, coefficients, Bubble.getDiameter() / 6);
 			if (counter == 3) {
-				moveBubble();
+				if (gameplay.getBubblesTab().getBubbleToThrow() instanceof DestroyingBubble)
+					moveDestroyingBubble();
+				else
+					moveBubble();
 				counter = 1;
 			}
 			counter++;
@@ -75,6 +83,27 @@ public class Shooter {
 			mover = null;
 		}
 
+		private void moveDestroyingBubble() {
+			if (checkIfNeedToChangePath(point) || point.getY() < Bubble.getDiameter() / 2) {
+				new Thread(() -> gameplay.getRemover().removeHangers(deleted), "Removing Thread").start();
+				stop();
+				gameplay.sendBubbleRemovedNotifications(gameplay.getBubblesTab().getBubbleToThrow());
+			}
+			for (Coordinate coordinate : getCoordinates(point, Bubble.getDiameter() / 4)) {
+				Bubble bubble = gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()];
+				if (bubble != null) {
+					if (bubble instanceof ColouredBubble) {
+						ColouredBubble colouredBubble = (ColouredBubble) bubble;
+						for (BubbleColor color : colouredBubble.getColors())
+							gameplay.getColorsCounter().decrement(color);
+					}
+					deleted.add(coordinate);
+					gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] = null;
+					gameplay.sendBubbleRemovedNotifications(bubble);
+				}
+			}
+		}
+
 		private Void restartTimer(Point2D point, Point2D coefficients,
 				TriFunction<Point2D, Point2D, Double, Point2D> function) {
 			gameplay.getTimer().cancelTask(mover);
@@ -83,7 +112,7 @@ public class Shooter {
 		}
 
 		private boolean willThereBeACollision(Point2D point) {
-			List<Coordinate> coordinates = getCoordinates(point);
+			List<Coordinate> coordinates = getCoordinates(point, Bubble.getDiameter() / 2);
 			for (Coordinate coordinate : coordinates) {
 				Bubble bubble = gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()];
 				if (bubble != null || point.getY() < Bubble.getDiameter() / 2) {
@@ -106,7 +135,7 @@ public class Shooter {
 		}
 
 		private boolean removeWithTransparentBubble(Coordinate coordinate, Point2D point) {
-			if (!haveTheSameColorAsTransparent(coordinate)) {
+			if (!checkIfSameColorAsTransparent(coordinate)) {
 				if (point.getY() < Bubble.getDiameter() / 2) {
 					gameplay.sendBubbleRemovedNotifications(gameplay.getBubblesTab().getBubbleToThrow());
 					gameplay.setStopMoving();
@@ -115,7 +144,7 @@ public class Shooter {
 				return false;
 			}
 			boolean remove = gameplay.getRemover().shouldBeAReaction(coordinate, true);
-			if (haveTheSameColorAsTransparent(coordinate) && remove) {
+			if (checkIfSameColorAsTransparent(coordinate) && remove) {
 				new Thread(() -> gameplay.getRemover().remove(coordinate, true), "Removing Thread").start();
 				gameplay.sendBubbleRemovedNotifications(gameplay.getBubblesTab().getBubbleToThrow());
 			} else if (point.getY() < Bubble.getDiameter() / 2) {
@@ -126,7 +155,7 @@ public class Shooter {
 			return remove;
 		}
 
-		private boolean haveTheSameColorAsTransparent(Coordinate coordinate) {
+		private boolean checkIfSameColorAsTransparent(Coordinate coordinate) {
 			Bubble bubble = gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()];
 			if (!(bubble instanceof ColouredBubble))
 				return false;
@@ -167,9 +196,9 @@ public class Shooter {
 			new Thread(() -> gameplay.getRemover().remove(coordinate, false), "Removing Thread").start();
 		}
 
-		private List<Integer> getRows(double y) {
-			int first = (int) ((y - Bubble.getDiameter() / 2) / gameplay.getBubblesTab().ROW_HEIGHT);
-			int second = (int) ((y + Bubble.getDiameter() / 2) / gameplay.getBubblesTab().ROW_HEIGHT);
+		private List<Integer> getRows(double y, double withdraw) {
+			int first = (int) ((y - withdraw) / gameplay.getBubblesTab().ROW_HEIGHT);
+			int second = (int) ((y + withdraw) / gameplay.getBubblesTab().ROW_HEIGHT);
 			List<Integer> result = new ArrayList<Integer>();
 			if (first >= 0 && first < gameplay.getBubblesTab().ROWS) {
 				result.add(first);
@@ -181,19 +210,19 @@ public class Shooter {
 			return result;
 		}
 
-		private List<Coordinate> getCoordinates(Point2D point) {
+		private List<Coordinate> getCoordinates(Point2D point, double withdraw) {
 			double x = point.getX();
 			double y = point.getY();
 			List<Coordinate> coordinates = new ArrayList<Coordinate>();
-			for (int row : getRows(y)) {
+			for (int row : getRows(y, withdraw)) {
 				double rowOffset = 0;
 				int rowToCheck = row + gameplay.getBubblesTab().getRowOffset();
 				if (rowToCheck % 2 == 1)
 					rowOffset = Bubble.getDiameter() / 2;
-				int column = (int) ((x - rowOffset - Bubble.getDiameter() / 2) / Bubble.getDiameter());
+				int column = (int) ((x - rowOffset - withdraw) / Bubble.getDiameter());
 				if (column >= 0)
 					coordinates.add(new Coordinate(row, column));
-				column = (int) ((x - rowOffset + Bubble.getDiameter() / 2) / Bubble.getDiameter());
+				column = (int) ((x - rowOffset + withdraw) / Bubble.getDiameter());
 				if (column < gameplay.getBubblesTab().COLUMNS)
 					coordinates.add(new Coordinate(row, column));
 			}

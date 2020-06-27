@@ -10,12 +10,14 @@ import com.project.controller.GameplayController;
 import com.project.model.bubble.Bubble;
 import com.project.model.bubble.BubbleColor;
 import com.project.model.bubble.ColouredBubble;
+import com.project.model.bubble.DestroyingBubble;
 import com.project.model.bubble.TransparentBubble;
 import com.project.util.ImageUtil;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -23,6 +25,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -82,12 +85,25 @@ public class GameplayView {
 			addMulticolouredCircle(bubble, centerX, centerY, radius);
 		else if (bubble instanceof TransparentBubble)
 			addTransparentBubble(bubble, centerX, centerY, radius);
-		else {
-			Circle circle = new Circle(centerX, centerY, radius + 2);
-			circle.setFill(new ImagePattern(ImageUtil.BOMB_IMAGE));
-			circlesMap.put(bubble.BUBBLE_NUMBER, circle);
-			pane.getChildren().add(circle);
-		}
+		else if (bubble instanceof DestroyingBubble)
+			addDestroyingBubble(bubble, centerX, centerY, radius);
+		else
+			addBombBubble(bubble, centerX, centerY, radius);
+	}
+
+	private void addDestroyingBubble(Bubble bubble, double centerX, double centerY, double radius) {
+		Circle circle = new Circle(centerX, centerY, radius,Color.WHITE);
+		GaussianBlur gaussianBlur = new GaussianBlur(10.0);
+		circle.setEffect(gaussianBlur);
+		circlesMap.put(bubble.BUBBLE_NUMBER, circle);
+		pane.getChildren().add(circle);
+	}
+
+	private void addBombBubble(Bubble bubble, double centerX, double centerY, double radius) {
+		Circle circle = new Circle(centerX, centerY, radius + 2);
+		circle.setFill(new ImagePattern(ImageUtil.BOMB_IMAGE));
+		circlesMap.put(bubble.BUBBLE_NUMBER, circle);
+		pane.getChildren().add(circle);
 	}
 
 	private void addTransparentBubble(Bubble bubble, double centerX, double centerY, double radius) {
@@ -104,7 +120,8 @@ public class GameplayView {
 		ColouredBubble colouredBubble = (ColouredBubble) bubble;
 		List<BubbleColor> colors = colouredBubble.getColors();
 		if (colouredBubble.getColorsQuantity() == 1) {
-			Circle circle = new Circle(centerX, centerY, radius, colors.get(0).getPaint());
+			Paint paint = CirclePainter.getLinearGradientPaint(colors.get(0).getColor());
+			Circle circle = new Circle(centerX, centerY, radius, paint);
 			circlesMap.put(bubble.BUBBLE_NUMBER, circle);
 			pane.getChildren().add(circle);
 		} else {
@@ -134,7 +151,7 @@ public class GameplayView {
 		Circle circle = circlesMap.get(bubble.BUBBLE_NUMBER);
 		if (circle != null) {
 			if (bubble instanceof ColouredBubble)
-				circle.setFill(((ColouredBubble) bubble).getColors().get(0).getPaint());
+				circle.setFill(CirclePainter.getLinearGradientPaint(((ColouredBubble) bubble).getColors().get(0).getColor()));
 			circle.setCenterX(bubble.getCenterX());
 			circle.setCenterY(bubble.getCenterY());
 			return;
