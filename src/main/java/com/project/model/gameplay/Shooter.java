@@ -5,7 +5,9 @@ import java.util.List;
 
 import com.project.function.TriFunction;
 import com.project.model.bubble.Bubble;
+import com.project.model.bubble.BubbleColor;
 import com.project.model.bubble.ColouredBubble;
+import com.project.model.bubble.TransparentBubble;
 
 import javafx.geometry.Point2D;
 
@@ -91,11 +93,48 @@ public class Shooter {
 					else
 						distance = calculateDistance(point, coordinate);
 					if (distance < Bubble.getDiameter() - Bubble.getOffset()) {
-						addBubbleOnFreeLocation(coordinates, point);
-						return true;
+						if (gameplay.getBubblesTab().getBubbleToThrow() instanceof TransparentBubble) {
+							return removeWithTransparentBubble(coordinate, point);
+						} else {
+							addBubbleOnFreeLocation(coordinates, point);
+							return true;
+						}
 					}
 				}
 			}
+			return false;
+		}
+
+		private boolean removeWithTransparentBubble(Coordinate coordinate, Point2D point) {
+			if (!haveTheSameColorAsTransparent(coordinate)) {
+				if (point.getY() < Bubble.getDiameter() / 2) {
+					gameplay.sendBubbleRemovedNotifications(gameplay.getBubblesTab().getBubbleToThrow());
+					gameplay.setStopMoving();
+					return true;
+				}
+				return false;
+			}
+			boolean remove = gameplay.getRemover().shouldBeAReaction(coordinate, true);
+			if (haveTheSameColorAsTransparent(coordinate) && remove) {
+				new Thread(() -> gameplay.getRemover().remove(coordinate, true), "Removing Thread").start();
+				gameplay.sendBubbleRemovedNotifications(gameplay.getBubblesTab().getBubbleToThrow());
+			} else if (point.getY() < Bubble.getDiameter() / 2) {
+				gameplay.sendBubbleRemovedNotifications(gameplay.getBubblesTab().getBubbleToThrow());
+				gameplay.setStopMoving();
+				return true;
+			}
+			return remove;
+		}
+
+		private boolean haveTheSameColorAsTransparent(Coordinate coordinate) {
+			Bubble bubble = gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()];
+			if (!(bubble instanceof ColouredBubble))
+				return false;
+			ColouredBubble colouredBubble = (ColouredBubble) bubble;
+			TransparentBubble transparentBubble = (TransparentBubble) gameplay.getBubblesTab().getBubbleToThrow();
+			for (BubbleColor color : colouredBubble.getColors())
+				if (transparentBubble.getColor().equals(color))
+					return true;
 			return false;
 		}
 
@@ -125,7 +164,7 @@ public class Shooter {
 					gameplay.getColorsCounter().increment(colouredBubble.getColors().get(i));
 			}
 			gameplay.sendBubbleChangedNotifications(gameplay.getBubblesTab().getBubbleToThrow());
-			new Thread(() -> gameplay.getRemover().remove(coordinate), "Removing Thread").start();
+			new Thread(() -> gameplay.getRemover().remove(coordinate, false), "Removing Thread").start();
 		}
 
 		private List<Integer> getRows(double y) {

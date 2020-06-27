@@ -49,25 +49,42 @@ public class Remover {
 		this.gameplay = gameplay;
 	}
 
-	public void remove(Coordinate coordinate) {
+	public void remove(Coordinate coordinate, boolean isTransparent) {
 		if (gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] == null)
 			return;
 		this.coordinate = coordinate;
 		counter = 1;
 		neighbor.add(coordinate);
 		toDelete.add(coordinate);
-		findBubblesToRemove();
+		findBubblesToRemove(isTransparent);
 		this.coordinate = null;
 		gameplay.setStopMoving();
 	}
 
-	private void findBubblesToRemove() {
+	public boolean shouldBeAReaction(Coordinate coordinate, boolean isTransparent) {
+		if(!(gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] instanceof ColouredBubble))
+			return false;
+		this.coordinate = coordinate;
+		counter = 1;
+		neighbor.add(coordinate);
+		toDelete.add(coordinate);
+		applyOnSurroundingBubbles(consumers.get(0));
+		this.coordinate = null;
+		neighbor.clear();
+		toDelete.clear();
+		bombs.clear();
+		if (counter >= getNumberToCheck(isTransparent))
+			return true;
+		return false;
+	}
+
+	private void findBubblesToRemove(boolean isTransparent) {
 		if (gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] instanceof BombBubble) {
 			findBombedBubbles();
 		} else {
 			applyOnSurroundingBubbles(consumers.get(0));
 			neighbor.clear();
-			if (counter >= 3)
+			if (counter >= getNumberToCheck(isTransparent))
 				synchronized (locker) {
 					removeBubbles();
 					findNeighbors();
@@ -85,6 +102,13 @@ public class Remover {
 		}
 		bombs.clear();
 		toDelete.clear();
+	}
+
+	private int getNumberToCheck(boolean isTransparent) {
+		if (isTransparent)
+			return 2;
+		return 3;
+
 	}
 
 	private void runFindingBombedBubbles() {
@@ -117,14 +141,12 @@ public class Remover {
 			if (gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] != null) {
 				this.toDelete.add(coordinate);
 				toDelete.add(coordinate);
-//				for (int i = 0; i < 2; i++) {
 				findNeighborAndBombs();
 				neighbor.removeAll(toDelete);
 				this.toDelete.clear();
 				this.toDelete.addAll(neighbor);
 				toDelete.addAll(neighbor);
 				neighbor.clear();
-//				}
 				this.toDelete.clear();
 			}
 		}
@@ -332,7 +354,7 @@ public class Remover {
 			if (secondBubble instanceof BombBubble) {
 				bombs.add(newCoordinate);
 				neighbor.add(newCoordinate);
-			} else if (checkIfSameColour(firstBubble, secondBubble)) {
+			} else if (checkIfSameColor(firstBubble, secondBubble)) {
 				toDelete.add(newCoordinate);
 				int size = neighbor.size();
 				neighbor.add(newCoordinate);
@@ -346,7 +368,23 @@ public class Remover {
 		}
 	}
 
-	private boolean checkIfSameColour(Bubble firstBubble, Bubble secondBubble) {
+//	private void simpleRepeatOnSameColorBubbles(Coordinate newCoordinate) {
+//		Coordinate oldCoordinate = coordinate;
+//		Bubble firstBubble = gameplay.getBubblesTab().getBubbles()[oldCoordinate.getRow()][oldCoordinate.getColumn()];
+//		Bubble secondBubble = gameplay.getBubblesTab().getBubbles()[newCoordinate.getRow()][newCoordinate.getColumn()];
+//		if (firstBubble instanceof ColouredBubble && secondBubble instanceof ColouredBubble) {
+//			if (checkIfSameColor(firstBubble, secondBubble)) {
+//				counter++;
+//				this.coordinate = newCoordinate;
+//				applyOnSurroundingBubbles(consumers.get(5));
+//				this.coordinate = oldCoordinate;
+//				System.out.println(counter);
+//				return;
+//			}
+//		}
+//	}
+
+	private boolean checkIfSameColor(Bubble firstBubble, Bubble secondBubble) {
 		ColouredBubble firstColouredBubble = (ColouredBubble) firstBubble;
 		ColouredBubble secondColouredBubble = (ColouredBubble) secondBubble;
 		for (int i = 0; i < firstColouredBubble.getColorsQuantity(); i++)

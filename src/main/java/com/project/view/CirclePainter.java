@@ -21,14 +21,29 @@ public class CirclePainter {
 	private List<BubbleColor> colors;
 
 	public CirclePainter(Circle circle, List<BubbleColor> colors) {
-		if (colors.size() < 2)
+		if (colors.size() == 0)
 			throw new IllegalArgumentException("Not enough colors");
 		this.circle = circle;
 		this.colors = new ArrayList<BubbleColor>(colors);
-		if (colors.size() == 2)
+		if (colors.size() == 1)
+			paintGhost();
+		else if (colors.size() == 2)
 			paintTwoColors();
 		else
 			paintThreeColours();
+	}
+
+	private void paintGhost() {
+		Image image = ImageUtil.GHOST_IMAGE;
+		PixelReader pixelReader = image.getPixelReader();
+		WritableImage writableImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+		PixelWriter pixelWriter = writableImage.getPixelWriter();
+		for (int i = 0; i < writableImage.getWidth(); i++)
+			for (int j = 0; j < writableImage.getHeight(); j++) {
+				if (!pixelReader.getColor(i, j).equals(Color.TRANSPARENT))
+					pixelWriter.setColor(i, j, colors.get(0).getColor());
+			}
+		circle.setFill(new ImagePattern(writableImage));
 	}
 
 	private void paintTwoColors() {
@@ -69,14 +84,17 @@ public class CirclePainter {
 		if (colors.size() != this.colors.size())
 			throw new IllegalArgumentException("Wrong list size");
 		for (int i = 0; i < this.colors.size(); i++)
-			if (!this.colors.equals(colors)) {
-				i = this.colors.size();
-				if (this.colors.size() == 2)
-					paintTwoColors();
-				else
-					paintThreeColours();
+			if (!this.colors.get(i).equals(colors.get(i))) {
 				this.colors.clear();
 				this.colors.addAll(colors);
+				i = this.colors.size();
+				if (this.colors.size() == 1)
+					paintGhost();
+				else if (this.colors.size() == 2)
+					paintTwoColors();
+
+				else
+					paintThreeColours();
 			}
 	}
 

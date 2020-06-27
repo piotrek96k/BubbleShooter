@@ -55,7 +55,7 @@ public class Gameplay {
 		if (checkIfGameEnded())
 			finishGame();
 		else
-			bubblesTab.changeNextBubbleIfNeeded();
+			bubblesTab.setBubbleToThrow();
 		isMoving = false;
 		synchronized (bubblesTab.getLocker()) {
 			if (bubblesTab.isWaiting())

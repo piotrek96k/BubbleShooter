@@ -1,6 +1,7 @@
 package com.project.view;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import com.project.controller.GameplayController;
 import com.project.model.bubble.Bubble;
 import com.project.model.bubble.BubbleColor;
 import com.project.model.bubble.ColouredBubble;
+import com.project.model.bubble.TransparentBubble;
 import com.project.util.ImageUtil;
 
 import javafx.geometry.Insets;
@@ -76,13 +78,25 @@ public class GameplayView {
 		double centerX = bubble.getCenterX();
 		double centerY = bubble.getCenterY();
 		double radius = Bubble.getRadius() - BUBBLE_RADIUS_REDUCE;
-		if (bubble instanceof ColouredBubble) {
+		if (bubble instanceof ColouredBubble)
 			addMulticolouredCircle(bubble, centerX, centerY, radius);
-			return;
+		else if (bubble instanceof TransparentBubble)
+			addTransparentBubble(bubble, centerX, centerY, radius);
+		else {
+			Circle circle = new Circle(centerX, centerY, radius + 2);
+			circle.setFill(new ImagePattern(ImageUtil.BOMB_IMAGE));
+			circlesMap.put(bubble.BUBBLE_NUMBER, circle);
+			pane.getChildren().add(circle);
 		}
-		Circle circle = new Circle(centerX, centerY, radius + 2);
-		circle.setFill(new ImagePattern(ImageUtil.BOMB_IMAGE));
-		circlesMap.put(bubble.BUBBLE_NUMBER, circle);
+	}
+
+	private void addTransparentBubble(Bubble bubble, double centerX, double centerY, double radius) {
+		TransparentBubble transparentBubble = (TransparentBubble) bubble;
+		Circle circle = new Circle(centerX, centerY, radius);
+		circle.setOpacity(0.5);
+		CirclePainter circlePainter = new CirclePainter(circle,
+				Arrays.asList(new BubbleColor[] { transparentBubble.getColor() }));
+		circlePainterMap.put(bubble.BUBBLE_NUMBER, circlePainter);
 		pane.getChildren().add(circle);
 	}
 
@@ -130,7 +144,10 @@ public class GameplayView {
 			circle = circlePainter.getCircle();
 			circle.setCenterX(bubble.getCenterX());
 			circle.setCenterY(bubble.getCenterY());
-			circlePainter.updatePaint(((ColouredBubble) bubble).getColors());
+			if (bubble instanceof ColouredBubble)
+				circlePainter.updatePaint(((ColouredBubble) bubble).getColors());
+			else if (bubble instanceof TransparentBubble)
+				circlePainter.updatePaint(Arrays.asList(new BubbleColor[] { ((TransparentBubble) bubble).getColor() }));
 			return;
 		}
 	}
