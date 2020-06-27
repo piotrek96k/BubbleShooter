@@ -1,6 +1,9 @@
 package com.project.model.gameplay;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.function.Supplier;
 
 import com.project.model.bubble.BombBubble;
 import com.project.model.bubble.Bubble;
@@ -23,21 +26,29 @@ public class BubblesTab {
 
 	public final double BUBBLES_HEIGHT;
 
+	private int rowOffset;
+
+	private boolean[] isWaiting = { false };
+
+	private List<Supplier<BubbleColor>> suppliers;
+
 	private Bubble[][] bubbles;
 
 	private Bubble bubbleToThrow;
 
 	private Bubble nextBubble;
-	
+
 	private Gameplay gameplay;
 
 	private Random random = new Random();
 
 	private Object locker = new Object();
 
-	private boolean[] isWaiting = { false };
-
-	private int rowOffset;
+	{
+		suppliers = new ArrayList<Supplier<BubbleColor>>();
+		suppliers.add(this::getRandomBubbleColor);
+		suppliers.add(this::getRandomBubbleColorIfColorExists);
+	}
 
 	public BubblesTab(Gameplay gameplay, int rows, int columns, double diameter) {
 		ROWS = rows + 1;
@@ -98,9 +109,10 @@ public class BubblesTab {
 			double yCoordinate = getCenterY(0);
 			for (int j = 0; j < COLUMNS; j++) {
 				double xCoordinate = getCenterX(0, j);
-				BubbleColor color = getRandomBubbleColorIfColorExists();
-				gameplay.getColorsCounter().increment(color);
-				bubbles[0][j] = new ColouredBubble(xCoordinate, yCoordinate, new BubbleColor[] { color });
+				bubbles[0][j] = getRandomTypeBubble(xCoordinate, yCoordinate, 0.03, 0.05, suppliers.get(1));
+				if (bubbles[0][j] instanceof ColouredBubble)
+					for (BubbleColor color : ((ColouredBubble) bubbles[0][j]).getColors())
+						gameplay.getColorsCounter().increment(color);
 				gameplay.sendBubbleAddedNotifications(bubbles[0][j]);
 			}
 		}
@@ -116,20 +128,22 @@ public class BubblesTab {
 
 	public void init() {
 		initBubbles();
-		nextBubble = getRandomTypeBubble(WIDTH / 2, BUBBLES_HEIGHT + (HEIGHT - BUBBLES_HEIGHT) / 2);
+		nextBubble = getRandomTypeBubble(WIDTH / 2, BUBBLES_HEIGHT + (HEIGHT - BUBBLES_HEIGHT) / 2, 0.1, 0.2,
+				suppliers.get(1));
 		gameplay.sendBubbleAddedNotifications(nextBubble);
 		setBubbleToThrow();
 		createNewTask();
 	}
 
 	private void initBubbles() {
-		for (int i = 0; i < ROWS /2; i++) {
+		for (int i = 0; i < ROWS / 2; i++) {
 			double yCoordinate = getCenterY(i);
 			for (int j = 0; j < COLUMNS; j++) {
 				double xCoordinate = getCenterX(i, j);
-				BubbleColor color = getRandomBubbleColor();
-				gameplay.getColorsCounter().increment(color);
-				bubbles[i][j] = new ColouredBubble(xCoordinate, yCoordinate, new BubbleColor[] { color });
+				bubbles[i][j] = getRandomTypeBubble(xCoordinate, yCoordinate, 0.03, 0.05, suppliers.get(0));
+				if (bubbles[i][j] instanceof ColouredBubble)
+					for (BubbleColor color : ((ColouredBubble) bubbles[i][j]).getColors())
+						gameplay.getColorsCounter().increment(color);
 				gameplay.sendBubbleAddedNotifications(bubbles[i][j]);
 			}
 		}
@@ -145,33 +159,35 @@ public class BubblesTab {
 		gameplay.sendBubbleChangedNotifications(bubbleToThrow);
 		double centerX = WIDTH / 3;
 		double centerY = BUBBLES_HEIGHT + (HEIGHT - BUBBLES_HEIGHT) / 2;
-		nextBubble = getRandomTypeBubble(centerX, centerY);
+		nextBubble = getRandomTypeBubble(centerX, centerY, 0.1, 0.2, suppliers.get(1));
 		gameplay.sendBubbleAddedNotifications(nextBubble);
 	}
 
-	private Bubble getRandomTypeBubble(double centerX, double centerY) {
-		int randomNumber = random.nextInt(10);
-		if (randomNumber == 3)
+	private Bubble getRandomTypeBubble(double centerX, double centerY, double probability1, double probability2,
+			Supplier<BubbleColor> supplier) {
+		double randomNumber = random.nextDouble();
+		if (randomNumber <= probability1)
 			return new BombBubble(centerX, centerY);
 		else
-			return getColouredBubble(centerX, centerY);
+			return getColouredBubble(centerX, centerY, probability2, supplier);
 	}
 
-	private Bubble getColouredBubble(double centerX, double centerY) {
-		int randomNumber;
+	private Bubble getColouredBubble(double centerX, double centerY, double probability,
+			Supplier<BubbleColor> supplier) {
+		double randomNumber;
 		Bubble result;
-		BubbleColor color = getRandomBubbleColorIfColorExists();
-		randomNumber = random.nextInt(5);
-		if (randomNumber == 2 && gameplay.getColorsCounter().getActiveBubblesNumber() >= 2) {
+		BubbleColor color = supplier.get();
+		randomNumber = random.nextDouble();
+		if (randomNumber <= probability && gameplay.getColorsCounter().getActiveBubblesNumber() >= 2) {
 			BubbleColor secondColor;
 			do {
-				secondColor = getRandomBubbleColorIfColorExists();
+				secondColor = supplier.get();
 			} while (secondColor.equals(color));
-			randomNumber = random.nextInt(3);
-			if (randomNumber == 1 && gameplay.getColorsCounter().getActiveBubblesNumber() >= 3) {
+			randomNumber = random.nextDouble();
+			if (randomNumber <= 0.33 && gameplay.getColorsCounter().getActiveBubblesNumber() >= 3) {
 				BubbleColor thirdColor;
 				do {
-					thirdColor = getRandomBubbleColorIfColorExists();
+					thirdColor = supplier.get();
 				} while (thirdColor.equals(color) || thirdColor.equals(secondColor));
 				result = new ColouredBubble(centerX, centerY, new BubbleColor[] { color, secondColor, thirdColor });
 			} else
@@ -203,8 +219,8 @@ public class BubblesTab {
 				do {
 					colorRepeat = false;
 					color = getRandomBubbleColorIfColorExists();
-					for (int j = 0; j <bubble.getColorsQuantity(); j++)
-						if (i!=j && color.equals(bubble.getColors().get(j)))
+					for (int j = 0; j < bubble.getColorsQuantity(); j++)
+						if (i != j && color.equals(bubble.getColors().get(j)))
 							colorRepeat = true;
 				} while (colorRepeat);
 				bubble.getColors().set(i, color);

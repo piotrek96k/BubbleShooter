@@ -11,16 +11,17 @@ public class ColorsCounter {
 
 	private int activeBubblesNumber;
 
-	public ColorsCounter() {
+	public ColorsCounter(int activeBubblesNumber) {
 		quantities = new HashMap<>();
+		this.activeBubblesNumber = activeBubblesNumber;
 		for (BubbleColor value : BubbleColor.values())
 			quantities.put(value, 0);
 	}
 
 	public void increment(BubbleColor color) {
 		int value = quantities.get(color);
-		if (value == 0)
-			activeBubblesNumber++;
+//		if (value == 0)
+//			activeBubblesNumber++;
 		quantities.put(color, ++value);
 	}
 

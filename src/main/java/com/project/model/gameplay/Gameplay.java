@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.project.model.bubble.Bubble;
+import com.project.model.bubble.BubbleColor;
 import com.project.model.listener.BubbleListener;
 import com.project.model.listener.MoveListener;
 import com.project.timer.PausableTimer;
@@ -39,11 +40,11 @@ public class Gameplay {
 
 	public Gameplay(int rows, int columns, double diameter) {
 		bubblesTab = new BubblesTab(this, rows, columns, diameter);
-		colorsCounter = new ColorsCounter();
+		colorsCounter = new ColorsCounter(BubbleColor.values().length);
 		remover = new Remover(this);
 		shooter = new Shooter(this);
 		Bubble.setDiameter(diameter);
-		Bubble.setOffset(2.0);
+		Bubble.setOffset(5.0);
 	}
 
 	public void init() {

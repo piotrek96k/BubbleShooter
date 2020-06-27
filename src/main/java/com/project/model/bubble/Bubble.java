@@ -6,7 +6,7 @@ public abstract class Bubble {
 	
 	protected static double offset;
 	
-	protected static int bubblesNumber = 0;
+	protected static int bubblesNumber;
 
 	protected double centerX;
 	
@@ -72,7 +72,7 @@ public abstract class Bubble {
 	}
 	
 	public static double getRadius() {
-		return (diameter-offset)/2;
+		return diameter/2;
 	}
 
 }

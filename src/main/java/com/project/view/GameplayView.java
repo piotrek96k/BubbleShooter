@@ -10,8 +10,6 @@ import com.project.model.bubble.Bubble;
 import com.project.model.bubble.BubbleColor;
 import com.project.model.bubble.ColouredBubble;
 import com.project.util.ImageUtil;
-import com.project.view.circle.ThreeColouredCircle;
-import com.project.view.circle.TwoColouredCircle;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -23,12 +21,13 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
 public class GameplayView {
+
+	public static final double BUBBLE_RADIUS_REDUCE = 1.0;
 
 	private GameplayController controller;
 
@@ -38,9 +37,7 @@ public class GameplayView {
 
 	private Map<Integer, Circle> circlesMap = new HashMap<>();
 
-	private Map<Integer, TwoColouredCircle> twoCirclesMap = new HashMap<>();
-
-	private Map<Integer, ThreeColouredCircle> threeCirclesMap = new HashMap<>();
+	private Map<Integer, CirclePainter> circlePainterMap = new HashMap<>();
 
 	public GameplayView() {
 		pane = new Pane();
@@ -78,7 +75,7 @@ public class GameplayView {
 	public void addBubble(Bubble bubble) {
 		double centerX = bubble.getCenterX();
 		double centerY = bubble.getCenterY();
-		double radius = Bubble.getRadius();
+		double radius = Bubble.getRadius() - BUBBLE_RADIUS_REDUCE;
 		if (bubble instanceof ColouredBubble) {
 			addMulticolouredCircle(bubble, centerX, centerY, radius);
 			return;
@@ -96,21 +93,11 @@ public class GameplayView {
 			Circle circle = new Circle(centerX, centerY, radius, colors.get(0).getPaint());
 			circlesMap.put(bubble.BUBBLE_NUMBER, circle);
 			pane.getChildren().add(circle);
-		} else if (colouredBubble.getColorsQuantity() == 2) {
-			TwoColouredCircle twoColouredCircle = new TwoColouredCircle(centerX, centerY, radius,
-					colors.get(0).getPaint(), colors.get(1).getPaint());
-			twoColouredCircle.init();
-			pane.getChildren().add(twoColouredCircle.getFirstCirclePart());
-			pane.getChildren().add(twoColouredCircle.getSecondCirclePart());
-			twoCirclesMap.put(bubble.BUBBLE_NUMBER, twoColouredCircle);
 		} else {
-			ThreeColouredCircle threeColouredCircle = new ThreeColouredCircle(centerX, centerY, radius,
-					colors.get(0).getPaint(), colors.get(1).getPaint(), colors.get(2).getPaint());
-			threeColouredCircle.init();
-			pane.getChildren().add(threeColouredCircle.getFirstCirclePart());
-			pane.getChildren().add(threeColouredCircle.getSecondCirclePart());
-			pane.getChildren().add(threeColouredCircle.getThirdCirclePart());
-			threeCirclesMap.put(bubble.BUBBLE_NUMBER, threeColouredCircle);
+			Circle circle = new Circle(centerX, centerY, radius);
+			CirclePainter circlePainter = new CirclePainter(circle, colouredBubble.getColors());
+			pane.getChildren().add(circle);
+			circlePainterMap.put(bubble.BUBBLE_NUMBER, circlePainter);
 		}
 	}
 
@@ -121,28 +108,12 @@ public class GameplayView {
 			pane.getChildren().remove(circle);
 			return;
 		}
-		TwoColouredCircle twoColouredCircle = twoCirclesMap.get(bubble.BUBBLE_NUMBER);
-		if (twoColouredCircle != null) {
-			removeTwoColouredBubble(bubble, twoColouredCircle);
+		CirclePainter circlePainter = circlePainterMap.get(bubble.BUBBLE_NUMBER);
+		if (circlePainter != null) {
+			circlePainterMap.remove(bubble.BUBBLE_NUMBER);
+			pane.getChildren().remove(circlePainter.getCircle());
 			return;
 		}
-		ThreeColouredCircle threeColouredCircle = threeCirclesMap.get(bubble.BUBBLE_NUMBER);
-		if (threeColouredCircle != null) {
-			removeThreeColouredBubble(bubble, threeColouredCircle);
-		}
-	}
-
-	private void removeTwoColouredBubble(Bubble bubble, TwoColouredCircle twoColouredCircle) {
-		twoCirclesMap.remove(bubble.BUBBLE_NUMBER);
-		pane.getChildren().remove(twoColouredCircle.getFirstCirclePart());
-		pane.getChildren().remove(twoColouredCircle.getSecondCirclePart());
-	}
-
-	private void removeThreeColouredBubble(Bubble bubble, ThreeColouredCircle threeColouredCircle) {
-		threeCirclesMap.remove(bubble.BUBBLE_NUMBER);
-		pane.getChildren().remove(threeColouredCircle.getFirstCirclePart());
-		pane.getChildren().remove(threeColouredCircle.getSecondCirclePart());
-		pane.getChildren().remove(threeColouredCircle.getThirdCirclePart());
 	}
 
 	public void updateBubble(Bubble bubble) {
@@ -154,35 +125,14 @@ public class GameplayView {
 			circle.setCenterY(bubble.getCenterY());
 			return;
 		}
-		TwoColouredCircle twoColouredCircle = twoCirclesMap.get(bubble.BUBBLE_NUMBER);
-		if (twoColouredCircle != null) {
-			updateTwocolouredBubble(bubble, twoColouredCircle);
+		CirclePainter circlePainter = circlePainterMap.get(bubble.BUBBLE_NUMBER);
+		if (circlePainter != null) {
+			circle = circlePainter.getCircle();
+			circle.setCenterX(bubble.getCenterX());
+			circle.setCenterY(bubble.getCenterY());
+			circlePainter.updatePaint(((ColouredBubble) bubble).getColors());
 			return;
 		}
-		ThreeColouredCircle threeColouredCircle = threeCirclesMap.get(bubble.BUBBLE_NUMBER);
-		if (threeColouredCircle != null) {
-			updateThreeColouredBubble(bubble, threeColouredCircle);
-		}
-	}
-
-	private void updateThreeColouredBubble(Bubble bubble, ThreeColouredCircle threeColouredCircle) {
-		double x = bubble.getCenterX();
-		double y = bubble.getCenterY();
-		ColouredBubble colouredBubble = (ColouredBubble) bubble;
-		Paint[] paints = new Paint[3];
-		for (int i = 0; i < paints.length; i++)
-			paints[i] = colouredBubble.getColors().get(i).getPaint();
-		threeColouredCircle.update(x, y, paints);
-	}
-
-	private void updateTwocolouredBubble(Bubble bubble, TwoColouredCircle twoColouredCircle) {
-		double x = bubble.getCenterX();
-		double y = bubble.getCenterY();
-		ColouredBubble colouredBubble = (ColouredBubble) bubble;
-		Paint[] paints = new Paint[2];
-		for (int i = 0; i < paints.length; i++)
-			paints[i] = colouredBubble.getColors().get(i).getPaint();
-		twoColouredCircle.update(x, y, paints);
 	}
 
 	private void setLineStyle(Line line) {
