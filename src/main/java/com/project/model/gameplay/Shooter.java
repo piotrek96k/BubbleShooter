@@ -121,13 +121,12 @@ public class Shooter {
 						distance = calculateDistance(point, bubble);
 					else
 						distance = calculateDistance(point, coordinate);
-					if (distance < Bubble.getDiameter() - Bubble.getOffset()) {
-						if (gameplay.getBubblesTab().getBubbleToThrow() instanceof TransparentBubble) {
-							return removeWithTransparentBubble(coordinate, point);
-						} else {
-							addBubbleOnFreeLocation(coordinates, point);
-							return true;
-						}
+					if (distance < Bubble.getDiameter() - 2
+							&& gameplay.getBubblesTab().getBubbleToThrow() instanceof TransparentBubble)
+						return removeWithTransparentBubble(coordinate, point);
+					else if (distance < Bubble.getDiameter() - Bubble.getOffset()) {
+						addBubbleOnFreeLocation(coordinates, point);
+						return true;
 					}
 				}
 			}

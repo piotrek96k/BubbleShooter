@@ -109,7 +109,7 @@ public class GameplayView {
 	private void addTransparentBubble(Bubble bubble, double centerX, double centerY, double radius) {
 		TransparentBubble transparentBubble = (TransparentBubble) bubble;
 		Circle circle = new Circle(centerX, centerY, radius);
-		circle.setOpacity(0.5);
+		circle.setOpacity(0.8);
 		CirclePainter circlePainter = new CirclePainter(circle,
 				Arrays.asList(new BubbleColor[] { transparentBubble.getColor() }));
 		circlePainterMap.put(bubble.BUBBLE_NUMBER, circlePainter);

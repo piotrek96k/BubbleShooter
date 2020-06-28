@@ -40,7 +40,7 @@ public class CirclePainter {
 	public static  Paint getLinearGradientPaint(Color color) {
 		Color firstColor = color.brighter();
 		Color secondColor = color.darker();
-		Stop[] stops = { new Stop(0.35, firstColor), new Stop(0.8, secondColor) };
+		Stop[] stops = { new Stop(0.5, firstColor), new Stop(0.8, secondColor) };
 		return new LinearGradient(0.0, 0.0, 1.0, 1.0, true, CycleMethod.NO_CYCLE, stops);
 	}
 

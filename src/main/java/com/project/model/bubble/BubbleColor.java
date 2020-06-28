@@ -4,8 +4,8 @@ import javafx.scene.paint.Color;
 
 public enum BubbleColor {
 
-	YELLOW(Color.YELLOW), RED(Color.RED), PURPLE(Color.MEDIUMORCHID), GREEN(Color.LIME), BLUE(Color.ROYALBLUE),
-	TURQUOISE(Color.TURQUOISE);
+	YELLOW(Color.YELLOW), RED(Color.RED), PURPLE(Color.PURPLE), GREEN(Color.LIME.darker()), BLUE(Color.ROYALBLUE),
+	TURQUOISE(Color.TURQUOISE), ORANGE(Color.ORANGE), GRAY(Color.GRAY), DARKGREEN(Color.GREEN.darker());
 
 	private Color color;
 
