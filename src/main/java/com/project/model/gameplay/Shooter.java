@@ -8,7 +8,7 @@ import java.util.Set;
 import com.project.function.TriFunction;
 import com.project.model.bubble.Bubble;
 import com.project.model.bubble.BubbleColor;
-import com.project.model.bubble.ColouredBubble;
+import com.project.model.bubble.ColoredBubble;
 import com.project.model.bubble.DestroyingBubble;
 import com.project.model.bubble.TransparentBubble;
 
@@ -23,7 +23,7 @@ public class Shooter {
 	private List<TriFunction<Point2D, Point2D, Double, Point2D>> functions;
 
 	{
-		functions = new ArrayList<>(3);
+		functions = new ArrayList<TriFunction<Point2D, Point2D, Double, Point2D>>(3);
 		functions.add(this::firstApply);
 		functions.add(this::secondApply);
 		functions.add(this::thirdApply);
@@ -92,9 +92,9 @@ public class Shooter {
 			for (Coordinate coordinate : getCoordinates(point, Bubble.getDiameter() / 4)) {
 				Bubble bubble = gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()];
 				if (bubble != null) {
-					if (bubble instanceof ColouredBubble) {
-						ColouredBubble colouredBubble = (ColouredBubble) bubble;
-						for (BubbleColor color : colouredBubble.getColors())
+					if (bubble instanceof ColoredBubble) {
+						ColoredBubble coloredBubble = (ColoredBubble) bubble;
+						for (BubbleColor color : coloredBubble.getColors())
 							gameplay.getColorsCounter().decrement(color);
 					}
 					deleted.add(coordinate);
@@ -156,11 +156,11 @@ public class Shooter {
 
 		private boolean checkIfSameColorAsTransparent(Coordinate coordinate) {
 			Bubble bubble = gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()];
-			if (!(bubble instanceof ColouredBubble))
+			if (!(bubble instanceof ColoredBubble))
 				return false;
-			ColouredBubble colouredBubble = (ColouredBubble) bubble;
+			ColoredBubble coloredBubble = (ColoredBubble) bubble;
 			TransparentBubble transparentBubble = (TransparentBubble) gameplay.getBubblesTab().getBubbleToThrow();
-			for (BubbleColor color : colouredBubble.getColors())
+			for (BubbleColor color : coloredBubble.getColors())
 				if (transparentBubble.getColor().equals(color))
 					return true;
 			return false;
@@ -186,10 +186,10 @@ public class Shooter {
 			gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] = bubble;
 			bubble.setCenterX(gameplay.getBubblesTab().getCenterX(coordinate.getRow(), coordinate.getColumn()));
 			bubble.setCenterY(gameplay.getBubblesTab().getCenterY(coordinate.getRow()));
-			if (bubble instanceof ColouredBubble) {
-				ColouredBubble colouredBubble = (ColouredBubble) bubble;
-				for (int i = 0; i < colouredBubble.getColorsQuantity(); i++)
-					gameplay.getColorsCounter().increment(colouredBubble.getColors().get(i));
+			if (bubble instanceof ColoredBubble) {
+				ColoredBubble coloredBubble = (ColoredBubble) bubble;
+				for (int i = 0; i < coloredBubble.getColorsQuantity(); i++)
+					gameplay.getColorsCounter().increment(coloredBubble.getColors().get(i));
 			}
 			gameplay.sendBubbleChangedNotifications(gameplay.getBubblesTab().getBubbleToThrow());
 			new Thread(() -> gameplay.getRemover().remove(coordinate, false), "Removing Thread").start();
@@ -231,7 +231,7 @@ public class Shooter {
 	}
 
 	public List<Point2D> getLinePoints(double x, double y) {
-		List<Point2D> result = new ArrayList<>();
+		List<Point2D> result = new ArrayList<Point2D>();
 		if (y < gameplay.getBubblesTab().BUBBLES_HEIGHT + Bubble.getDiameter() && !gameplay.getTimer().isPaused()) {
 			Point2D point = getStartPoint();
 			Point2D coefficients = getCoefficients(x, y, point);
@@ -244,7 +244,7 @@ public class Shooter {
 
 	private List<Point2D> getLinePoints(Point2D point, Point2D coefficients,
 			TriFunction<Point2D, Point2D, Double, Point2D> function) {
-		List<Point2D> result = new ArrayList<>();
+		List<Point2D> result = new ArrayList<Point2D>();
 		boolean collide;
 		do {
 			point = function.apply(point, coefficients, 1.0);

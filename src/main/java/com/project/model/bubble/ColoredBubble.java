@@ -3,11 +3,11 @@ package com.project.model.bubble;
 import java.util.Arrays;
 import java.util.List;
 
-public class ColouredBubble extends Bubble{
+public class ColoredBubble extends Bubble{
 	
 	protected List<BubbleColor> colors;
 
-	public ColouredBubble(double centerX, double centerY, BubbleColor[] colors) {
+	public ColoredBubble(double centerX, double centerY, BubbleColor[] colors) {
 		super(centerX, centerY);
 		this.colors = Arrays.asList(colors);
 	}

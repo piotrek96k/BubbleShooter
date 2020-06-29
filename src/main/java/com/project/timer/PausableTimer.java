@@ -7,19 +7,26 @@ import java.util.TimerTask;
 
 public class PausableTimer {
 
-	private boolean isPaused = false;
+	private boolean isPaused;
 
-	private boolean isCanceled = false;
+	private boolean isCanceled;
 
 	private Timer timer;
 
-	private Map<Runnable, Long> timesMap = new HashMap<>();
+	private Map<Runnable, Long> timesMap;
 
-	private Map<Runnable, Long> delaysMap = new HashMap<>();
+	private Map<Runnable, Long> delaysMap;
 
-	private Map<Runnable, Long> initDelaysMap = new HashMap<>();
+	private Map<Runnable, Long> initDelaysMap;
 
-	private Map<Runnable, TimerTask> timerTasks = new HashMap<>();
+	private Map<Runnable, TimerTask> timerTasks;
+
+	{
+		timesMap = new HashMap<Runnable, Long>();
+		delaysMap = new HashMap<Runnable, Long>();
+		initDelaysMap = new HashMap<Runnable, Long>();
+		timerTasks = new HashMap<Runnable, TimerTask>();
+	}
 
 	public PausableTimer(boolean isDeamon) {
 		timer = new Timer(isDeamon);

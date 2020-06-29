@@ -9,7 +9,7 @@ import java.util.Map;
 import com.project.controller.GameplayController;
 import com.project.model.bubble.Bubble;
 import com.project.model.bubble.BubbleColor;
-import com.project.model.bubble.ColouredBubble;
+import com.project.model.bubble.ColoredBubble;
 import com.project.model.bubble.DestroyingBubble;
 import com.project.model.bubble.TransparentBubble;
 import com.project.util.ImageUtil;
@@ -32,17 +32,27 @@ import javafx.scene.shape.Rectangle;
 
 public class GameplayView {
 
-	public static final double BUBBLE_RADIUS_REDUCE = 1.0;
+	public static final double BUBBLE_RADIUS_REDUCE;
 
 	private GameplayController controller;
 
 	private Pane pane;
 
-	private List<Line> lines = new ArrayList<>();
+	private List<Line> lines;
 
-	private Map<Integer, Circle> circlesMap = new HashMap<>();
+	private Map<Integer, Circle> circlesMap;
 
-	private Map<Integer, CirclePainter> circlePainterMap = new HashMap<>();
+	private Map<Integer, CirclePainter> circlePainterMap;
+
+	static {
+		BUBBLE_RADIUS_REDUCE = 1.0;
+	}
+
+	{
+		lines = new ArrayList<Line>();
+		circlesMap = new HashMap<Integer, Circle>();
+		circlePainterMap = new HashMap<Integer, CirclePainter>();
+	}
 
 	public GameplayView() {
 		pane = new Pane();
@@ -81,8 +91,8 @@ public class GameplayView {
 		double centerX = bubble.getCenterX();
 		double centerY = bubble.getCenterY();
 		double radius = Bubble.getRadius() - BUBBLE_RADIUS_REDUCE;
-		if (bubble instanceof ColouredBubble)
-			addMulticolouredCircle(bubble, centerX, centerY, radius);
+		if (bubble instanceof ColoredBubble)
+			addMulticoloredCircle(bubble, centerX, centerY, radius);
 		else if (bubble instanceof TransparentBubble)
 			addTransparentBubble(bubble, centerX, centerY, radius);
 		else if (bubble instanceof DestroyingBubble)
@@ -92,7 +102,7 @@ public class GameplayView {
 	}
 
 	private void addDestroyingBubble(Bubble bubble, double centerX, double centerY, double radius) {
-		Circle circle = new Circle(centerX, centerY, radius,Color.WHITE);
+		Circle circle = new Circle(centerX, centerY, radius, Color.WHITE);
 		GaussianBlur gaussianBlur = new GaussianBlur(10.0);
 		circle.setEffect(gaussianBlur);
 		circlesMap.put(bubble.BUBBLE_NUMBER, circle);
@@ -116,17 +126,17 @@ public class GameplayView {
 		pane.getChildren().add(circle);
 	}
 
-	private void addMulticolouredCircle(Bubble bubble, double centerX, double centerY, double radius) {
-		ColouredBubble colouredBubble = (ColouredBubble) bubble;
-		List<BubbleColor> colors = colouredBubble.getColors();
-		if (colouredBubble.getColorsQuantity() == 1) {
+	private void addMulticoloredCircle(Bubble bubble, double centerX, double centerY, double radius) {
+		ColoredBubble coloredBubble = (ColoredBubble) bubble;
+		List<BubbleColor> colors = coloredBubble.getColors();
+		if (coloredBubble.getColorsQuantity() == 1) {
 			Paint paint = CirclePainter.getLinearGradientPaint(colors.get(0).getColor());
 			Circle circle = new Circle(centerX, centerY, radius, paint);
 			circlesMap.put(bubble.BUBBLE_NUMBER, circle);
 			pane.getChildren().add(circle);
 		} else {
 			Circle circle = new Circle(centerX, centerY, radius);
-			CirclePainter circlePainter = new CirclePainter(circle, colouredBubble.getColors());
+			CirclePainter circlePainter = new CirclePainter(circle, coloredBubble.getColors());
 			pane.getChildren().add(circle);
 			circlePainterMap.put(bubble.BUBBLE_NUMBER, circlePainter);
 		}
@@ -150,8 +160,9 @@ public class GameplayView {
 	public void updateBubble(Bubble bubble) {
 		Circle circle = circlesMap.get(bubble.BUBBLE_NUMBER);
 		if (circle != null) {
-			if (bubble instanceof ColouredBubble)
-				circle.setFill(CirclePainter.getLinearGradientPaint(((ColouredBubble) bubble).getColors().get(0).getColor()));
+			if (bubble instanceof ColoredBubble)
+				circle.setFill(
+						CirclePainter.getLinearGradientPaint(((ColoredBubble) bubble).getColors().get(0).getColor()));
 			circle.setCenterX(bubble.getCenterX());
 			circle.setCenterY(bubble.getCenterY());
 			return;
@@ -161,8 +172,8 @@ public class GameplayView {
 			circle = circlePainter.getCircle();
 			circle.setCenterX(bubble.getCenterX());
 			circle.setCenterY(bubble.getCenterY());
-			if (bubble instanceof ColouredBubble)
-				circlePainter.updatePaint(((ColouredBubble) bubble).getColors());
+			if (bubble instanceof ColoredBubble)
+				circlePainter.updatePaint(((ColoredBubble) bubble).getColors());
 			else if (bubble instanceof TransparentBubble)
 				circlePainter.updatePaint(Arrays.asList(new BubbleColor[] { ((TransparentBubble) bubble).getColor() }));
 			return;

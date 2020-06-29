@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 
 import com.project.model.bubble.BombBubble;
 import com.project.model.bubble.Bubble;
-import com.project.model.bubble.ColouredBubble;
+import com.project.model.bubble.ColoredBubble;
 
 public class Remover {
 
@@ -21,15 +21,15 @@ public class Remover {
 
 	private Coordinate coordinate;
 
-	private Object locker = new Object();
+	private Object locker;
 
-	private Set<Coordinate> neighbor = new HashSet<>();
+	private Set<Coordinate> neighbor;
 
-	private Set<Coordinate> toDelete = new LinkedHashSet<>();
+	private Set<Coordinate> toDelete;
 
-	private Set<Coordinate> bombs = new LinkedHashSet<Coordinate>();
+	private Set<Coordinate> bombs;
 
-	private List<Consumer<Coordinate>> consumers = new ArrayList<>(4);
+	private List<Consumer<Coordinate>> consumers;
 
 	private int counter;
 
@@ -38,6 +38,11 @@ public class Remover {
 	private boolean bomb;
 
 	{
+		locker = new Object();
+		neighbor = new HashSet<Coordinate>();
+		toDelete = new LinkedHashSet<Coordinate>();
+		bombs = new LinkedHashSet<Coordinate>();
+		consumers = new ArrayList<Consumer<Coordinate>>(5);
 		consumers.add(this::repeatOnSameColorBubbles);
 		consumers.add(this::addNeighbor);
 		consumers.add(this::checkIfHanging);
@@ -63,7 +68,7 @@ public class Remover {
 
 	public boolean shouldBeAReaction(Coordinate coordinate, boolean isTransparent) {
 		if (!(gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate
-				.getColumn()] instanceof ColouredBubble))
+				.getColumn()] instanceof ColoredBubble))
 			return false;
 		this.coordinate = coordinate;
 		counter = 1;
@@ -82,8 +87,8 @@ public class Remover {
 	public void removeHangers(Set<Coordinate> deleted) {
 		toDelete = deleted;
 		synchronized (locker) {
-		findNeighbors();
-		removeIfHanging();
+			findNeighbors();
+			removeIfHanging();
 		}
 		neighbor.clear();
 		toDelete.clear();
@@ -225,10 +230,10 @@ public class Remover {
 	}
 
 	private void removeBubble(Bubble bubble) {
-		if (bubble instanceof ColouredBubble) {
-			ColouredBubble colouredBubble = (ColouredBubble) bubble;
-			for (int i = 0; i < colouredBubble.getColorsQuantity(); i++)
-				gameplay.getColorsCounter().decrement(colouredBubble.getColors().get(i));
+		if (bubble instanceof ColoredBubble) {
+			ColoredBubble coloredBubble = (ColoredBubble) bubble;
+			for (int i = 0; i < coloredBubble.getColorsQuantity(); i++)
+				gameplay.getColorsCounter().decrement(coloredBubble.getColors().get(i));
 		}
 		gameplay.sendBubbleRemovedNotifications(bubble);
 	}
@@ -249,7 +254,7 @@ public class Remover {
 
 	private void removeIfHanging() {
 		toDelete.clear();
-		Set<Coordinate> toDrop = new LinkedHashSet<>();
+		Set<Coordinate> toDrop = new LinkedHashSet<Coordinate>();
 		neighbor.forEach(coordinate -> {
 			Bubble bubble = gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()];
 			if (bubble != null && coordinate.getRow() != 0) {
@@ -271,13 +276,13 @@ public class Remover {
 	}
 
 	private void initDroppers(Set<Coordinate> toDrop) throws InterruptedException {
-		List<Bubble> list = new LinkedList<>();
+		List<Bubble> list = new LinkedList<Bubble>();
 		toDrop.forEach(coordinate -> {
 			list.add(gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()]);
 			gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] = null;
 		});
 		Collections.reverse(list);
-		Map<Bubble, Dropper> droppersMap = new HashMap<>();
+		Map<Bubble, Dropper> droppersMap = new HashMap<Bubble,Dropper>();
 		int delay = 10;
 		for (int i = 0; i < list.size(); i++) {
 			Bubble bubble = list.get(i);
@@ -290,7 +295,7 @@ public class Remover {
 	}
 
 	private void dropBubbles(List<Bubble> toDrop, Map<Bubble, Dropper> droppersMap) throws InterruptedException {
-		List<Bubble> toDelete = new LinkedList<>();
+		List<Bubble> toDelete = new LinkedList<Bubble>();
 		Runnable[] runnable = { null };
 		runnable[0] = () -> {
 			synchronized (locker) {
@@ -380,28 +385,12 @@ public class Remover {
 		}
 	}
 
-//	private void simpleRepeatOnSameColorBubbles(Coordinate newCoordinate) {
-//		Coordinate oldCoordinate = coordinate;
-//		Bubble firstBubble = gameplay.getBubblesTab().getBubbles()[oldCoordinate.getRow()][oldCoordinate.getColumn()];
-//		Bubble secondBubble = gameplay.getBubblesTab().getBubbles()[newCoordinate.getRow()][newCoordinate.getColumn()];
-//		if (firstBubble instanceof ColouredBubble && secondBubble instanceof ColouredBubble) {
-//			if (checkIfSameColor(firstBubble, secondBubble)) {
-//				counter++;
-//				this.coordinate = newCoordinate;
-//				applyOnSurroundingBubbles(consumers.get(5));
-//				this.coordinate = oldCoordinate;
-//				System.out.println(counter);
-//				return;
-//			}
-//		}
-//	}
-
 	private boolean checkIfSameColor(Bubble firstBubble, Bubble secondBubble) {
-		ColouredBubble firstColouredBubble = (ColouredBubble) firstBubble;
-		ColouredBubble secondColouredBubble = (ColouredBubble) secondBubble;
-		for (int i = 0; i < firstColouredBubble.getColorsQuantity(); i++)
-			for (int j = 0; j < secondColouredBubble.getColorsQuantity(); j++)
-				if (firstColouredBubble.getColors().get(i).equals(secondColouredBubble.getColors().get(j)))
+		ColoredBubble firstColoredBubble = (ColoredBubble) firstBubble;
+		ColoredBubble secondColoredBubble = (ColoredBubble) secondBubble;
+		for (int i = 0; i < firstColoredBubble.getColorsQuantity(); i++)
+			for (int j = 0; j < secondColoredBubble.getColorsQuantity(); j++)
+				if (firstColoredBubble.getColors().get(i).equals(secondColoredBubble.getColors().get(j)))
 					return true;
 		return false;
 	}

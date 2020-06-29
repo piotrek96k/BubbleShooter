@@ -34,10 +34,10 @@ public class CirclePainter {
 		else if (colors.size() == 2)
 			paintTwoColors();
 		else
-			paintThreeColours();
+			paintThreeColors();
 	}
-	
-	public static  Paint getLinearGradientPaint(Color color) {
+
+	public static Paint getLinearGradientPaint(Color color) {
 		Color firstColor = color.brighter();
 		Color secondColor = color.darker();
 		Stop[] stops = { new Stop(0.5, firstColor), new Stop(0.8, secondColor) };
@@ -58,35 +58,49 @@ public class CirclePainter {
 	}
 
 	private void paintTwoColors() {
-		Image image = ImageUtil.TWO_COLOURED_CIRCLE_IMAGE;
+		Image image = ImageUtil.TWO_COLORED_CIRCLE_IMAGE;
 		PixelReader pixelReader = image.getPixelReader();
 		WritableImage writableImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
 		PixelWriter pixelWriter = writableImage.getPixelWriter();
+		Color first = colors.get(0).getColor();
+		Color second = colors.get(1).getColor();
 		for (int i = 0; i < writableImage.getWidth(); i++)
 			for (int j = 0; j < writableImage.getHeight(); j++) {
 				Color color = pixelReader.getColor(i, j);
-				if (color.getBlue() < 0.95 && color.getRed() < 0.95 && color.getGreen() < 0.95)
-					pixelWriter.setColor(i, j, colors.get(0).getColor());
-				else
-					pixelWriter.setColor(i, j, colors.get(1).getColor());
+				if (!color.equals(Color.TRANSPARENT)) {
+					double red = color.getRed() * first.getRed() + (1 - color.getRed()) * second.getRed();
+					double green = color.getGreen() * first.getGreen() + (1 - color.getGreen()) * second.getGreen();
+					double blue = color.getBlue() * first.getBlue() + (1 - color.getBlue()) * second.getBlue();
+					Color newColor = new Color(red, green, blue, 1.0);
+					pixelWriter.setColor(i, j, newColor);
+				}
+
 			}
 		circle.setFill(new ImagePattern(writableImage));
 	}
 
-	private void paintThreeColours() {
-		Image image = ImageUtil.THREE_COLOURED_CIRCLE_IMAGE;
+	private void paintThreeColors() {
+		Image image = ImageUtil.THREE_COLORED_CIRCLE_IMAGE;
 		PixelReader pixelReader = image.getPixelReader();
 		WritableImage writableImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
 		PixelWriter pixelWriter = writableImage.getPixelWriter();
+		Color first = colors.get(0).getColor();
+		Color second = colors.get(1).getColor();
+		Color third = colors.get(2).getColor();
 		for (int i = 0; i < writableImage.getWidth(); i++)
 			for (int j = 0; j < writableImage.getHeight(); j++) {
 				Color color = pixelReader.getColor(i, j);
-				if (color.getBlue() < 0.4 && color.getRed() < 0.4 && color.getGreen() < 0.4)
-					pixelWriter.setColor(i, j, colors.get(0).getColor());
-				else if (color.getBlue() > 0.6 && color.getRed() > 0.6 && color.getGreen() > 0.6)
-					pixelWriter.setColor(i, j, colors.get(1).getColor());
-				else
-					pixelWriter.setColor(i, j, colors.get(2).getColor());
+				if (!color.equals(Color.TRANSPARENT)) {
+					double sum = color.getRed() + color.getGreen() + color.getBlue();
+					double red = color.getRed() / sum * first.getRed() + color.getGreen() / sum * second.getRed()
+							+ color.getBlue() / sum * third.getRed();
+					double green = color.getRed() / sum * first.getGreen() + color.getGreen() / sum * second.getGreen()
+							+ color.getBlue() / sum * third.getGreen();
+					double blue = color.getRed() / sum * first.getBlue() + color.getGreen() / sum * second.getBlue()
+							+ color.getBlue() / sum * third.getBlue();
+					Color newColor = new Color(red, green, blue, 1.0);
+					pixelWriter.setColor(i, j, newColor);
+				}
 			}
 		circle.setFill(new ImagePattern(writableImage));
 	}
@@ -105,7 +119,7 @@ public class CirclePainter {
 					paintTwoColors();
 
 				else
-					paintThreeColours();
+					paintThreeColors();
 			}
 	}
 

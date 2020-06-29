@@ -16,7 +16,7 @@ import javafx.geometry.Point2D;
 
 public class Gameplay {
 
-	private boolean isMoving = false;
+	private boolean isMoving;
 
 	private BubblesTab bubblesTab;
 
@@ -26,17 +26,26 @@ public class Gameplay {
 
 	private ColorsCounter colorsCounter;
 
-	private PausableTimer timer = new PausableTimer(true);
+	private PausableTimer timer;
 
-	private BooleanProperty finished = new SimpleBooleanProperty();
+	private BooleanProperty finished;
 
-	private List<BubbleListener> bubbleAddedListeners = new LinkedList<>();
+	private List<BubbleListener> bubbleAddedListeners;
 
-	private List<BubbleListener> bubbleRemovedListeners = new LinkedList<>();
+	private List<BubbleListener> bubbleRemovedListeners;
 
-	private List<BubbleListener> bubbleChangedListeners = new LinkedList<>();
+	private List<BubbleListener> bubbleChangedListeners;
 
-	private List<MoveListener> moveListeners = new LinkedList<>();
+	private List<MoveListener> moveListeners;
+
+	{
+		timer = new PausableTimer(true);
+		finished = new SimpleBooleanProperty();
+		bubbleAddedListeners = new LinkedList<BubbleListener>();
+		bubbleRemovedListeners = new LinkedList<BubbleListener>();
+		bubbleChangedListeners = new LinkedList<BubbleListener>();
+		moveListeners = new LinkedList<MoveListener>();
+	}
 
 	public Gameplay(int rows, int columns, double diameter) {
 		bubblesTab = new BubblesTab(this, rows, columns, diameter);
