@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.controller.OpcjeMenuController">
+   <children>
+      <Button fx:id="PowrotButton" layoutX="600.0" layoutY="450.0" mnemonicParsing="false" onAction="#PowrotButtonAction" prefHeight="50.0" prefWidth="150.0" text="Powrót" />
+      <Label fx:id="GlosnoscLabel" layoutX="425.0" layoutY="375.0" prefHeight="50.0" prefWidth="100.0" text="Głośność" />
+      <Label fx:id="MuzykaLabel" layoutX="425.0" layoutY="300.0" prefHeight="50.0" prefWidth="100.0" text="Muzyka" />
+      <Label fx:id="EfektyDzwiekoweLabel" layoutX="425.0" layoutY="225.0" prefHeight="50.0" prefWidth="100.0" text="Efekty dzwiękowe" />
+      <RadioButton fx:id="EfektyDzwiekoweONRadio" layoutX="525.0" layoutY="225.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="110.0" selected="true" text="ON">
+         <toggleGroup>
+            <ToggleGroup fx:id="EfektyDzwiekoweGroup" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="EfektyDzwiekoweOFFRadio" layoutX="640.0" layoutY="225.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="110.0" text="OFF" toggleGroup="$EfektyDzwiekoweGroup" />
+      <RadioButton fx:id="MuzykaONRadio" layoutX="525.0" layoutY="300.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="110.0" selected="true" text="ON">
+         <toggleGroup>
+            <ToggleGroup fx:id="MuzykaGroup" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="MuzykaOFFRadio" layoutX="640.0" layoutY="300.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="110.0" text="OFF" toggleGroup="$MuzykaGroup" />
+      <Slider fx:id="GlosnoscSlider" layoutX="525.0" layoutY="375.0" prefHeight="50.0" prefWidth="225.0" />
+   </children>
+</AnchorPane>

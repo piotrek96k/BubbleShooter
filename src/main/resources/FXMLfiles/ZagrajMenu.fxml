@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.controller.ZagrajMenuController">
+   <children>
+      <Button fx:id="PowrotButton" layoutX="600.0" layoutY="450.0" mnemonicParsing="false" onAction="#PowrotButtonAction" prefHeight="50.0" prefWidth="150.0" text="Powrót" />
+      <Button fx:id="GrajButton" layoutX="425.0" layoutY="450.0" mnemonicParsing="false" onAction="#GrajButtonAction" prefHeight="50.0" prefWidth="150.0" text="Graj" />
+      <Label fx:id="PoziomLabel" layoutX="425.0" layoutY="375.0" prefHeight="50.0" prefWidth="100.0" text="Poziom" />
+      <ChoiceBox fx:id="PoziomChociceBox" layoutX="525.0" layoutY="375.0" prefHeight="50.0" prefWidth="225.0" />
+      <Label fx:id="TrybGryLabel" layoutX="425.0" layoutY="300.0" prefHeight="50.0" prefWidth="100.0" text="Tryb gry:" />
+      <ChoiceBox fx:id="TrybGryChociceBox" layoutX="525.0" layoutY="300.0" prefHeight="50.0" prefWidth="225.0" />
+      <Label fx:id="ImieLabel" layoutX="425.0" layoutY="225.0" prefHeight="50.0" prefWidth="100.0" text="Imię" />
+      <TextField fx:id="ImieTextField" layoutX="525.0" layoutY="225.0" prefHeight="50.0" prefWidth="225.0" />
+   </children>
+</AnchorPane>

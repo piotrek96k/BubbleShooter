@@ -5,6 +5,8 @@ import com.project.model.gameplay.Gameplay;
 import com.project.view.GameplayView;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -16,12 +18,18 @@ public class ApplicationMain extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		Gameplay gameplay = new Gameplay(25,25,25.0);
-		GameplayView gameplayView = new GameplayView();
-		stage.setScene(new Scene(gameplayView.getPane()));
-		stage.setResizable(false);
-		new GameplayController(gameplay,gameplayView);
+		//Gameplay gameplay = new Gameplay(25,25,25.0);
+		//GameplayView gameplayView = new GameplayView();
+		//stage.setScene(new Scene(gameplayView.getPane()));
+		//stage.setResizable(false);
+		//new GameplayController(gameplay,gameplayView);
+		//stage.show();
+
+		Parent root = FXMLLoader.load(getClass().getResource("/FXMLfiles/MainMenu.fxml"));
+		stage.setTitle("Bubble Shooter");
+		stage.setScene(new Scene(root, 800, 600));
 		stage.show();
+
 	}
 
 }
