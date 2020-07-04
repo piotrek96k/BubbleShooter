@@ -14,6 +14,8 @@ import java.util.function.Consumer;
 import com.project.model.bubble.BombBubble;
 import com.project.model.bubble.Bubble;
 import com.project.model.bubble.ColoredBubble;
+import com.project.sound.GameplaySoundEffect;
+import com.project.sound.SoundPlayer;
 
 public class Remover {
 
@@ -139,10 +141,10 @@ public class Remover {
 	}
 
 	private void findBombedBubbles() {
-		Set<Coordinate> toDelete = new LinkedHashSet<Coordinate>();
+//		Set<Coordinate> toDelete = new LinkedHashSet<Coordinate>();
 		bombs.add(coordinate);
 		toDelete = repeatFindingBombedBubbles(this.bombs);
-		this.toDelete = toDelete;
+//		this.toDelete = toDelete;
 		synchronized (locker) {
 			removeBombedBubbles();
 			findNeighbors();
@@ -156,13 +158,15 @@ public class Remover {
 		Set<Coordinate> oldBombs = new LinkedHashSet<Coordinate>(this.bombs);
 		for (Coordinate coordinate : bombs) {
 			if (gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] != null) {
+//				for(int i =0; i< 2; i++) {
 				this.toDelete.add(coordinate);
 				toDelete.add(coordinate);
 				findNeighborAndBombs();
 				neighbor.removeAll(toDelete);
-				this.toDelete.clear();
-				this.toDelete.addAll(neighbor);
+//				this.toDelete.clear();
+//				this.toDelete.addAll(neighbor);
 				toDelete.addAll(neighbor);
+//				}
 				neighbor.clear();
 				this.toDelete.clear();
 			}
@@ -180,6 +184,7 @@ public class Remover {
 		Runnable[] runnable = { null };
 		runnable[0] = () -> {
 			synchronized (locker) {
+				SoundPlayer.getInstance().playGameplaySoundEffect(GameplaySoundEffect.EXPLOSION);
 				for (Coordinate coordinate : toDelete) {
 					Bubble bubble = gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()];
 					gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] = null;
@@ -220,6 +225,7 @@ public class Remover {
 				Bubble bubble = gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()];
 				gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] = null;
 				removeBubble(bubble);
+				SoundPlayer.getInstance().playGameplaySoundEffect(GameplaySoundEffect.POP);
 				if (counter[0] == toDelete.size()) {
 					gameplay.getTimer().cancelTask(runnable[0]);
 					locker.notifyAll();
@@ -267,12 +273,14 @@ public class Remover {
 				ended = false;
 			}
 		});
-		if (!toDrop.isEmpty())
+		if (!toDrop.isEmpty()) {
+			SoundPlayer.getInstance().playGameplaySoundEffect(GameplaySoundEffect.FALLING);
 			try {
 				initDroppers(toDrop);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		}
 	}
 
 	private void initDroppers(Set<Coordinate> toDrop) throws InterruptedException {
@@ -282,7 +290,7 @@ public class Remover {
 			gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] = null;
 		});
 		Collections.reverse(list);
-		Map<Bubble, Dropper> droppersMap = new HashMap<Bubble,Dropper>();
+		Map<Bubble, Dropper> droppersMap = new HashMap<Bubble, Dropper>();
 		int delay = 10;
 		for (int i = 0; i < list.size(); i++) {
 			Bubble bubble = list.get(i);

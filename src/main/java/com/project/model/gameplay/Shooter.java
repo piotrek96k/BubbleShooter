@@ -11,6 +11,8 @@ import com.project.model.bubble.BubbleColor;
 import com.project.model.bubble.ColoredBubble;
 import com.project.model.bubble.DestroyingBubble;
 import com.project.model.bubble.TransparentBubble;
+import com.project.sound.GameplaySoundEffect;
+import com.project.sound.SoundPlayer;
 
 import javafx.geometry.Point2D;
 
@@ -299,6 +301,11 @@ public class Shooter {
 			Point2D point = getStartPoint();
 			Point2D coefficients = getCoefficients(x, y, point);
 			TriFunction<Point2D, Point2D, Double, Point2D> function = chooseFunctionToApplay(point, coefficients);
+			SoundPlayer.getInstance().playGameplaySoundEffect(GameplaySoundEffect.THROW);
+			if (gameplay.getBubblesTab().getBubbleToThrow() instanceof TransparentBubble)
+				SoundPlayer.getInstance().playGameplaySoundEffect(GameplaySoundEffect.GHOST);
+			else if (gameplay.getBubblesTab().getBubbleToThrow() instanceof DestroyingBubble)
+				SoundPlayer.getInstance().playGameplaySoundEffect(GameplaySoundEffect.BURNING);
 			createNewTimerTask(point, coefficients, function);
 		}
 	}

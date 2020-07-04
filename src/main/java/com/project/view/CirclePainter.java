@@ -3,8 +3,8 @@ package com.project.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.project.image.GameImage;
 import com.project.model.bubble.BubbleColor;
-import com.project.util.ImageUtil;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
@@ -45,7 +45,7 @@ public class CirclePainter {
 	}
 
 	private void paintGhost() {
-		Image image = ImageUtil.GHOST_IMAGE;
+		Image image = GameImage.GHOST.getImage();
 		PixelReader pixelReader = image.getPixelReader();
 		WritableImage writableImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
 		PixelWriter pixelWriter = writableImage.getPixelWriter();
@@ -58,7 +58,7 @@ public class CirclePainter {
 	}
 
 	private void paintTwoColors() {
-		Image image = ImageUtil.TWO_COLORED_CIRCLE_IMAGE;
+		Image image = GameImage.TWO_COLORED_CIRCLE.getImage();
 		PixelReader pixelReader = image.getPixelReader();
 		WritableImage writableImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
 		PixelWriter pixelWriter = writableImage.getPixelWriter();
@@ -80,7 +80,7 @@ public class CirclePainter {
 	}
 
 	private void paintThreeColors() {
-		Image image = ImageUtil.THREE_COLORED_CIRCLE_IMAGE;
+		Image image = GameImage.THREE_COLORED_CIRCLE.getImage();
 		PixelReader pixelReader = image.getPixelReader();
 		WritableImage writableImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
 		PixelWriter pixelWriter = writableImage.getPixelWriter();

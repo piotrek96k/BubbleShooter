@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.project.controller.GameplayController;
+import com.project.image.GameImage;
 import com.project.model.bubble.Bubble;
 import com.project.model.bubble.BubbleColor;
 import com.project.model.bubble.ColoredBubble;
 import com.project.model.bubble.DestroyingBubble;
 import com.project.model.bubble.TransparentBubble;
-import com.project.util.ImageUtil;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -52,9 +52,6 @@ public class GameplayView {
 		lines = new ArrayList<Line>();
 		circlesMap = new HashMap<Integer, Circle>();
 		circlePainterMap = new HashMap<Integer, CirclePainter>();
-	}
-
-	public GameplayView() {
 		pane = new Pane();
 	}
 
@@ -111,7 +108,7 @@ public class GameplayView {
 
 	private void addBombBubble(Bubble bubble, double centerX, double centerY, double radius) {
 		Circle circle = new Circle(centerX, centerY, radius + 2);
-		circle.setFill(new ImagePattern(ImageUtil.BOMB_IMAGE));
+		circle.setFill(new ImagePattern(GameImage.BOMB.getImage()));
 		circlesMap.put(bubble.BUBBLE_NUMBER, circle);
 		pane.getChildren().add(circle);
 	}

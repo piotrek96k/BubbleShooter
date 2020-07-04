@@ -7,6 +7,7 @@ import com.project.model.bubble.Bubble;
 import com.project.model.bubble.BubbleColor;
 import com.project.model.listener.BubbleListener;
 import com.project.model.listener.MoveListener;
+import com.project.sound.SoundPlayer;
 import com.project.timer.PausableTimer;
 
 import javafx.beans.property.BooleanProperty;
@@ -54,6 +55,7 @@ public class Gameplay {
 		shooter = new Shooter(this);
 		Bubble.setDiameter(diameter);
 		Bubble.setOffset(5.0);
+		SoundPlayer.getInstance().switchMenuGameplayMusic();
 	}
 
 	public void init() {
@@ -87,16 +89,20 @@ public class Gameplay {
 	}
 
 	public void pauseOrResume() {
-		if (timer.isPaused())
+		if (timer.isPaused()) {
 			timer.resume();
-		else
+			SoundPlayer.getInstance().resumeGameplaySoundEffects();
+		} else {
 			timer.pause();
+			SoundPlayer.getInstance().pauseGameplaySoundEffects();
+		}
 	}
 
 	public void finishGame() {
 		timer.cancel();
-		System.out.println("Koniec Gry");
+		SoundPlayer.getInstance().switchMenuGameplayMusic();
 		finished.set(true);
+		System.out.println("Koniec Gry");
 	}
 
 	public void throwBubble(double x, double y) {

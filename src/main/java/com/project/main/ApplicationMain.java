@@ -2,9 +2,11 @@ package com.project.main;
 
 import com.project.controller.GameplayController;
 import com.project.model.gameplay.Gameplay;
+import com.project.sound.SoundPlayer;
 import com.project.view.GameplayView;
 
 import javafx.application.Application;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -16,11 +18,17 @@ public class ApplicationMain extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		Gameplay gameplay = new Gameplay(25,25,25.0);
+		Group group = new Group();
+		SoundPlayer player = SoundPlayer.getInstance();
+		player.init(group);
+		stage.setOnCloseRequest(event -> player.stop());
+		Gameplay gameplay = new Gameplay(25, 25, 25.0);
 		GameplayView gameplayView = new GameplayView();
-		stage.setScene(new Scene(gameplayView.getPane()));
+		group.getChildren().add(gameplayView.getPane());
+		Scene scene = new Scene(group);
+		stage.setScene(scene);
 		stage.setResizable(false);
-		new GameplayController(gameplay,gameplayView);
+		new GameplayController(gameplay, gameplayView);
 		stage.show();
 	}
 
