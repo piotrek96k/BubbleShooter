@@ -252,7 +252,8 @@ public class Shooter {
 			point = function.apply(point, coefficients, 1.0);
 			if (checkIfNeedToChangePath(point)) {
 				result.add(point);
-				result.addAll(changePath(point, coefficients, this::getLinePoints));
+				if (!(gameplay.getBubblesTab().getBubbleToThrow() instanceof DestroyingBubble))
+					result.addAll(changePath(point, coefficients, this::getLinePoints));
 				return result;
 			}
 			collide = checkIfLineCollideWithBall(point);

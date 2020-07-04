@@ -51,8 +51,11 @@ public class CirclePainter {
 		PixelWriter pixelWriter = writableImage.getPixelWriter();
 		for (int i = 0; i < writableImage.getWidth(); i++)
 			for (int j = 0; j < writableImage.getHeight(); j++) {
-				if (!pixelReader.getColor(i, j).equals(Color.TRANSPARENT))
-					pixelWriter.setColor(i, j, colors.get(0).getColor());
+				if (!pixelReader.getColor(i, j).equals(Color.TRANSPARENT)) {
+					Color basicColor = colors.get(0).getColor();
+					Color color = new Color(basicColor.getRed(), basicColor.getGreen(), basicColor.getBlue(), pixelReader.getColor(i, j).getOpacity());
+					pixelWriter.setColor(i, j, color);
+				}
 			}
 		circle.setFill(new ImagePattern(writableImage));
 	}

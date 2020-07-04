@@ -21,7 +21,6 @@ public class ApplicationMain extends Application {
 		Group group = new Group();
 		SoundPlayer player = SoundPlayer.getInstance();
 		player.init(group);
-		stage.setOnCloseRequest(event -> player.stop());
 		Gameplay gameplay = new Gameplay(25, 25, 25.0);
 		GameplayView gameplayView = new GameplayView();
 		group.getChildren().add(gameplayView.getPane());

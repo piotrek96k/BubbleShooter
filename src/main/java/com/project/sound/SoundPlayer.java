@@ -71,6 +71,8 @@ public class SoundPlayer {
 		public void run() {
 			if (mediaView != null)
 				group.getChildren().remove(mediaView);
+			if (mediaPlayer != null)
+				mediaPlayer.dispose();
 			Media media = GameplayMusic.values()[number].getMedia();
 			mediaPlayer = new MediaPlayer(media);
 			mediaPlayer.setMute(musicMuted);
@@ -88,8 +90,10 @@ public class SoundPlayer {
 		}
 
 		public void stop() {
-			if (mediaPlayer != null)
+			if (mediaPlayer != null) {
 				mediaPlayer.stop();
+				mediaPlayer.dispose();
+			}
 			if (mediaView != null)
 				group.getChildren().remove(mediaView);
 		}
@@ -139,12 +143,16 @@ public class SoundPlayer {
 			MediaView mediaView = new MediaView(player);
 			group.getChildren().add(mediaView);
 			gameplayEffectsPlayers.add(player);
-			player.setOnEndOfMedia(() -> {
-				group.getChildren().remove(mediaView);
-				gameplayEffectsPlayers.remove(player);
-			});
+			player.setOnEndOfMedia(() -> stopGameplayEffectsPlayers(player, mediaView));
+			player.setOnStopped(() -> stopGameplayEffectsPlayers(player, mediaView));
 			player.play();
 		});
+	}
+
+	private void stopGameplayEffectsPlayers(MediaPlayer player, MediaView mediaView) {
+		group.getChildren().remove(mediaView);
+		gameplayEffectsPlayers.remove(player);
+		player.dispose();
 	}
 
 	public void pauseGameplaySoundEffects() {
@@ -158,6 +166,8 @@ public class SoundPlayer {
 	private void playMenuMusic() {
 		if (menuMusicView != null)
 			group.getChildren().remove(menuMusicView);
+		if (menuMusicPlayer != null)
+			menuMusicPlayer.dispose();
 		menuMusicPlayer = new MediaPlayer(menuMusicMedia);
 		menuMusicPlayer.setMute(musicMuted);
 		menuMusicView = new MediaView(menuMusicPlayer);
@@ -167,8 +177,10 @@ public class SoundPlayer {
 	}
 
 	private void stopMenuMusic() {
-		if (menuMusicPlayer != null)
+		if (menuMusicPlayer != null) {
 			menuMusicPlayer.stop();
+			menuMusicPlayer.dispose();
+		}
 		if (menuMusicView != null)
 			group.getChildren().remove(menuMusicView);
 		menuMusicPlayer = null;
@@ -184,11 +196,6 @@ public class SoundPlayer {
 				playMenuMusic();
 			}
 		});
-	}
-
-	public void stop() {
-		stopGameplayMusic();
-		stopMenuMusic();
 	}
 
 	public void muteOrUnmuteMusic() {

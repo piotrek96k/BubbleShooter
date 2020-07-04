@@ -91,10 +91,10 @@ public class Gameplay {
 	public void pauseOrResume() {
 		if (timer.isPaused()) {
 			timer.resume();
-			SoundPlayer.getInstance().resumeGameplaySoundEffects();
+//			SoundPlayer.getInstance().resumeGameplaySoundEffects();
 		} else {
 			timer.pause();
-			SoundPlayer.getInstance().pauseGameplaySoundEffects();
+//			SoundPlayer.getInstance().pauseGameplaySoundEffects();
 		}
 	}
 
