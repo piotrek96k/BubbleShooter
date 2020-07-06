@@ -6,7 +6,7 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.controller.MainMenuController">
    <children>
       <Button fx:id="ZakonczButton" layoutX="600.0" layoutY="450.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="150.0" text="Zakończ" />
-      <Button fx:id="NajlepsiGraczeButton" layoutX="600.0" layoutY="375.0" mnemonicParsing="false" onAction="#NajlepsiGraczeButtonActio" prefHeight="50.0" prefWidth="150.0" text="Najlepsi gracze" />
+      <Button fx:id="NajlepsiGraczeButton" layoutX="600.0" layoutY="375.0" mnemonicParsing="false" onAction="#NajlepsiGraczeButtonAction" prefHeight="50.0" prefWidth="150.0" text="Najlepsi gracze" />
       <Button fx:id="OpcjeButton" layoutX="600.0" layoutY="300.0" mnemonicParsing="false" onAction="#OpcjeButtonAction" prefHeight="50.0" prefWidth="150.0" text="Opcje" />
       <Button fx:id="ZagrajButton" layoutX="600.0" layoutY="225.0" mnemonicParsing="false" onAction="#ZagrajButtonAction" prefHeight="50.0" prefWidth="150.0" text="Zagraj" />
    </children>

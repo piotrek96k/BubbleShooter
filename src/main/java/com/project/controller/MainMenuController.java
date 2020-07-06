@@ -32,8 +32,12 @@ public class MainMenuController {
     }
 
     @FXML
-    void NajlepsiGraczeButtonAction(ActionEvent event) {
-
+    void NajlepsiGraczeButtonAction(ActionEvent event) throws IOException {
+        Parent opcjeMenuParent = FXMLLoader.load(getClass().getResource("/FXMLfiles/OpcjeMenu.fxml"));
+        Scene opcjeMenuScene= new Scene(opcjeMenuParent);
+        Stage window= (Stage) ((Node)event.getSource()).getScene().getWindow();
+        window.setScene(opcjeMenuScene);
+        window.show();
     }
 
     @FXML
