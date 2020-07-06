@@ -48,12 +48,12 @@ public class Gameplay {
 		moveListeners = new LinkedList<MoveListener>();
 	}
 
-	public Gameplay(int rows, int columns, double diameter) {
-		bubblesTab = new BubblesTab(this, rows, columns, diameter);
+	public Gameplay() {
+		bubblesTab = new BubblesTab(this);
 		colorsCounter = new ColorsCounter(BubbleColor.values().length);
 		remover = new Remover(this);
 		shooter = new Shooter(this);
-		Bubble.setDiameter(diameter);
+//		Bubble.setDiameter(diameter);
 		Bubble.setOffset(5.0);
 		SoundPlayer.getInstance().switchMenuGameplayMusic();
 	}
@@ -75,7 +75,7 @@ public class Gameplay {
 	}
 
 	private boolean checkIfGameEnded() {
-		for (Bubble bubble : bubblesTab.getBubbles()[bubblesTab.ROWS - 1])
+		for (Bubble bubble : bubblesTab.getBubbles()[BubblesTab.ROWS - 1])
 			if (bubble != null)
 				return true;
 		for (Bubble bubble : bubblesTab.getBubbles()[0])

@@ -13,6 +13,7 @@ import com.project.model.bubble.BubbleColor;
 import com.project.model.bubble.ColoredBubble;
 import com.project.model.bubble.DestroyingBubble;
 import com.project.model.bubble.TransparentBubble;
+import com.project.model.gameplay.BubblesTab;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -42,7 +43,7 @@ public class GameplayView {
 
 	private Map<Integer, Circle> circlesMap;
 
-	private Map<Integer, CirclePainter> circlePainterMap;
+	private Map<Integer, Painter> paintersMap;
 
 	static {
 		BUBBLE_RADIUS_REDUCE = 1.0;
@@ -51,15 +52,16 @@ public class GameplayView {
 	{
 		lines = new ArrayList<Line>();
 		circlesMap = new HashMap<Integer, Circle>();
-		circlePainterMap = new HashMap<Integer, CirclePainter>();
+		paintersMap = new HashMap<Integer, Painter>();
 		pane = new Pane();
 	}
 
 	public void setController(GameplayController gameplayController) {
 		this.controller = gameplayController;
 		setPaneSize();
-		pane.setBackground(
-				new Background(new BackgroundFill(Color.rgb(24, 24, 24), CornerRadii.EMPTY, new Insets(0.0))));
+		pane.setBackground(new Background(
+				new BackgroundFill(Painter.getLinearGradientPaint(Color.rgb(40, 41, 42), Color.rgb(0, 1, 2)),
+						CornerRadii.EMPTY, new Insets(0.0))));
 		addRectangle();
 		pane.setOnMouseEntered(this::handleMouseEntering);
 		pane.setOnMouseExited(this::handleMouseExiting);
@@ -69,17 +71,16 @@ public class GameplayView {
 	}
 
 	private void addRectangle() {
-		double height = controller.getModel().getBubblesTab().HEIGHT
-				- controller.getModel().getBubblesTab().BUBBLES_HEIGHT;
+		double height = BubblesTab.HEIGHT - BubblesTab.BUBBLES_HEIGHT;
 		double startY = pane.getPrefHeight() - height;
 		Rectangle rectangle = new Rectangle(0, startY, pane.getPrefWidth(), height);
-		rectangle.setFill(Color.rgb(48, 48, 48));
+		rectangle.setFill(Painter.getLinearGradientPaint(Color.rgb(36, 36, 36)));
 		pane.getChildren().add(0, rectangle);
 	}
 
 	private void setPaneSize() {
-		pane.setPrefHeight(controller.getModel().getBubblesTab().HEIGHT);
-		pane.setPrefWidth(controller.getModel().getBubblesTab().WIDTH);
+		pane.setPrefHeight(BubblesTab.HEIGHT);
+		pane.setPrefWidth(BubblesTab.WIDTH);
 		pane.setMinHeight(Pane.USE_PREF_SIZE);
 		pane.setMinWidth(Pane.USE_PREF_SIZE);
 	}
@@ -87,7 +88,7 @@ public class GameplayView {
 	public void addBubble(Bubble bubble) {
 		double centerX = bubble.getCenterX();
 		double centerY = bubble.getCenterY();
-		double radius = Bubble.getRadius() - BUBBLE_RADIUS_REDUCE;
+		double radius = Bubble.DIAMETER / 2 - BUBBLE_RADIUS_REDUCE;
 		if (bubble instanceof ColoredBubble)
 			addMulticoloredCircle(bubble, centerX, centerY, radius);
 		else if (bubble instanceof TransparentBubble)
@@ -117,9 +118,8 @@ public class GameplayView {
 		TransparentBubble transparentBubble = (TransparentBubble) bubble;
 		Circle circle = new Circle(centerX, centerY, radius);
 		circle.setOpacity(0.8);
-		CirclePainter circlePainter = new CirclePainter(circle,
-				Arrays.asList(new BubbleColor[] { transparentBubble.getColor() }));
-		circlePainterMap.put(bubble.BUBBLE_NUMBER, circlePainter);
+		Painter painter = new Painter(circle, Arrays.asList(new BubbleColor[] { transparentBubble.getColor() }));
+		paintersMap.put(bubble.BUBBLE_NUMBER, painter);
 		pane.getChildren().add(circle);
 	}
 
@@ -127,15 +127,15 @@ public class GameplayView {
 		ColoredBubble coloredBubble = (ColoredBubble) bubble;
 		List<BubbleColor> colors = coloredBubble.getColors();
 		if (coloredBubble.getColorsQuantity() == 1) {
-			Paint paint = CirclePainter.getLinearGradientPaint(colors.get(0).getColor());
+			Paint paint = Painter.getLinearGradientPaint(colors.get(0).getColor());
 			Circle circle = new Circle(centerX, centerY, radius, paint);
 			circlesMap.put(bubble.BUBBLE_NUMBER, circle);
 			pane.getChildren().add(circle);
 		} else {
 			Circle circle = new Circle(centerX, centerY, radius);
-			CirclePainter circlePainter = new CirclePainter(circle, coloredBubble.getColors());
+			Painter painter = new Painter(circle, coloredBubble.getColors());
 			pane.getChildren().add(circle);
-			circlePainterMap.put(bubble.BUBBLE_NUMBER, circlePainter);
+			paintersMap.put(bubble.BUBBLE_NUMBER, painter);
 		}
 	}
 
@@ -146,10 +146,10 @@ public class GameplayView {
 			pane.getChildren().remove(circle);
 			return;
 		}
-		CirclePainter circlePainter = circlePainterMap.get(bubble.BUBBLE_NUMBER);
-		if (circlePainter != null) {
-			circlePainterMap.remove(bubble.BUBBLE_NUMBER);
-			pane.getChildren().remove(circlePainter.getCircle());
+		Painter painter = paintersMap.get(bubble.BUBBLE_NUMBER);
+		if (painter != null) {
+			paintersMap.remove(bubble.BUBBLE_NUMBER);
+			pane.getChildren().remove(painter.getCircle());
 			return;
 		}
 	}
@@ -158,21 +158,20 @@ public class GameplayView {
 		Circle circle = circlesMap.get(bubble.BUBBLE_NUMBER);
 		if (circle != null) {
 			if (bubble instanceof ColoredBubble)
-				circle.setFill(
-						CirclePainter.getLinearGradientPaint(((ColoredBubble) bubble).getColors().get(0).getColor()));
+				circle.setFill(Painter.getLinearGradientPaint(((ColoredBubble) bubble).getColors().get(0).getColor()));
 			circle.setCenterX(bubble.getCenterX());
 			circle.setCenterY(bubble.getCenterY());
 			return;
 		}
-		CirclePainter circlePainter = circlePainterMap.get(bubble.BUBBLE_NUMBER);
-		if (circlePainter != null) {
-			circle = circlePainter.getCircle();
+		Painter painter = paintersMap.get(bubble.BUBBLE_NUMBER);
+		if (painter != null) {
+			circle = painter.getCircle();
 			circle.setCenterX(bubble.getCenterX());
 			circle.setCenterY(bubble.getCenterY());
 			if (bubble instanceof ColoredBubble)
-				circlePainter.updatePaint(((ColoredBubble) bubble).getColors());
+				painter.updatePaint(((ColoredBubble) bubble).getColors());
 			else if (bubble instanceof TransparentBubble)
-				circlePainter.updatePaint(Arrays.asList(new BubbleColor[] { ((TransparentBubble) bubble).getColor() }));
+				painter.updatePaint(Arrays.asList(new BubbleColor[] { ((TransparentBubble) bubble).getColor() }));
 			return;
 		}
 	}
@@ -182,10 +181,6 @@ public class GameplayView {
 		line.setStrokeWidth(3);
 		line.setOpacity(0.5);
 		line.getStrokeDashArray().addAll(10.0, 15.0);
-	}
-
-	public Pane getPane() {
-		return pane;
 	}
 
 	private void handleMouseEntering(MouseEvent event) {
@@ -253,6 +248,10 @@ public class GameplayView {
 		setLineStyle(line);
 		lines.add(line);
 		pane.getChildren().add(1, line);
+	}
+
+	public Pane getPane() {
+		return pane;
 	}
 
 }

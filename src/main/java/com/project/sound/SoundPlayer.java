@@ -8,7 +8,7 @@ import java.util.Set;
 import com.project.exception.IllegalValueException;
 
 import javafx.application.Platform;
-import javafx.scene.Group;
+import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -19,7 +19,7 @@ public class SoundPlayer {
 
 	private static Media menuMusicMedia;
 
-	private Group group;
+	private StackPane stackPane;
 
 	private GameplayMusicPlayer gameplayMusicPlayer;
 
@@ -29,9 +29,9 @@ public class SoundPlayer {
 
 	private Set<MediaPlayer> gameplayEffectsPlayers;
 
-	private double musicVolume = 1.0;
+	private double musicVolume;
 
-	private double effectsVolume = 1.0;
+	private double effectsVolume;
 
 	private boolean musicMuted;
 
@@ -47,6 +47,8 @@ public class SoundPlayer {
 
 	{
 		gameplayEffectsPlayers = new HashSet<MediaPlayer>();
+		musicVolume = 0.05;
+		effectsVolume = 0.05;
 	}
 
 	private SoundPlayer() {
@@ -70,7 +72,7 @@ public class SoundPlayer {
 		@Override
 		public void run() {
 			if (mediaView != null)
-				group.getChildren().remove(mediaView);
+				stackPane.getChildren().remove(mediaView);
 			if (mediaPlayer != null)
 				mediaPlayer.dispose();
 			Media media = GameplayMusic.values()[number].getMedia();
@@ -78,7 +80,7 @@ public class SoundPlayer {
 			mediaPlayer.setMute(musicMuted);
 			mediaPlayer.setVolume(musicVolume);
 			mediaView = new MediaView(mediaPlayer);
-			group.getChildren().add(mediaView);
+			stackPane.getChildren().add(mediaView);
 			mediaPlayer.setOnEndOfMedia(this);
 			mediaPlayer.play();
 			if (++counter >= 25) {
@@ -95,7 +97,7 @@ public class SoundPlayer {
 				mediaPlayer.dispose();
 			}
 			if (mediaView != null)
-				group.getChildren().remove(mediaView);
+				stackPane.getChildren().remove(mediaView);
 		}
 
 		public void muteOrUnmute() {
@@ -116,8 +118,8 @@ public class SoundPlayer {
 		return soundPlayer;
 	}
 
-	public void init(Group group) {
-		this.group = group;
+	public void init(StackPane stackPane) {
+		this.stackPane = stackPane;
 		playMenuMusic();
 	}
 
@@ -141,7 +143,7 @@ public class SoundPlayer {
 			player.setMute(effectsMuted);
 			player.setVolume(effectsVolume);
 			MediaView mediaView = new MediaView(player);
-			group.getChildren().add(mediaView);
+			stackPane.getChildren().add(mediaView);
 			gameplayEffectsPlayers.add(player);
 			player.setOnEndOfMedia(() -> stopGameplayEffectsPlayers(player, mediaView));
 			player.setOnStopped(() -> stopGameplayEffectsPlayers(player, mediaView));
@@ -150,7 +152,7 @@ public class SoundPlayer {
 	}
 
 	private void stopGameplayEffectsPlayers(MediaPlayer player, MediaView mediaView) {
-		group.getChildren().remove(mediaView);
+		stackPane.getChildren().remove(mediaView);
 		gameplayEffectsPlayers.remove(player);
 		player.dispose();
 	}
@@ -165,13 +167,14 @@ public class SoundPlayer {
 
 	private void playMenuMusic() {
 		if (menuMusicView != null)
-			group.getChildren().remove(menuMusicView);
+			stackPane.getChildren().remove(menuMusicView);
 		if (menuMusicPlayer != null)
 			menuMusicPlayer.dispose();
 		menuMusicPlayer = new MediaPlayer(menuMusicMedia);
 		menuMusicPlayer.setMute(musicMuted);
+		menuMusicPlayer.setVolume(musicVolume);
 		menuMusicView = new MediaView(menuMusicPlayer);
-		group.getChildren().add(menuMusicView);
+		stackPane.getChildren().add(menuMusicView);
 		menuMusicPlayer.setOnEndOfMedia(this::playMenuMusic);
 		menuMusicPlayer.play();
 	}
@@ -182,7 +185,7 @@ public class SoundPlayer {
 			menuMusicPlayer.dispose();
 		}
 		if (menuMusicView != null)
-			group.getChildren().remove(menuMusicView);
+			stackPane.getChildren().remove(menuMusicView);
 		menuMusicPlayer = null;
 	}
 

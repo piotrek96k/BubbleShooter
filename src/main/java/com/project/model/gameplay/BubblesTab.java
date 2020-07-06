@@ -16,17 +16,17 @@ public class BubblesTab {
 
 	public static final double HEIGHT_COEFFICIENT;
 
-	public final int ROWS;
+	public static final int ROWS;
 
-	public final int COLUMNS;
+	public static final int COLUMNS;
 
-	public final double ROW_HEIGHT;
+	public static final double ROW_HEIGHT;
 
-	public final double HEIGHT;
+	public static final double HEIGHT;
 
-	public final double WIDTH;
+	public static final double WIDTH;
 
-	public final double BUBBLES_HEIGHT;
+	public static final double BUBBLES_HEIGHT;
 
 	private int rowOffset;
 
@@ -48,6 +48,12 @@ public class BubblesTab {
 
 	static {
 		HEIGHT_COEFFICIENT = Math.pow(3, 0.5) / 2;
+		ROWS = 26;
+		COLUMNS = 25;
+		ROW_HEIGHT = Bubble.DIAMETER * HEIGHT_COEFFICIENT;
+		BUBBLES_HEIGHT = 24 * ROW_HEIGHT + Bubble.DIAMETER;
+		HEIGHT = BUBBLES_HEIGHT + 3 * Bubble.DIAMETER;
+		WIDTH = (COLUMNS + 0.5) * Bubble.DIAMETER;
 	}
 
 	{
@@ -59,13 +65,7 @@ public class BubblesTab {
 		locker = new Object();
 	}
 
-	public BubblesTab(Gameplay gameplay, int rows, int columns, double diameter) {
-		ROWS = rows + 1;
-		COLUMNS = columns;
-		ROW_HEIGHT = diameter * HEIGHT_COEFFICIENT;
-		BUBBLES_HEIGHT = (rows - 1) * ROW_HEIGHT + diameter;
-		HEIGHT = BUBBLES_HEIGHT + 3 * diameter;
-		WIDTH = (COLUMNS + 0.5) * diameter;
+	public BubblesTab(Gameplay gameplay) {
 		bubbles = new Bubble[ROWS][COLUMNS];
 		this.gameplay = gameplay;
 	}
@@ -288,14 +288,14 @@ public class BubblesTab {
 	}
 
 	public double getCenterY(int row) {
-		return row * ROW_HEIGHT + 0.5 * Bubble.getDiameter();
+		return row * ROW_HEIGHT + 0.5 * Bubble.DIAMETER;
 	}
 
 	public double getCenterX(int row, int column) {
-		double result = column * Bubble.getDiameter() + 0.5 * Bubble.getDiameter();
+		double result = column * Bubble.DIAMETER + 0.5 * Bubble.DIAMETER;
 		int rowToCheck = row + rowOffset;
 		if (rowToCheck % 2 == 1)
-			result += 0.5 * Bubble.getDiameter();
+			result += 0.5 * Bubble.DIAMETER;
 		return result;
 	}
 

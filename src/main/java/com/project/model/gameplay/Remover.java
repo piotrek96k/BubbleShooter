@@ -295,7 +295,7 @@ public class Remover {
 		for (int i = 0; i < list.size(); i++) {
 			Bubble bubble = list.get(i);
 			double startHeight = Dropper.convertHeight(bubble.getCenterY(),
-					gameplay.getBubblesTab().BUBBLES_HEIGHT + Bubble.getDiameter());
+					BubblesTab.BUBBLES_HEIGHT + Bubble.DIAMETER);
 			Dropper dropper = new Dropper(startHeight, delay + delay * i);
 			droppersMap.put(bubble, dropper);
 		}
@@ -325,11 +325,10 @@ public class Remover {
 		for (Bubble bubble : toDrop) {
 			Dropper dropper = droppersMap.get(bubble);
 			double height = dropper.getHeight(System.currentTimeMillis());
-			double paneHeight = Dropper.convertHeight(height,
-					gameplay.getBubblesTab().BUBBLES_HEIGHT + Bubble.getDiameter());
+			double paneHeight = Dropper.convertHeight(height, BubblesTab.BUBBLES_HEIGHT + Bubble.DIAMETER);
 			bubble.setCenterY(paneHeight);
 			gameplay.sendBubbleChangedNotifications(bubble);
-			if (height <= Bubble.getDiameter() / 2) {
+			if (height <= Bubble.DIAMETER / 2) {
 				removeBubble(bubble);
 				toDelete.add(bubble);
 			}

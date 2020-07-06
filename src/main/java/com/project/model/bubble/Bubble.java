@@ -2,7 +2,7 @@ package com.project.model.bubble;
 
 public abstract class Bubble {
 
-	protected static double diameter;
+	public static final double DIAMETER;
 	
 	protected static double offset;
 	
@@ -13,6 +13,10 @@ public abstract class Bubble {
 	protected double centerY;
 	
 	public final int BUBBLE_NUMBER;
+	
+	static {
+		DIAMETER = 25.0;
+	}
 
 	public Bubble(double centerX, double centerY) {
 		this.centerX = centerX;
@@ -54,14 +58,6 @@ public abstract class Bubble {
 	public void setCenterY(double centerY) {
 		this.centerY = centerY;
 	}
-
-	public static double getDiameter() {
-		return diameter;
-	}
-
-	public static void setDiameter(double diameter) {
-		Bubble.diameter = diameter;
-	}
 	
 	public static double getOffset() {
 		return offset;
@@ -69,10 +65,6 @@ public abstract class Bubble {
 
 	public static void setOffset(double offset) {
 		Bubble.offset = offset;
-	}
-	
-	public static double getRadius() {
-		return diameter/2;
 	}
 
 }

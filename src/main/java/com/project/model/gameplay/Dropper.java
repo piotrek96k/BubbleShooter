@@ -26,9 +26,9 @@ public class Dropper {
 		if(System.currentTimeMillis()<startTime+initialDelay)
 			return startHeight;
 		double height = startHeight - 0.5 * (Math.pow(counter++ / 2, 2));
-		if (height > Bubble.getDiameter() / 2)
+		if (height > Bubble.DIAMETER / 2)
 			return height;
-		return Bubble.getDiameter() / 2;
+		return Bubble.DIAMETER / 2;
 	}
 
 	public static double convertHeight(double height, double paneSize) {

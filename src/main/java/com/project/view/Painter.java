@@ -18,13 +18,13 @@ import javafx.scene.paint.Paint;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Circle;
 
-public class CirclePainter {
+public class Painter {
 
 	private Circle circle;
 
 	private List<BubbleColor> colors;
 
-	public CirclePainter(Circle circle, List<BubbleColor> colors) {
+	public Painter(Circle circle, List<BubbleColor> colors) {
 		if (colors.size() == 0)
 			throw new IllegalArgumentException("Not enough colors");
 		this.circle = circle;
@@ -40,6 +40,10 @@ public class CirclePainter {
 	public static Paint getLinearGradientPaint(Color color) {
 		Color firstColor = color.brighter();
 		Color secondColor = color.darker();
+		return getLinearGradientPaint(firstColor, secondColor);
+	}
+
+	public static Paint getLinearGradientPaint(Color firstColor, Color secondColor) {
 		Stop[] stops = { new Stop(0.5, firstColor), new Stop(0.8, secondColor) };
 		return new LinearGradient(0.0, 0.0, 1.0, 1.0, true, CycleMethod.NO_CYCLE, stops);
 	}
@@ -53,7 +57,8 @@ public class CirclePainter {
 			for (int j = 0; j < writableImage.getHeight(); j++) {
 				if (!pixelReader.getColor(i, j).equals(Color.TRANSPARENT)) {
 					Color basicColor = colors.get(0).getColor();
-					Color color = new Color(basicColor.getRed(), basicColor.getGreen(), basicColor.getBlue(), pixelReader.getColor(i, j).getOpacity());
+					Color color = new Color(basicColor.getRed(), basicColor.getGreen(), basicColor.getBlue(),
+							pixelReader.getColor(i, j).getOpacity());
 					pixelWriter.setColor(i, j, color);
 				}
 			}
@@ -120,7 +125,6 @@ public class CirclePainter {
 					paintGhost();
 				else if (this.colors.size() == 2)
 					paintTwoColors();
-
 				else
 					paintThreeColors();
 			}
