@@ -234,7 +234,7 @@ public class Shooter {
 
 	public List<Point2D> getLinePoints(double x, double y) {
 		List<Point2D> result = new ArrayList<Point2D>();
-		if (y < BubblesTab.BUBBLES_HEIGHT + Bubble.DIAMETER && !gameplay.getTimer().isPaused()) {
+		if (y < BubblesTab.BUBBLES_HEIGHT + Bubble.DIAMETER) {
 			Point2D point = getStartPoint();
 			Point2D coefficients = getCoefficients(x, y, point);
 			TriFunction<Point2D, Point2D, Double, Point2D> function = chooseFunctionToApplay(point, coefficients);

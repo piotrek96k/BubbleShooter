@@ -1,5 +1,6 @@
 package com.project.main;
 
+import com.project.dialog.DialogOpener;
 import com.project.fxml.FxmlDocument;
 import com.project.model.gameplay.BubblesTab;
 import com.project.sound.SoundPlayer;
@@ -22,14 +23,23 @@ public class ApplicationMain extends Application {
 		StackPane stackPane = new StackPane();
 		Scene scene = new Scene(stackPane);
 		stage.setScene(scene);
-		SoundPlayer player = SoundPlayer.getInstance();
-		player.init(stackPane);
-		FXMLLoader loader = FxmlDocument.MainMenuView.getLoader();
+		SoundPlayer.getInstance().init(stackPane);
+		FXMLLoader loader = FxmlDocument.MAIN_MENU.getLoader();
 		Pane pane = loader.load();
 		pane.setPrefSize(BubblesTab.WIDTH / 2 * 3, BubblesTab.HEIGHT);
 		stackPane.getChildren().add(pane);
+		stage.setOnCloseRequest(event -> {
+			event.consume();
+			DialogOpener.openExitConfirmationAlert();
+		});
+		stage.setTitle("Bubble Shooter");
 		stage.setResizable(false);
 		stage.show();
+	}
+
+	@Override
+	public void stop() {
+		SoundPlayer.getInstance().saveUserPreferences();
 	}
 
 }

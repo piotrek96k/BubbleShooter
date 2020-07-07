@@ -2,20 +2,19 @@ package com.project.controller;
 
 import java.io.IOException;
 
+import com.project.dialog.DialogOpener;
 import com.project.fxml.FxmlDocument;
-import com.project.model.gameplay.Gameplay;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 
 public class MainMenuController {
 
 	@FXML
-	private VBox vBox;
+	private GridPane gridPane;
 
 	@FXML
 	private Button playButton;
@@ -31,24 +30,39 @@ public class MainMenuController {
 
 	@FXML
 	private void initialize() {
-		initPlayButton();
+		playButton.setOnAction(event -> loadFxml(FxmlDocument.PLAY_MENU));
+		optionsButton.setOnAction(event -> loadOptions());
+		exitButton.setOnAction(event -> DialogOpener.openExitConfirmationAlert());
 	}
 
-	private void initPlayButton() {
-		playButton.setOnAction(event -> {
-			StackPane stackPane = (StackPane) (vBox.getParent());
-			stackPane.getChildren().remove(vBox);
-			FXMLLoader loader = FxmlDocument.GameplayView.getLoader();
-			try {
-				Pane pane = loader.load();
-				stackPane.getChildren().add(pane);
-				GameplayController controller = loader.getController();
-				Gameplay gameplay = new Gameplay();
-				controller.setGameplay(gameplay);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		});
+	private void loadOptions() {
+		Pane pane = (Pane) gridPane.getParent();
+		pane.getChildren().remove(gridPane);
+		FXMLLoader loader = FxmlDocument.OPTIONS_MENU.getLoader();
+		try {
+			Pane optionsPane = loader.load();
+			pane.getChildren().add(optionsPane);
+			((OptionsMenuController) loader.getController()).setBackButtonAction(event -> {
+				pane.getChildren().remove(optionsPane);
+				try {
+					pane.getChildren().add(FxmlDocument.MAIN_MENU.getLoader().load());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void loadFxml(FxmlDocument fxml) {
+		Pane pane = (Pane) gridPane.getParent();
+		pane.getChildren().remove(gridPane);
+		try {
+			pane.getChildren().add(fxml.getLoader().load());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

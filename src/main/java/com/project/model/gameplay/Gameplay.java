@@ -53,7 +53,6 @@ public class Gameplay {
 		colorsCounter = new ColorsCounter(BubbleColor.values().length);
 		remover = new Remover(this);
 		shooter = new Shooter(this);
-//		Bubble.setDiameter(diameter);
 		Bubble.setOffset(5.0);
 		SoundPlayer.getInstance().switchMenuGameplayMusic();
 	}
@@ -194,6 +193,10 @@ public class Gameplay {
 
 	public boolean isMoving() {
 		return isMoving;
+	}
+
+	public boolean isPaused() {
+		return timer.isPaused();
 	}
 
 }

@@ -4,7 +4,15 @@ import javafx.fxml.FXMLLoader;
 
 public enum FxmlDocument {
 
-	MainMenuView("/fxml/MainMenuView.fxml"), GameplayView("/fxml/GameplayView.fxml");
+	GAMEPLAY_VIEW("/fxml/GameplayView.fxml"),
+
+	MAIN_MENU("/fxml/MainMenu.fxml"),
+
+	OPTIONS_MENU("/fxml/OptionsMenu.fxml"),
+
+	PAUSE_MENU("/fxml/PauseMenu.fxml"),
+
+	PLAY_MENU("/fxml/PlayMenu.fxml");
 
 	String document;
 

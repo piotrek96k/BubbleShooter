@@ -1,7 +1,9 @@
 package com.project.controller;
 
+import java.io.IOException;
 import java.util.List;
 
+import com.project.fxml.FxmlDocument;
 import com.project.model.bubble.Bubble;
 import com.project.model.gameplay.Gameplay;
 import com.project.view.GameplayView;
@@ -9,14 +11,17 @@ import com.project.view.Painter;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
+import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 public class GameplayController {
@@ -27,21 +32,28 @@ public class GameplayController {
 
 	private Point2D clickPoint;
 
+	private Pane pauseMenuPane;
+
 	@FXML
 	private GridPane gridPane;
-	
+
+	@FXML
+	private Button pauseButton;
+
 	@FXML
 	private void initialize() {
 		gridPane.setBackground(new Background(new BackgroundFill(
-				Painter.getLinearGradientPaint(Color.rgb(200, 178, 128)), CornerRadii.EMPTY, new Insets(0.0))));	}
+				Painter.getLinearGradientPaint(Color.rgb(200, 178, 128)), CornerRadii.EMPTY, new Insets(0.0))));
+	}
 
 	public void setGameplay(Gameplay gameplay) {
 		this.gameplay = gameplay;
 		view = new GameplayView();
 		view.setController(this);
 		initGameplay();
-		gridPane.add(view.getPane(),0,0,1,1);
-		view.getPane().getScene().addEventFilter(KeyEvent.KEY_PRESSED, this::handleKeyEvents);
+		gridPane.add(view.getPane(), 0, 0, 1, 1);
+		gridPane.addEventFilter(KeyEvent.KEY_PRESSED, this::handleKeyEvents);
+		pauseButton.setOnAction(event -> pauseOrResumeGame());
 	}
 
 	private void initGameplay() {
@@ -53,8 +65,26 @@ public class GameplayController {
 	}
 
 	private void handleKeyEvents(KeyEvent keyEvent) {
-		if (keyEvent.getCode().equals(KeyCode.SPACE))
-			gameplay.pauseOrResume();
+		if (keyEvent.getCode().equals(KeyCode.ESCAPE)) {
+			pauseOrResumeGame();
+		}
+	}
+
+	public void pauseOrResumeGame() {
+		gameplay.pauseOrResume();
+		if (gameplay.isPaused())
+			try {
+				FXMLLoader loader = FxmlDocument.PAUSE_MENU.getLoader();
+				pauseMenuPane = loader.load();
+				pauseMenuPane.setPrefWidth(gridPane.getWidth());
+				pauseMenuPane.setPrefHeight(gridPane.getHeight());
+				gridPane.add(pauseMenuPane, 0, 0, GridPane.REMAINING, GridPane.REMAINING);
+				((PauseMenuController) loader.getController()).setGameplayController(this);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		else
+			gridPane.getChildren().remove(pauseMenuPane);
 	}
 
 	private void addBubble(Bubble ball) {
@@ -81,8 +111,12 @@ public class GameplayController {
 		gameplay.throwBubble(x, y);
 	}
 
-	public Gameplay getModel() {
+	public Gameplay getGameplay() {
 		return gameplay;
+	}
+
+	public GridPane getGridPane() {
+		return gridPane;
 	}
 
 }

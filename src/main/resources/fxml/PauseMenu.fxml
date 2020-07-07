@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+
+<VBox fx:id="vBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="25.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.controller.PauseMenuController">
+   <children>
+      <Button fx:id="resumeButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Wznów">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Button>
+      <Button fx:id="restartButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Restart">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Button>
+      <Button fx:id="optionsButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Opcje">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Button>
+      <Button fx:id="bestPlayersButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Najlepsi Gracze">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Button>
+      <Button fx:id="menuButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Menu ">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Button>
+   </children>
+</VBox>
