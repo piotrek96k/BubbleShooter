@@ -1,9 +1,9 @@
 package com.project.controller;
 
-import java.io.IOException;
 import java.util.List;
 
 import com.project.fxml.FxmlDocument;
+import com.project.fxml.Loader;
 import com.project.model.bubble.Bubble;
 import com.project.model.gameplay.Gameplay;
 import com.project.view.GameplayView;
@@ -11,10 +11,10 @@ import com.project.view.Painter;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
@@ -41,6 +41,15 @@ public class GameplayController {
 	private Button pauseButton;
 
 	@FXML
+	private Label timeLabel;
+
+	@FXML
+	private Label pointsLabel;
+
+	@FXML
+	private Label comboLabel;
+
+	@FXML
 	private void initialize() {
 		gridPane.setBackground(new Background(new BackgroundFill(
 				Painter.getLinearGradientPaint(Color.rgb(200, 178, 128)), CornerRadii.EMPTY, new Insets(0.0))));
@@ -52,6 +61,9 @@ public class GameplayController {
 		view.setController(this);
 		initGameplay();
 		gridPane.add(view.getPane(), 0, 0, 1, 1);
+		timeLabel.setText(gameplay.getTime());
+		pointsLabel.setText(Long.toString(gameplay.getPoints()));
+		comboLabel.setText(gameplay.getCombo());
 		gridPane.addEventFilter(KeyEvent.KEY_PRESSED, this::handleKeyEvents);
 		pauseButton.setOnAction(event -> pauseOrResumeGame());
 	}
@@ -60,8 +72,12 @@ public class GameplayController {
 		gameplay.addBubbleAddedListener(bubble -> Platform.runLater(() -> addBubble(bubble)));
 		gameplay.addBubbleChangedListener(bubble -> Platform.runLater(() -> view.updateBubble(bubble)));
 		gameplay.addBubbleRemovedListener(bubble -> Platform.runLater(() -> removeBubble(bubble)));
-		gameplay.addMoveListener(() -> Platform.runLater(() -> refreshLines()));
-		gameplay.init();
+		gameplay.addMoveListener(() -> Platform.runLater(() -> view.updateBubblesTab()));
+		gameplay.addTimeListener(() -> Platform.runLater(() -> timeLabel.setText(gameplay.getTime())));
+		gameplay.addPointsListener(
+				() -> Platform.runLater(() -> pointsLabel.setText(Long.toString(gameplay.getPoints()))));
+		gameplay.addComboListener(() -> Platform.runLater(() -> comboLabel.setText(gameplay.getCombo())));
+//		gameplay.init();
 	}
 
 	private void handleKeyEvents(KeyEvent keyEvent) {
@@ -72,18 +88,14 @@ public class GameplayController {
 
 	public void pauseOrResumeGame() {
 		gameplay.pauseOrResume();
-		if (gameplay.isPaused())
-			try {
-				FXMLLoader loader = FxmlDocument.PAUSE_MENU.getLoader();
-				pauseMenuPane = loader.load();
-				pauseMenuPane.setPrefWidth(gridPane.getWidth());
-				pauseMenuPane.setPrefHeight(gridPane.getHeight());
-				gridPane.add(pauseMenuPane, 0, 0, GridPane.REMAINING, GridPane.REMAINING);
-				((PauseMenuController) loader.getController()).setGameplayController(this);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		else
+		if (gameplay.isPaused()) {
+			Loader<PauseMenuController, Pane> loader = new Loader<PauseMenuController, Pane>(FxmlDocument.PAUSE_MENU);
+			pauseMenuPane = loader.getView();
+			pauseMenuPane.setPrefWidth(gridPane.getWidth());
+			pauseMenuPane.setPrefHeight(gridPane.getHeight());
+			gridPane.add(pauseMenuPane, 0, 0, GridPane.REMAINING, GridPane.REMAINING);
+			loader.getController().setGameplayController(this);
+		} else
 			gridPane.getChildren().remove(pauseMenuPane);
 	}
 

@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 
 import com.project.model.bubble.BombBubble;
 import com.project.model.bubble.Bubble;
+import com.project.model.bubble.BubbleColor;
 import com.project.model.bubble.ColoredBubble;
 import com.project.sound.GameplaySoundEffect;
 import com.project.sound.SoundPlayer;
@@ -85,42 +86,72 @@ public class Remover {
 			return true;
 		return false;
 	}
+	
+	public void simpleRemove(Coordinate coordinate) {
+		Bubble bubble = gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()];
+		if (bubble != null) {
+			if (bubble instanceof ColoredBubble) {
+				ColoredBubble coloredBubble = (ColoredBubble) bubble;
+				for (BubbleColor color : coloredBubble.getColors())
+					gameplay.getColorsCounter().decrement(color);
+			}
+			toDelete.add(coordinate);
+			gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] = null;
+			gameplay.sendBubbleRemovedNotifications(bubble);
+			gameplay.getPointsCounter().addPointsForBubble(bubble);
+		}
+	}
 
-	public void removeHangers(Set<Coordinate> deleted) {
-		toDelete = deleted;
+	public void removeHangers() {
+		boolean isEmpty = toDelete.isEmpty();
 		synchronized (locker) {
 			findNeighbors();
 			removeIfHanging();
 		}
 		neighbor.clear();
 		toDelete.clear();
+		if(isEmpty)
+			gameplay.getPointsCounter().resetCombo();
+		else
+			gameplay.getPointsCounter().increaseCombo();
 		gameplay.setStopMoving();
 	}
 
 	private void findBubblesToRemove(boolean isTransparent) {
 		if (gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] instanceof BombBubble) {
 			findBombedBubbles();
+			gameplay.getPointsCounter().increaseCombo();
 		} else {
 			applyOnSurroundingBubbles(consumers.get(0));
 			neighbor.clear();
 			if (counter >= getNumberToCheck(isTransparent))
-				synchronized (locker) {
-					removeBubbles();
-					findNeighbors();
-					removeIfHanging();
-					neighbor.clear();
-					runFindingBombedBubbles();
-				}
-			else {
-				applyOnSurroundingBubbles(consumers.get(4));
-				if (bomb) {
-					runFindingBombedBubbles();
-					bomb = false;
-				}
-			}
+				startReaction();
+			else
+				ifBombStartReaction();
 		}
 		bombs.clear();
 		toDelete.clear();
+	}
+
+	private void ifBombStartReaction() {
+		applyOnSurroundingBubbles(consumers.get(4));
+		if (bomb) {
+			runFindingBombedBubbles();
+			bomb = false;
+			gameplay.getPointsCounter().increaseCombo();
+		} else
+			gameplay.getPointsCounter().resetCombo();
+	}
+
+	private void startReaction() {
+		synchronized (locker) {
+			removeBubbles();
+			findNeighbors();
+			removeIfHanging();
+			neighbor.clear();
+			runFindingBombedBubbles();
+			gameplay.getPointsCounter().increaseCombo();
+		}
 	}
 
 	private int getNumberToCheck(boolean isTransparent) {
@@ -241,6 +272,7 @@ public class Remover {
 			for (int i = 0; i < coloredBubble.getColorsQuantity(); i++)
 				gameplay.getColorsCounter().decrement(coloredBubble.getColors().get(i));
 		}
+		gameplay.getPointsCounter().addPointsForBubble(bubble);
 		gameplay.sendBubbleRemovedNotifications(bubble);
 	}
 

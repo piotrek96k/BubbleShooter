@@ -68,6 +68,11 @@ public class BubblesTab {
 	public BubblesTab(Gameplay gameplay) {
 		bubbles = new Bubble[ROWS][COLUMNS];
 		this.gameplay = gameplay;
+		initBubbles();
+		nextBubble = getRandomBubbleType(WIDTH / 2, BUBBLES_HEIGHT + (HEIGHT - BUBBLES_HEIGHT) / 2, 0.2,
+				suppliers.get(1));
+		setNextBubbleAsBubbleToThrow();
+		createNewTask();
 	}
 
 	private class GoDown implements Runnable {
@@ -103,7 +108,6 @@ public class BubblesTab {
 						bubbles[i][j] = bubbles[i - 1][j];
 						bubbles[i - 1][j] = null;
 						bubbles[i][j].setCenterY(getCenterY(i));
-						gameplay.sendBubbleChangedNotifications(bubbles[i][j]);
 						if (i == ROWS - 1)
 							finished = true;
 					}
@@ -112,6 +116,7 @@ public class BubblesTab {
 					gameplay.finishGame();
 			}
 			initRow();
+			gameplay.sendMoveNotifications();
 		}
 
 		private void initRow() {
@@ -122,7 +127,6 @@ public class BubblesTab {
 				if (bubbles[0][j] instanceof ColoredBubble)
 					for (BubbleColor color : ((ColoredBubble) bubbles[0][j]).getColors())
 						gameplay.getColorsCounter().increment(color);
-				gameplay.sendBubbleAddedNotifications(bubbles[0][j]);
 			}
 		}
 
@@ -133,15 +137,6 @@ public class BubblesTab {
 				rowOffset = 0;
 		}
 
-	}
-
-	public void init() {
-		initBubbles();
-		nextBubble = getRandomBubbleType(WIDTH / 2, BUBBLES_HEIGHT + (HEIGHT - BUBBLES_HEIGHT) / 2, 0.2,
-				suppliers.get(1));
-		gameplay.sendBubbleAddedNotifications(nextBubble);
-		setNextBubbleAsBubbleToThrow();
-		createNewTask();
 	}
 
 	private void initBubbles() {

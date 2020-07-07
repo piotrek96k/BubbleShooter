@@ -30,7 +30,10 @@
       <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
    </rowConstraints>
    <children>
-      <Button fx:id="backButton" mnemonicParsing="false" prefHeight="50.0" prefWidth="150.0" text="Powrót" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
+      <Button fx:id="backButton" mnemonicParsing="false" prefHeight="50.0" prefWidth="150.0" text="Powrót" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
+         <font>
+            <Font size="24.0" />
+         </font></Button>
       <Label prefHeight="50.0" text="Efekty dzwiękowe" GridPane.columnIndex="1" GridPane.rowIndex="1">
          <font>
             <Font size="24.0" />

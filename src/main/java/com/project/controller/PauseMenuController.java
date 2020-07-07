@@ -1,13 +1,11 @@
 package com.project.controller;
 
-import java.io.IOException;
-
 import com.project.dialog.DialogOpener;
 import com.project.fxml.FxmlDocument;
+import com.project.fxml.Loader;
 import com.project.model.gameplay.Gameplay;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -46,45 +44,27 @@ public class PauseMenuController {
 	private void startNewGame() {
 		gameplayController.getGameplay().finishGame();
 		Pane gridPane = gameplayController.getGridPane();
-		Pane pane = (Pane) gridPane.getParent();
-		pane.getChildren().remove(gridPane);
-		FXMLLoader loader = FxmlDocument.GAMEPLAY_VIEW.getLoader();
-		try {
-			Pane loadedPane = loader.load();
-			pane.getChildren().add(loadedPane);
-			((GameplayController) loader.getController()).setGameplay(new Gameplay());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Loader<GameplayController, Pane> loader = MainMenuController.loadFxml(FxmlDocument.GAMEPLAY_VIEW, gridPane);
+		loader.getController().setGameplay(new Gameplay());
 	}
 
 	private void loadOptionsMenu() {
 		GridPane gridPane = gameplayController.getGridPane();
 		Pane pane = (Pane) vBox.getParent().getParent();
 		pane.getChildren().remove(gridPane);
-		FXMLLoader loader = FxmlDocument.OPTIONS_MENU.getLoader();
-		try {
-			Pane optionsPane = loader.load();
-			pane.getChildren().add(optionsPane);
-			((OptionsMenuController) loader.getController()).setBackButtonAction(event -> {
-				pane.getChildren().remove(optionsPane);
-				pane.getChildren().add(gridPane);
-			});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Loader<OptionsMenuController, Pane> loader = new Loader<OptionsMenuController, Pane>(FxmlDocument.OPTIONS_MENU);
+		Pane optionsPane = loader.getView();
+		pane.getChildren().add(optionsPane);
+		loader.getController().setBackButtonAction(event -> {
+			pane.getChildren().remove(optionsPane);
+			pane.getChildren().add(gridPane);
+		});
 	}
 
 	private void loadPlayMenu() {
 		gameplayController.getGameplay().finishGame();
 		Pane gridPane = gameplayController.getGridPane();
-		Pane pane = (Pane) gridPane.getParent();
-		pane.getChildren().remove(gridPane);
-		try {
-			pane.getChildren().add(FxmlDocument.PLAY_MENU.getLoader().load());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		MainMenuController.loadFxml(FxmlDocument.PLAY_MENU, gridPane);
 	}
 
 }

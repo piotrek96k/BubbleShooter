@@ -1,7 +1,5 @@
 package com.project.fxml;
 
-import javafx.fxml.FXMLLoader;
-
 public enum FxmlDocument {
 
 	GAMEPLAY_VIEW("/fxml/GameplayView.fxml"),
@@ -20,8 +18,8 @@ public enum FxmlDocument {
 		this.document = document;
 	}
 
-	public FXMLLoader getLoader() {
-		return new FXMLLoader(FxmlDocument.class.getResource(document));
+	public String getDocument() {
+		return document;
 	}
 
 }

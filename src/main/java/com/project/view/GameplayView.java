@@ -68,6 +68,9 @@ public class GameplayView {
 		pane.setOnMouseMoved(this::handleMouseMoving);
 		pane.setOnMouseDragged(this::handleMouseMoving);
 		pane.setOnMouseClicked(this::handleMouseClicking);
+		updateBubblesTab();
+		addBubble(controller.getGameplay().getBubblesTab().getBubbleToThrow());
+		addBubble(controller.getGameplay().getBubblesTab().getNextBubble());
 	}
 
 	private void addRectangle() {
@@ -83,6 +86,14 @@ public class GameplayView {
 		pane.setPrefWidth(BubblesTab.WIDTH);
 		pane.setMinHeight(Pane.USE_PREF_SIZE);
 		pane.setMinWidth(Pane.USE_PREF_SIZE);
+	}
+
+	public void updateBubblesTab() {
+		Bubble[][] bubbles = controller.getGameplay().getBubblesTab().getBubbles();
+		for (Bubble[] bubblesRow : bubbles)
+			for (Bubble bubble : bubblesRow)
+				if (bubble != null && !updateBubble(bubble))
+					addBubble(bubble);
 	}
 
 	public void addBubble(Bubble bubble) {
@@ -154,14 +165,14 @@ public class GameplayView {
 		}
 	}
 
-	public void updateBubble(Bubble bubble) {
+	public boolean updateBubble(Bubble bubble) {
 		Circle circle = circlesMap.get(bubble.BUBBLE_NUMBER);
 		if (circle != null) {
 			if (bubble instanceof ColoredBubble)
 				circle.setFill(Painter.getLinearGradientPaint(((ColoredBubble) bubble).getColors().get(0).getColor()));
 			circle.setCenterX(bubble.getCenterX());
 			circle.setCenterY(bubble.getCenterY());
-			return;
+			return true;
 		}
 		Painter painter = paintersMap.get(bubble.BUBBLE_NUMBER);
 		if (painter != null) {
@@ -172,8 +183,9 @@ public class GameplayView {
 				painter.updatePaint(((ColoredBubble) bubble).getColors());
 			else if (bubble instanceof TransparentBubble)
 				painter.updatePaint(Arrays.asList(new BubbleColor[] { ((TransparentBubble) bubble).getColor() }));
-			return;
+			return true;
 		}
+		return false;
 	}
 
 	private void setLineStyle(Line line) {

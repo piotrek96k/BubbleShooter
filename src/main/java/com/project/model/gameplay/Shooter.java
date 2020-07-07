@@ -1,9 +1,7 @@
 package com.project.model.gameplay;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.project.function.TriFunction;
 import com.project.model.bubble.Bubble;
@@ -42,8 +40,6 @@ public class Shooter {
 		private Point2D coefficients;
 
 		private int counter = 1;
-
-		Set<Coordinate> deleted = new LinkedHashSet<Coordinate>();
 
 		private TriFunction<Point2D, Point2D, Double, Point2D> function;
 
@@ -87,23 +83,12 @@ public class Shooter {
 
 		private void moveDestroyingBubble() {
 			if (checkIfNeedToChangePath(point) || point.getY() < Bubble.DIAMETER / 2) {
-				new Thread(() -> gameplay.getRemover().removeHangers(deleted), "Removing Thread").start();
+				new Thread(() -> gameplay.getRemover().removeHangers(), "Removing Thread").start();
 				stop();
 				gameplay.sendBubbleRemovedNotifications(gameplay.getBubblesTab().getBubbleToThrow());
 			}
-			for (Coordinate coordinate : getCoordinates(point, Bubble.DIAMETER / 4)) {
-				Bubble bubble = gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()];
-				if (bubble != null) {
-					if (bubble instanceof ColoredBubble) {
-						ColoredBubble coloredBubble = (ColoredBubble) bubble;
-						for (BubbleColor color : coloredBubble.getColors())
-							gameplay.getColorsCounter().decrement(color);
-					}
-					deleted.add(coordinate);
-					gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] = null;
-					gameplay.sendBubbleRemovedNotifications(bubble);
-				}
-			}
+			for (Coordinate coordinate : getCoordinates(point, Bubble.DIAMETER / 4))
+				gameplay.getRemover().simpleRemove(coordinate);
 		}
 
 		private Void restartTimer(Point2D point, Point2D coefficients,
@@ -270,7 +255,7 @@ public class Shooter {
 		if (bubble == null)
 			return false;
 		double distance = calculateDistance(point, coordinate);
-		if (distance > Bubble.DIAMETER / 2)
+		if (distance > Bubble.DIAMETER)
 			return false;
 		return true;
 	}

@@ -6,7 +6,7 @@ import java.util.List;
 import com.project.model.bubble.Bubble;
 import com.project.model.bubble.BubbleColor;
 import com.project.model.listener.BubbleListener;
-import com.project.model.listener.MoveListener;
+import com.project.model.listener.ChangeListener;
 import com.project.sound.SoundPlayer;
 import com.project.timer.PausableTimer;
 
@@ -27,6 +27,10 @@ public class Gameplay {
 
 	private ColorsCounter colorsCounter;
 
+	private TimeCounter timeCounter;
+
+	private PointsCounter pointsCounter;
+
 	private PausableTimer timer;
 
 	private BooleanProperty finished;
@@ -37,7 +41,13 @@ public class Gameplay {
 
 	private List<BubbleListener> bubbleChangedListeners;
 
-	private List<MoveListener> moveListeners;
+	private List<ChangeListener> moveListeners;
+
+	private List<ChangeListener> timeListeners;
+
+	private List<ChangeListener> pointsListeners;
+
+	private List<ChangeListener> comboListeners;
 
 	{
 		timer = new PausableTimer(true);
@@ -45,20 +55,21 @@ public class Gameplay {
 		bubbleAddedListeners = new LinkedList<BubbleListener>();
 		bubbleRemovedListeners = new LinkedList<BubbleListener>();
 		bubbleChangedListeners = new LinkedList<BubbleListener>();
-		moveListeners = new LinkedList<MoveListener>();
+		moveListeners = new LinkedList<ChangeListener>();
+		timeListeners = new LinkedList<ChangeListener>();
+		pointsListeners = new LinkedList<ChangeListener>();
+		comboListeners = new LinkedList<ChangeListener>();
 	}
 
 	public Gameplay() {
-		bubblesTab = new BubblesTab(this);
 		colorsCounter = new ColorsCounter(BubbleColor.values().length);
+		timeCounter = new TimeCounter(this);
+		pointsCounter = new PointsCounter(this);
 		remover = new Remover(this);
 		shooter = new Shooter(this);
+		bubblesTab = new BubblesTab(this);
 		Bubble.setOffset(5.0);
 		SoundPlayer.getInstance().switchMenuGameplayMusic();
-	}
-
-	public void init() {
-		bubblesTab.init();
 	}
 
 	public void setStopMoving() {
@@ -90,10 +101,10 @@ public class Gameplay {
 	public void pauseOrResume() {
 		if (timer.isPaused()) {
 			timer.resume();
-//			SoundPlayer.getInstance().resumeGameplaySoundEffects();
+			SoundPlayer.getInstance().resumeGameplaySoundEffects();
 		} else {
 			timer.pause();
-//			SoundPlayer.getInstance().pauseGameplaySoundEffects();
+			SoundPlayer.getInstance().pauseGameplaySoundEffects();
 		}
 	}
 
@@ -154,17 +165,56 @@ public class Gameplay {
 		bubbleChangedListeners.remove(listener);
 	}
 
-	public void addMoveListener(MoveListener listener) {
+	public void addMoveListener(ChangeListener listener) {
 		moveListeners.add(listener);
 	}
 
-	public void removeMoveListener(MoveListener listener) {
+	public void removeMoveListener(ChangeListener listener) {
 		moveListeners.remove(listener);
 	}
 
-	public void sendMovedNotofications() {
-		for (MoveListener listener : moveListeners)
-			listener.moved();
+	public void sendMoveNotifications() {
+		for (ChangeListener listener : moveListeners)
+			listener.changed();
+	}
+
+	public void addTimeListener(ChangeListener listener) {
+		timeListeners.add(listener);
+	}
+
+	public void removeTimeListener(ChangeListener listener) {
+		timeListeners.remove(listener);
+	}
+
+	public void sendTimeNotifications() {
+		for (ChangeListener listener : timeListeners)
+			listener.changed();
+	}
+
+	public void addPointsListener(ChangeListener listener) {
+		pointsListeners.add(listener);
+	}
+
+	public void removePointsListener(ChangeListener listener) {
+		pointsListeners.remove(listener);
+	}
+
+	public void sendPointsNotofications() {
+		for (ChangeListener listener : pointsListeners)
+			listener.changed();
+	}
+
+	public void addComboListener(ChangeListener listener) {
+		comboListeners.add(listener);
+	}
+
+	public void removeComboListener(ChangeListener listener) {
+		comboListeners.remove(listener);
+	}
+
+	public void sendComboNotifications() {
+		for (ChangeListener listener : comboListeners)
+			listener.changed();
 	}
 
 	public BubblesTab getBubblesTab() {
@@ -183,8 +233,28 @@ public class Gameplay {
 		return colorsCounter;
 	}
 
+	public TimeCounter getTimeCounter() {
+		return timeCounter;
+	}
+
+	public PointsCounter getPointsCounter() {
+		return pointsCounter;
+	}
+
 	public PausableTimer getTimer() {
 		return timer;
+	}
+
+	public String getTime() {
+		return timeCounter.getTime();
+	}
+
+	public String getCombo() {
+		return pointsCounter.getCombo();
+	}
+
+	public long getPoints() {
+		return pointsCounter.getPoints();
 	}
 
 	public ReadOnlyBooleanProperty isFinishedProperty() {

@@ -2,6 +2,6 @@ package com.project.function;
 
 public interface TriFunction<T,U,V,R> {
 
-	R apply(T t, U u, V v);
+	public R apply(T t, U u, V v);
 	
 }

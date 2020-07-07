@@ -5,11 +5,15 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
 public class PausableTimer {
 
-	private boolean isPaused;
+	private boolean canceled;
 
-	private boolean isCanceled;
+	private BooleanProperty paused;
 
 	private Timer timer;
 
@@ -22,6 +26,7 @@ public class PausableTimer {
 	private Map<Runnable, TimerTask> timerTasks;
 
 	{
+		paused = new SimpleBooleanProperty(false);
 		timesMap = new HashMap<Runnable, Long>();
 		delaysMap = new HashMap<Runnable, Long>();
 		initDelaysMap = new HashMap<Runnable, Long>();
@@ -33,9 +38,9 @@ public class PausableTimer {
 	}
 
 	public synchronized void schedule(Runnable runnable, long delay) {
-		if (isCanceled)
+		if (canceled)
 			throw new IllegalStateException();
-		if (!isPaused) {
+		if (!paused.get()) {
 			delaysMap.put(runnable, delay);
 			initDelaysMap.put(runnable, 0L);
 			createTimerTask(runnable, delay, delay);
@@ -43,7 +48,7 @@ public class PausableTimer {
 	}
 
 	public synchronized void cancelTask(Runnable runnable) {
-		if (isCanceled)
+		if (canceled)
 			throw new IllegalStateException();
 		TimerTask timerTask = timerTasks.get(runnable);
 		if (timerTask != null) {
@@ -76,9 +81,9 @@ public class PausableTimer {
 	}
 
 	public synchronized void pause() {
-		if (isCanceled)
+		if (canceled)
 			throw new IllegalStateException();
-		if (!isPaused) {
+		if (!paused.get()) {
 			for (Runnable runnable : timesMap.keySet()) {
 				long time = timesMap.get(runnable);
 				time = (System.currentTimeMillis() - time) + initDelaysMap.get(runnable);
@@ -87,29 +92,33 @@ public class PausableTimer {
 			for (TimerTask timerTask : timerTasks.values())
 				timerTask.cancel();
 			timerTasks.clear();
-			isPaused = true;
+			paused.set(true);
 		}
 	}
 
 	public synchronized void resume() {
-		if (isCanceled)
+		if (canceled)
 			throw new IllegalStateException();
-		if (isPaused) {
+		if (paused.get()) {
 			for (Runnable runnable : timesMap.keySet()) {
 				initDelaysMap.put(runnable, timesMap.get(runnable));
 				long time = Math.abs(delaysMap.get(runnable) - timesMap.get(runnable));
 				createTimerTask(runnable, time, delaysMap.get(runnable));
 			}
-			isPaused = false;
+			paused.set(false);
 		}
 	}
 
+	public synchronized ReadOnlyBooleanProperty isPausedProperty() {
+		return (ReadOnlyBooleanProperty) paused;
+	}
+
 	public synchronized boolean isPaused() {
-		return isPaused;
+		return paused.get();
 	}
 
 	public synchronized void cancel() {
-		isCanceled = true;
+		canceled = true;
 		timer.cancel();
 	}
 

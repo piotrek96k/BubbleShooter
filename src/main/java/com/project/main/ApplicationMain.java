@@ -1,12 +1,13 @@
 package com.project.main;
 
+import com.project.controller.MainMenuController;
 import com.project.dialog.DialogOpener;
 import com.project.fxml.FxmlDocument;
+import com.project.fxml.Loader;
 import com.project.model.gameplay.BubblesTab;
 import com.project.sound.SoundPlayer;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -24,8 +25,8 @@ public class ApplicationMain extends Application {
 		Scene scene = new Scene(stackPane);
 		stage.setScene(scene);
 		SoundPlayer.getInstance().init(stackPane);
-		FXMLLoader loader = FxmlDocument.MAIN_MENU.getLoader();
-		Pane pane = loader.load();
+		Loader<MainMenuController,Pane> loader = new Loader<MainMenuController, Pane>(FxmlDocument.MAIN_MENU);
+		Pane pane = loader.getView();
 		pane.setPrefSize(BubblesTab.WIDTH / 2 * 3, BubblesTab.HEIGHT);
 		stackPane.getChildren().add(pane);
 		stage.setOnCloseRequest(event -> {

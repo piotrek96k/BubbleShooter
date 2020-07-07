@@ -27,11 +27,11 @@
    <children>
       <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
          <children>
-            <Label fx:id="ImieLabel" prefHeight="50.0" prefWidth="100.0" text="Imię">
+            <Label prefHeight="50.0" prefWidth="100.0" text="Imię">
                <font>
                   <Font size="24.0" />
                </font></Label>
-            <TextField fx:id="ImieTextField" prefHeight="50.0" prefWidth="225.0">
+            <TextField prefHeight="50.0" prefWidth="225.0">
                <font>
                   <Font size="24.0" />
                </font></TextField>
@@ -39,20 +39,20 @@
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
          <children>
-            <Label fx:id="TrybGryLabel" prefHeight="50.0" prefWidth="100.0" text="Tryb gry:">
+            <Label prefHeight="50.0" prefWidth="100.0" text="Tryb gry:">
                <font>
                   <Font size="24.0" />
                </font></Label>
-            <ChoiceBox fx:id="TrybGryChociceBox" prefHeight="50.0" prefWidth="225.0" />
+            <ChoiceBox prefHeight="50.0" prefWidth="225.0" />
          </children>
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
          <children>
-            <Label fx:id="PoziomLabel" prefHeight="50.0" prefWidth="100.0" text="Poziom">
+            <Label prefHeight="50.0" prefWidth="100.0" text="Poziom">
                <font>
                   <Font size="24.0" />
                </font></Label>
-            <ChoiceBox fx:id="PoziomChociceBox" prefHeight="50.0" prefWidth="225.0" />
+            <ChoiceBox prefHeight="50.0" prefWidth="225.0" />
          </children>
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="25.0" GridPane.columnIndex="1" GridPane.rowIndex="4">

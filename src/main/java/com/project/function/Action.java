@@ -2,6 +2,6 @@ package com.project.function;
 
 public interface Action {
 
-	void execute();
+	public void execute();
 	
 }

@@ -1,12 +1,10 @@
 package com.project.controller;
 
-import java.io.IOException;
-
 import com.project.dialog.DialogOpener;
 import com.project.fxml.FxmlDocument;
+import com.project.fxml.Loader;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -30,39 +28,26 @@ public class MainMenuController {
 
 	@FXML
 	private void initialize() {
-		playButton.setOnAction(event -> loadFxml(FxmlDocument.PLAY_MENU));
+		playButton.setOnAction(event -> loadFxml(FxmlDocument.PLAY_MENU, gridPane));
 		optionsButton.setOnAction(event -> loadOptions());
 		exitButton.setOnAction(event -> DialogOpener.openExitConfirmationAlert());
 	}
 
 	private void loadOptions() {
-		Pane pane = (Pane) gridPane.getParent();
-		pane.getChildren().remove(gridPane);
-		FXMLLoader loader = FxmlDocument.OPTIONS_MENU.getLoader();
-		try {
-			Pane optionsPane = loader.load();
-			pane.getChildren().add(optionsPane);
-			((OptionsMenuController) loader.getController()).setBackButtonAction(event -> {
-				pane.getChildren().remove(optionsPane);
-				try {
-					pane.getChildren().add(FxmlDocument.MAIN_MENU.getLoader().load());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			});
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Loader<OptionsMenuController, Pane> loader = loadFxml(FxmlDocument.OPTIONS_MENU, gridPane);
+		loader.getController().setBackButtonAction(event -> {
+			Pane pane = (Pane) loader.getView().getParent();
+			pane.getChildren().remove(loader.getView());
+			pane.getChildren().add(new Loader<MainMenuController, Pane>(FxmlDocument.MAIN_MENU).getView());
+		});
 	}
 
-	private void loadFxml(FxmlDocument fxml) {
-		Pane pane = (Pane) gridPane.getParent();
-		pane.getChildren().remove(gridPane);
-		try {
-			pane.getChildren().add(fxml.getLoader().load());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public static <T> Loader<T, Pane> loadFxml(FxmlDocument document, Pane child) {
+		Pane pane = (Pane) child.getParent();
+		pane.getChildren().remove(child);
+		Loader<T, Pane> loader = new Loader<T, Pane>(document);
+		pane.getChildren().add(loader.getView());
+		return loader;
 	}
 
 }
