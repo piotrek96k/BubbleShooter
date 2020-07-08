@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.project.model.bubble.Bubble;
-import com.project.model.bubble.BubbleColor;
+import com.project.model.gameplay.mode.GameMode;
 import com.project.model.listener.BubbleListener;
 import com.project.model.listener.ChangeListener;
 import com.project.sound.SoundPlayer;
@@ -17,7 +17,11 @@ import javafx.geometry.Point2D;
 
 public class Gameplay {
 
-	private boolean isMoving;
+	private boolean moving;
+
+	private boolean victorious;
+
+	private GameMode gameMode;
 
 	private BubblesTab bubblesTab;
 
@@ -61,13 +65,14 @@ public class Gameplay {
 		comboListeners = new LinkedList<ChangeListener>();
 	}
 
-	public Gameplay() {
-		colorsCounter = new ColorsCounter(BubbleColor.values().length);
+	public Gameplay(GameMode gameMode) {
+		this.gameMode = gameMode;
+		colorsCounter = new ColorsCounter();
 		timeCounter = new TimeCounter(this);
-		pointsCounter = new PointsCounter(this);
 		remover = new Remover(this);
 		shooter = new Shooter(this);
 		bubblesTab = new BubblesTab(this);
+		pointsCounter = new PointsCounter(this);
 		Bubble.setOffset(5.0);
 		SoundPlayer.getInstance().switchMenuGameplayMusic();
 	}
@@ -77,7 +82,7 @@ public class Gameplay {
 			finishGame();
 		else
 			bubblesTab.setBubbleToThrow();
-		isMoving = false;
+		moving = false;
 		synchronized (bubblesTab.getLocker()) {
 			if (bubblesTab.isWaiting())
 				bubblesTab.getLocker().notifyAll();
@@ -91,11 +96,12 @@ public class Gameplay {
 		for (Bubble bubble : bubblesTab.getBubbles()[0])
 			if (bubble != null)
 				return false;
+		victorious = true;
 		return true;
 	}
 
 	public void setStartMoving() {
-		isMoving = true;
+		moving = true;
 	}
 
 	public void pauseOrResume() {
@@ -250,10 +256,10 @@ public class Gameplay {
 	}
 
 	public String getCombo() {
-		return pointsCounter.getCombo();
+		return pointsCounter.getComboAsString();
 	}
 
-	public long getPoints() {
+	public String getPoints() {
 		return pointsCounter.getPoints();
 	}
 
@@ -261,12 +267,20 @@ public class Gameplay {
 		return (ReadOnlyBooleanProperty) finished;
 	}
 
+	public GameMode getGameMode() {
+		return gameMode;
+	}
+
 	public boolean isMoving() {
-		return isMoving;
+		return moving;
 	}
 
 	public boolean isPaused() {
 		return timer.isPaused();
+	}
+
+	public boolean isVictorious() {
+		return victorious;
 	}
 
 }

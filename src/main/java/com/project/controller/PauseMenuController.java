@@ -45,7 +45,7 @@ public class PauseMenuController {
 		gameplayController.getGameplay().finishGame();
 		Pane gridPane = gameplayController.getGridPane();
 		Loader<GameplayController, Pane> loader = MainMenuController.loadFxml(FxmlDocument.GAMEPLAY_VIEW, gridPane);
-		loader.getController().setGameplay(new Gameplay());
+		loader.getController().setGameplay(new Gameplay(gameplayController.getGameplay().getGameMode()));
 	}
 
 	private void loadOptionsMenu() {

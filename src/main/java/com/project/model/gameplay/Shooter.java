@@ -124,6 +124,7 @@ public class Shooter {
 			if (!checkIfSameColorAsTransparent(coordinate)) {
 				if (point.getY() < Bubble.DIAMETER / 2) {
 					gameplay.sendBubbleRemovedNotifications(gameplay.getBubblesTab().getBubbleToThrow());
+					gameplay.getPointsCounter().resetCombo();
 					gameplay.setStopMoving();
 					return true;
 				}
@@ -135,6 +136,7 @@ public class Shooter {
 				gameplay.sendBubbleRemovedNotifications(gameplay.getBubblesTab().getBubbleToThrow());
 			} else if (point.getY() < Bubble.DIAMETER / 2) {
 				gameplay.sendBubbleRemovedNotifications(gameplay.getBubblesTab().getBubbleToThrow());
+				gameplay.getPointsCounter().resetCombo();
 				gameplay.setStopMoving();
 				return true;
 			}

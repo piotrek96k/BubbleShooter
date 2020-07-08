@@ -11,6 +11,7 @@ import com.project.model.bubble.BubbleColor;
 import com.project.model.bubble.ColoredBubble;
 import com.project.model.bubble.DestroyingBubble;
 import com.project.model.bubble.TransparentBubble;
+import com.project.model.gameplay.mode.GameMode;
 
 public class BubblesTab {
 
@@ -30,6 +31,8 @@ public class BubblesTab {
 
 	private int rowOffset;
 
+	private int numberOfColors[];
+
 	private boolean[] isWaiting;
 
 	private List<Supplier<BubbleColor>> suppliers;
@@ -45,6 +48,8 @@ public class BubblesTab {
 	private Random random;
 
 	private Object locker;
+
+	private GoDown goDown;
 
 	static {
 		HEIGHT_COEFFICIENT = Math.pow(3, 0.5) / 2;
@@ -68,14 +73,24 @@ public class BubblesTab {
 	public BubblesTab(Gameplay gameplay) {
 		bubbles = new Bubble[ROWS][COLUMNS];
 		this.gameplay = gameplay;
+		numberOfColors = new int[] { gameplay.getGameMode().getDifficultyLevel().getNumberOfColors() };
 		initBubbles();
 		nextBubble = getRandomBubbleType(WIDTH / 2, BUBBLES_HEIGHT + (HEIGHT - BUBBLES_HEIGHT) / 2, 0.2,
 				suppliers.get(1));
 		setNextBubbleAsBubbleToThrow();
 		createNewTask();
+		if (gameplay.getGameMode().equals(GameMode.SURVIVAL_MODE))
+			scheduleColorsIncerementRunnable();
 	}
 
 	private class GoDown implements Runnable {
+
+		private int consumerMethodNumber;
+
+		{
+			if (gameplay.getGameMode().equals(GameMode.TIME_MODE))
+				consumerMethodNumber = 1;
+		}
 
 		@Override
 		public void run() {
@@ -123,7 +138,8 @@ public class BubblesTab {
 			double yCoordinate = getCenterY(0);
 			for (int j = 0; j < COLUMNS; j++) {
 				double xCoordinate = getCenterX(0, j);
-				bubbles[0][j] = getRandomNotThrowableTypeBubble(xCoordinate, yCoordinate, 0.05, suppliers.get(1));
+				Supplier<BubbleColor> supplier = suppliers.get(consumerMethodNumber);
+				bubbles[0][j] = getRandomNotThrowableTypeBubble(xCoordinate, yCoordinate, 0.05, supplier);
 				if (bubbles[0][j] instanceof ColoredBubble)
 					for (BubbleColor color : ((ColoredBubble) bubbles[0][j]).getColors())
 						gameplay.getColorsCounter().increment(color);
@@ -154,7 +170,20 @@ public class BubblesTab {
 	}
 
 	private void createNewTask() {
-		gameplay.getTimer().schedule(new GoDown(), 20_000);
+		goDown = new GoDown();
+		gameplay.getTimer().schedule(goDown, 20_000);
+	}
+
+	private void scheduleColorsIncerementRunnable() {
+		Runnable[] runnable = { null };
+		runnable[0] = () -> {
+			numberOfColors[0]++;
+			if (gameplay.getPointsCounter().getCombo() < gameplay.getPointsCounter().getMinimumCombo())
+				gameplay.getPointsCounter().resetCombo();
+			if (numberOfColors[0] == BubbleColor.values().length)
+				gameplay.getTimer().cancelTask(runnable[0]);
+		};
+		gameplay.getTimer().schedule(runnable[0], 4 * 60_000);
 	}
 
 	private void setNextBubbleAsBubbleToThrow() {
@@ -199,9 +228,9 @@ public class BubblesTab {
 		randomNumber = random.nextDouble();
 		if (randomNumber <= probability && gameplay.getColorsCounter().getActiveBubblesNumber() >= 2) {
 			BubbleColor secondColor;
-			do {
+			do
 				secondColor = supplier.get();
-			} while (secondColor.equals(color));
+			while (secondColor.equals(color));
 			randomNumber = random.nextDouble();
 			if (randomNumber <= 0.33 && gameplay.getColorsCounter().getActiveBubblesNumber() >= 3) {
 				BubbleColor thirdColor;
@@ -217,6 +246,20 @@ public class BubblesTab {
 	}
 
 	public void setBubbleToThrow() {
+		if (gameplay.getGameMode().equals(GameMode.TIME_MODE))
+			changeNextBubbleIfNeed();
+		else
+			addColorsAndBubblesIfNeed();
+		setNextBubbleAsBubbleToThrow();
+	}
+
+	private void addColorsAndBubblesIfNeed() {
+		if (gameplay.getColorsCounter().getColorsSum() < 50)
+			for (int i = 0; i < 3; i++)
+				goDown.run();
+	}
+
+	private void changeNextBubbleIfNeed() {
 		if (nextBubble instanceof ColoredBubble) {
 			ColoredBubble bubble = (ColoredBubble) nextBubble;
 			int activeColorsNumber = gameplay.getColorsCounter().getActiveBubblesNumber();
@@ -226,7 +269,6 @@ public class BubblesTab {
 				changeNextBubble(bubble);
 		} else if (nextBubble instanceof TransparentBubble)
 			changeTransparentBubble();
-		setNextBubbleAsBubbleToThrow();
 	}
 
 	private void changeTransparentBubble() {
@@ -279,7 +321,7 @@ public class BubblesTab {
 
 	public BubbleColor getRandomBubbleColor() {
 		BubbleColor[] colors = BubbleColor.values();
-		return colors[random.nextInt(colors.length)];
+		return colors[random.nextInt(numberOfColors[0])];
 	}
 
 	public double getCenterY(int row) {
@@ -316,6 +358,10 @@ public class BubblesTab {
 
 	public boolean isWaiting() {
 		return isWaiting[0];
+	}
+
+	public int getNumberOfColors() {
+		return numberOfColors[0];
 	}
 
 }

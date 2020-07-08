@@ -44,9 +44,7 @@ public class TimeCounter {
 			builder.append("d ");
 			time %= 24;
 		}
-		if(time<10)
-			builder.append('0');
-		builder.append(time);
+		builder.append(String.format("%02d", time));
 		if (number != 0)
 			builder.append(':');
 	}

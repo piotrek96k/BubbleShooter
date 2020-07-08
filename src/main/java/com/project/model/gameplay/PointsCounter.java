@@ -1,7 +1,13 @@
 package com.project.model.gameplay;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.Locale;
+
 import com.project.model.bubble.Bubble;
 import com.project.model.bubble.ColoredBubble;
+import com.project.model.gameplay.mode.DifficultyLevel;
 
 public class PointsCounter {
 
@@ -12,8 +18,8 @@ public class PointsCounter {
 	private int combo;
 
 	public PointsCounter(Gameplay gameplay) {
-		combo = 1;
 		this.gameplay = gameplay;
+		resetCombo();
 	}
 
 	public void addPointsForBubble(Bubble bubble) {
@@ -34,16 +40,28 @@ public class PointsCounter {
 	}
 
 	public void resetCombo() {
-		combo = 1;
+		combo = getMinimumCombo();
 		gameplay.sendComboNotifications();
 	}
 
-	public String getCombo() {
+	public String getComboAsString() {
 		return "x" + combo;
 	}
+	
+	public int getCombo() {
+		return combo;
+	}
+	
+	public String getPoints() {
+		DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.getDefault());
+		DecimalFormatSymbols symbols = formatter.getDecimalFormatSymbols();
+		symbols.setGroupingSeparator(' ');
+		formatter.setDecimalFormatSymbols(symbols);
+		return formatter.format(points);
+	}
 
-	public long getPoints() {
-		return points;
+	public int getMinimumCombo() {
+		return 1 + gameplay.getBubblesTab().getNumberOfColors() - DifficultyLevel.EASY.getNumberOfColors();
 	}
 
 }

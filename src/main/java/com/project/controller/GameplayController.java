@@ -62,7 +62,7 @@ public class GameplayController {
 		initGameplay();
 		gridPane.add(view.getPane(), 0, 0, 1, 1);
 		timeLabel.setText(gameplay.getTime());
-		pointsLabel.setText(Long.toString(gameplay.getPoints()));
+		pointsLabel.setText(gameplay.getPoints());
 		comboLabel.setText(gameplay.getCombo());
 		gridPane.addEventFilter(KeyEvent.KEY_PRESSED, this::handleKeyEvents);
 		pauseButton.setOnAction(event -> pauseOrResumeGame());
@@ -75,15 +75,13 @@ public class GameplayController {
 		gameplay.addMoveListener(() -> Platform.runLater(() -> view.updateBubblesTab()));
 		gameplay.addTimeListener(() -> Platform.runLater(() -> timeLabel.setText(gameplay.getTime())));
 		gameplay.addPointsListener(
-				() -> Platform.runLater(() -> pointsLabel.setText(Long.toString(gameplay.getPoints()))));
+				() -> Platform.runLater(() -> pointsLabel.setText(gameplay.getPoints())));
 		gameplay.addComboListener(() -> Platform.runLater(() -> comboLabel.setText(gameplay.getCombo())));
-//		gameplay.init();
 	}
 
 	private void handleKeyEvents(KeyEvent keyEvent) {
-		if (keyEvent.getCode().equals(KeyCode.ESCAPE)) {
+		if (keyEvent.getCode().equals(KeyCode.ESCAPE))
 			pauseOrResumeGame();
-		}
 	}
 
 	public void pauseOrResumeGame() {

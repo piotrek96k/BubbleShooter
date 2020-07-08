@@ -10,17 +10,21 @@ public class ColorsCounter {
 	private Map<BubbleColor, Integer> quantities;
 
 	private int activeBubblesNumber;
+	
+	private int colorsSum;
 
-	public ColorsCounter(int activeBubblesNumber) {
-		quantities = new HashMap<>();
-		this.activeBubblesNumber = activeBubblesNumber;
+	public ColorsCounter() {
+		quantities = new HashMap<BubbleColor, Integer>();
 		for (BubbleColor value : BubbleColor.values())
 			quantities.put(value, 0);
 	}
 
 	public void increment(BubbleColor color) {
 		int value = quantities.get(color);
+		if (value == 0)
+			activeBubblesNumber++;
 		quantities.put(color, ++value);
+		colorsSum++;
 	}
 
 	public void decrement(BubbleColor color) {
@@ -28,6 +32,7 @@ public class ColorsCounter {
 		if (value == 1)
 			activeBubblesNumber--;
 		quantities.put(color, --value);
+		colorsSum--;
 	}
 
 	public int getQuantity(BubbleColor color) {
@@ -36,6 +41,10 @@ public class ColorsCounter {
 
 	public int getActiveBubblesNumber() {
 		return activeBubblesNumber;
+	}
+	
+	public int getColorsSum() {
+		return colorsSum;
 	}
 
 	@Override

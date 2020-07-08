@@ -20,7 +20,13 @@ public enum BubbleColor {
 
 	GRAY(Color.GRAY),
 
-	DARKGREEN(Color.GREEN.darker());
+	DARKGREEN(Color.GREEN.darker()),
+	
+	BLUEVIOLET(Color.BLUEVIOLET),
+	
+	WHITE(Color.WHITE),
+	
+	PINK(Color.HOTPINK);
 
 	private Color color;
 

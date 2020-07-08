@@ -3,7 +3,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -25,25 +24,14 @@
       <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
    </rowConstraints>
    <children>
-      <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-         <children>
-            <Label prefHeight="50.0" prefWidth="100.0" text="Imię">
-               <font>
-                  <Font size="24.0" />
-               </font></Label>
-            <TextField prefHeight="50.0" prefWidth="225.0">
-               <font>
-                  <Font size="24.0" />
-               </font></TextField>
-         </children>
-      </HBox>
+      <HBox alignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
          <children>
             <Label prefHeight="50.0" prefWidth="100.0" text="Tryb gry:">
                <font>
                   <Font size="24.0" />
                </font></Label>
-            <ChoiceBox prefHeight="50.0" prefWidth="225.0" />
+            <ChoiceBox fx:id="modeChoiceBox" prefHeight="50.0" prefWidth="225.0" />
          </children>
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
@@ -52,7 +40,7 @@
                <font>
                   <Font size="24.0" />
                </font></Label>
-            <ChoiceBox prefHeight="50.0" prefWidth="225.0" />
+            <ChoiceBox fx:id="levelChoiceBox" prefHeight="50.0" prefWidth="225.0" />
          </children>
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="25.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
