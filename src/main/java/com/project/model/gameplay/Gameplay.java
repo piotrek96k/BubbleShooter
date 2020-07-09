@@ -4,9 +4,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.project.model.bubble.Bubble;
-import com.project.model.gameplay.mode.GameMode;
 import com.project.model.listener.BubbleListener;
 import com.project.model.listener.ChangeListener;
+import com.project.model.mode.GameMode;
 import com.project.sound.SoundPlayer;
 import com.project.timer.PausableTimer;
 

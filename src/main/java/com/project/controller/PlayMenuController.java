@@ -3,8 +3,8 @@ package com.project.controller;
 import com.project.fxml.FxmlDocument;
 import com.project.fxml.Loader;
 import com.project.model.gameplay.Gameplay;
-import com.project.model.gameplay.mode.DifficultyLevel;
-import com.project.model.gameplay.mode.GameMode;
+import com.project.model.mode.DifficultyLevel;
+import com.project.model.mode.GameMode;
 
 import javafx.beans.binding.When;
 import javafx.fxml.FXML;

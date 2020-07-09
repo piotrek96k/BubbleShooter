@@ -11,7 +11,7 @@ import com.project.model.bubble.BubbleColor;
 import com.project.model.bubble.ColoredBubble;
 import com.project.model.bubble.DestroyingBubble;
 import com.project.model.bubble.TransparentBubble;
-import com.project.model.gameplay.mode.GameMode;
+import com.project.model.mode.GameMode;
 
 public class BubblesTab {
 

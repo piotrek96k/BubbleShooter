@@ -7,7 +7,7 @@ import java.util.Locale;
 
 import com.project.model.bubble.Bubble;
 import com.project.model.bubble.ColoredBubble;
-import com.project.model.gameplay.mode.DifficultyLevel;
+import com.project.model.mode.DifficultyLevel;
 
 public class PointsCounter {
 

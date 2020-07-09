@@ -1,4 +1,4 @@
-package com.project.model.gameplay.mode;
+package com.project.model.mode;
 
 public enum GameMode {
 
