@@ -88,7 +88,7 @@ public class BubblesTab {
 		private int consumerMethodNumber;
 
 		{
-			if (gameplay.getGameMode().equals(GameMode.TIME_MODE))
+			if (gameplay.getGameMode().equals(GameMode.ARCADE_MODE))
 				consumerMethodNumber = 1;
 		}
 
@@ -105,7 +105,7 @@ public class BubblesTab {
 						}
 					}
 					isWaiting[0] = false;
-					if (!gameplay.isFinishedProperty().get())
+					if (!gameplay.getFinishedProperty().get())
 						moveBubblesDown();
 				}
 			};
@@ -156,7 +156,7 @@ public class BubblesTab {
 	}
 
 	private void initBubbles() {
-		for (int i = 0; i < ROWS / 2; i++) {
+		for (int i = 0; i < ROWS /10; i++) {
 			double yCoordinate = getCenterY(i);
 			for (int j = 0; j < COLUMNS; j++) {
 				double xCoordinate = getCenterX(i, j);
@@ -246,7 +246,7 @@ public class BubblesTab {
 	}
 
 	public void setBubbleToThrow() {
-		if (gameplay.getGameMode().equals(GameMode.TIME_MODE))
+		if (gameplay.getGameMode().equals(GameMode.ARCADE_MODE))
 			changeNextBubbleIfNeed();
 		else
 			addColorsAndBubblesIfNeed();

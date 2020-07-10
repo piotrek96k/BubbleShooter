@@ -28,14 +28,14 @@ public class TimeCounter {
 		lastTime[0] = currentTime;
 		gameplay.sendTimeNotifications();
 	}
-
-	public String getTime() {
+	
+	public static String getFormattedTime(long time) {
 		StringBuilder builder = new StringBuilder();
 		appendTime(builder, time/1000, 0);
 		return builder.toString();
 	}
 
-	private void appendTime(StringBuilder builder, long time, int number) {
+	private static void appendTime(StringBuilder builder, long time, int number) {
 		if (time / 60 > 0 && number < 2) {
 			appendTime(builder, time/60, number+1);
 			time %= 60;
@@ -47,6 +47,10 @@ public class TimeCounter {
 		builder.append(String.format("%02d", time));
 		if (number != 0)
 			builder.append(':');
+	}
+	
+	public long getTime() {
+		return time;
 	}
 
 }

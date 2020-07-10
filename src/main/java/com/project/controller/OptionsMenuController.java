@@ -12,13 +12,13 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
 
-public class OptionsMenuController {
+public class OptionsMenuController implements Returnable{
 
 	@FXML
 	private GridPane gridPane;
 
 	@FXML
-	private Button backButton;
+	private Button returnButton;
 
 	@FXML
 	private ToggleGroup effectsGroup;
@@ -84,8 +84,9 @@ public class OptionsMenuController {
 				.addListener((observable, oldValue, newValue) -> player.setMusicVolume(newValue.doubleValue() / 100));
 	}
 
-	public void setBackButtonAction(EventHandler<ActionEvent> event) {
-		backButton.setOnAction(event);
+	@Override
+	public void setReturnButtonAction(EventHandler<ActionEvent> event) {
+		returnButton.setOnAction(event);
 	}
 
 }

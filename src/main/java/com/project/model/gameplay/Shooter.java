@@ -283,7 +283,7 @@ public class Shooter {
 	}
 
 	public void throwBubble(double x, double y) {
-		if (!gameplay.isFinishedProperty().get() && !gameplay.getTimer().isPaused() && !gameplay.isMoving()
+		if (!gameplay.getFinishedProperty().get() && !gameplay.getTimer().isPaused() && !gameplay.isMoving()
 				&& y < BubblesTab.BUBBLES_HEIGHT + Bubble.DIAMETER) {
 			gameplay.setStartMoving();
 			Point2D point = getStartPoint();

@@ -1,15 +1,26 @@
 package com.project.dialog;
 
+import java.util.Optional;
+
 import com.project.function.Action;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextInputDialog;
 
 public class DialogOpener {
 
 	private DialogOpener() {
+	}
+
+	public static Optional<String> openTextInputDialog() {
+		TextInputDialog dialog = new TextInputDialog("Imiê Gracza");
+		dialog.setTitle("WprowadŸ imiê");
+		dialog.setHeaderText("Podaj swoje imiê");
+		dialog.setContentText("Gratulacje, twój wynik zakwalifikowa³ ciê do tabeli najlepszych graczy");
+		return dialog.showAndWait();
 	}
 
 	public static void openExitConfirmationAlert() {

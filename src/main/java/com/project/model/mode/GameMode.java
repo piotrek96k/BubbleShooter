@@ -2,7 +2,7 @@ package com.project.model.mode;
 
 public enum GameMode {
 
-	TIME_MODE(DifficultyLevel.EASY, "Czasowy") {
+	ARCADE_MODE(DifficultyLevel.EASY, "Zrêcznoœciowy") {
 
 		@Override
 		public void setDifficultyLevel(DifficultyLevel difficultyLevel) {

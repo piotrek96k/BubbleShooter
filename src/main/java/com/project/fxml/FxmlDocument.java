@@ -10,7 +10,11 @@ public enum FxmlDocument {
 
 	PAUSE_MENU("/fxml/PauseMenu.fxml"),
 
-	PLAY_MENU("/fxml/PlayMenu.fxml");
+	PLAY_MENU("/fxml/PlayMenu.fxml"),
+	
+	RESTART_MENU("/fxml/RestartMenu.fxml"),
+	
+	STATISTICS_MENU("/fxml/StatisticsMenu.fxml");
 
 	String document;
 

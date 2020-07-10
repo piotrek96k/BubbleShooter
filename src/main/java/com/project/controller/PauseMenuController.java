@@ -37,7 +37,8 @@ public class PauseMenuController {
 		this.gameplayController = gameplayController;
 		resumeButton.setOnAction(event -> gameplayController.pauseOrResumeGame());
 		restartButton.setOnAction(event -> DialogOpener.openStartNewGameConfirmationAlert(this::startNewGame));
-		optionsButton.setOnAction(event -> loadOptionsMenu());
+		optionsButton.setOnAction(event -> loadAndInitReturnButton(FxmlDocument.OPTIONS_MENU));
+		bestPlayersButton.setOnAction(event->loadAndInitReturnButton(FxmlDocument.STATISTICS_MENU));
 		menuButton.setOnAction(event -> DialogOpener.openBackToMenuConfirmationAlert(this::loadPlayMenu));
 	}
 
@@ -48,14 +49,14 @@ public class PauseMenuController {
 		loader.getController().setGameplay(new Gameplay(gameplayController.getGameplay().getGameMode()));
 	}
 
-	private void loadOptionsMenu() {
+	private void loadAndInitReturnButton(FxmlDocument document) {
 		GridPane gridPane = gameplayController.getGridPane();
 		Pane pane = (Pane) vBox.getParent().getParent();
 		pane.getChildren().remove(gridPane);
-		Loader<OptionsMenuController, Pane> loader = new Loader<OptionsMenuController, Pane>(FxmlDocument.OPTIONS_MENU);
+		Loader<Returnable, Pane> loader = new Loader<Returnable, Pane>(document);
 		Pane optionsPane = loader.getView();
 		pane.getChildren().add(optionsPane);
-		loader.getController().setBackButtonAction(event -> {
+		loader.getController().setReturnButtonAction(event -> {
 			pane.getChildren().remove(optionsPane);
 			pane.getChildren().add(gridPane);
 		});

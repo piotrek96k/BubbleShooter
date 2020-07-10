@@ -3,9 +3,12 @@ package com.project.controller;
 import com.project.dialog.DialogOpener;
 import com.project.fxml.FxmlDocument;
 import com.project.fxml.Loader;
+import com.project.model.mode.DifficultyLevel;
+import com.project.model.mode.GameMode;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 
@@ -29,13 +32,14 @@ public class MainMenuController {
 	@FXML
 	private void initialize() {
 		playButton.setOnAction(event -> loadFxml(FxmlDocument.PLAY_MENU, gridPane));
-		optionsButton.setOnAction(event -> loadOptions());
+		optionsButton.setOnAction(event -> loadAndInitReturnButton(FxmlDocument.OPTIONS_MENU));
+		bestPlayersButton.setOnAction(event -> loadAndInitReturnButton(FxmlDocument.STATISTICS_MENU));
 		exitButton.setOnAction(event -> DialogOpener.openExitConfirmationAlert());
 	}
 
-	private void loadOptions() {
-		Loader<OptionsMenuController, Pane> loader = loadFxml(FxmlDocument.OPTIONS_MENU, gridPane);
-		loader.getController().setBackButtonAction(event -> {
+	private  void loadAndInitReturnButton(FxmlDocument document) {
+		Loader<Returnable, Pane> loader = loadFxml(document, gridPane);
+		loader.getController().setReturnButtonAction(event -> {
 			Pane pane = (Pane) loader.getView().getParent();
 			pane.getChildren().remove(loader.getView());
 			pane.getChildren().add(new Loader<MainMenuController, Pane>(FxmlDocument.MAIN_MENU).getView());
@@ -48,6 +52,23 @@ public class MainMenuController {
 		Loader<T, Pane> loader = new Loader<T, Pane>(document);
 		pane.getChildren().add(loader.getView());
 		return loader;
+	}
+
+	private static void initModeChoiceBox(ChoiceBox<GameMode> choiceBox) {
+		choiceBox.setStyle("-fx-font-size:24;");
+		for (GameMode mode : GameMode.values())
+			choiceBox.getItems().add(mode);
+		choiceBox.getSelectionModel().select(GameMode.ARCADE_MODE);
+	}
+
+	public static void initChoiceBoxes(ChoiceBox<DifficultyLevel> levelChoiceBox, ChoiceBox<GameMode> modeChoiceBox) {
+		levelChoiceBox.setStyle("-fx-font-size:24;");
+		for (DifficultyLevel level : DifficultyLevel.values())
+			levelChoiceBox.getItems().add(level);
+		levelChoiceBox.getSelectionModel().select(DifficultyLevel.EASY);
+		levelChoiceBox.disableProperty()
+				.bind(modeChoiceBox.getSelectionModel().selectedItemProperty().isNotEqualTo(GameMode.ARCADE_MODE));
+		initModeChoiceBox(modeChoiceBox);
 	}
 
 }

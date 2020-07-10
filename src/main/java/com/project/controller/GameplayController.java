@@ -2,14 +2,20 @@ package com.project.controller;
 
 import java.util.List;
 
+import com.project.dialog.DialogOpener;
 import com.project.fxml.FxmlDocument;
 import com.project.fxml.Loader;
 import com.project.model.bubble.Bubble;
 import com.project.model.gameplay.Gameplay;
+import com.project.model.gameplay.PointsCounter;
+import com.project.model.gameplay.TimeCounter;
+import com.project.model.player.Player;
 import com.project.view.GameplayView;
 import com.project.view.Painter;
 
 import javafx.application.Platform;
+import javafx.beans.Observable;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -33,6 +39,8 @@ public class GameplayController {
 	private Point2D clickPoint;
 
 	private Pane pauseMenuPane;
+
+	private EventHandler<KeyEvent> keyEventHandler;
 
 	@FXML
 	private GridPane gridPane;
@@ -61,10 +69,11 @@ public class GameplayController {
 		view.setController(this);
 		initGameplay();
 		gridPane.add(view.getPane(), 0, 0, 1, 1);
-		timeLabel.setText(gameplay.getTime());
-		pointsLabel.setText(gameplay.getPoints());
-		comboLabel.setText(gameplay.getCombo());
-		gridPane.addEventFilter(KeyEvent.KEY_PRESSED, this::handleKeyEvents);
+		timeLabel.setText(TimeCounter.getFormattedTime(gameplay.getTime()));
+		pointsLabel.setText(PointsCounter.getFormattedPoints(gameplay.getPoints()));
+		comboLabel.setText(PointsCounter.getFormattedCombo(gameplay.getCombo()));
+		keyEventHandler = this::handleKeyEvents;
+		gridPane.addEventFilter(KeyEvent.KEY_PRESSED, keyEventHandler);
 		pauseButton.setOnAction(event -> pauseOrResumeGame());
 	}
 
@@ -73,10 +82,27 @@ public class GameplayController {
 		gameplay.addBubbleChangedListener(bubble -> Platform.runLater(() -> view.updateBubble(bubble)));
 		gameplay.addBubbleRemovedListener(bubble -> Platform.runLater(() -> removeBubble(bubble)));
 		gameplay.addMoveListener(() -> Platform.runLater(() -> view.updateBubblesTab()));
-		gameplay.addTimeListener(() -> Platform.runLater(() -> timeLabel.setText(gameplay.getTime())));
-		gameplay.addPointsListener(
-				() -> Platform.runLater(() -> pointsLabel.setText(gameplay.getPoints())));
-		gameplay.addComboListener(() -> Platform.runLater(() -> comboLabel.setText(gameplay.getCombo())));
+		gameplay.addTimeListener(
+				() -> Platform.runLater(() -> timeLabel.setText(TimeCounter.getFormattedTime(gameplay.getTime()))));
+		gameplay.addPointsListener(() -> Platform
+				.runLater(() -> pointsLabel.setText(PointsCounter.getFormattedPoints(gameplay.getPoints()))));
+		gameplay.addComboListener(() -> Platform
+				.runLater(() -> comboLabel.setText(PointsCounter.getFormattedCombo(gameplay.getCombo()))));
+		gameplay.getFinishedProperty().addListener(this::handleFinishingGame);
+	}
+
+	private void handleFinishingGame(Observable observable) {
+		if (gameplay.isPaused())
+			return;
+		gridPane.removeEventFilter(KeyEvent.KEY_PRESSED, keyEventHandler);
+		Platform.runLater(() -> {
+			if (Player.willBeAddedToList(gameplay))
+				Player.addPlayer(gameplay, DialogOpener.openTextInputDialog());
+			Loader<RestartMenuController, Pane> loader = new Loader<RestartMenuController, Pane>(
+					FxmlDocument.RESTART_MENU);
+			gridPane.add(loader.getView(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
+			loader.getController().setGameplayController(this);
+		});
 	}
 
 	private void handleKeyEvents(KeyEvent keyEvent) {

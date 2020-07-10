@@ -118,7 +118,6 @@ public class Gameplay {
 		timer.cancel();
 		SoundPlayer.getInstance().switchMenuGameplayMusic();
 		finished.set(true);
-		System.out.println("Koniec Gry");
 	}
 
 	public void throwBubble(double x, double y) {
@@ -251,24 +250,24 @@ public class Gameplay {
 		return timer;
 	}
 
-	public String getTime() {
-		return timeCounter.getTime();
+	public int getCombo() {
+		return pointsCounter.getCombo();
 	}
 
-	public String getCombo() {
-		return pointsCounter.getComboAsString();
-	}
-
-	public String getPoints() {
+	public long getPoints() {
 		return pointsCounter.getPoints();
 	}
 
-	public ReadOnlyBooleanProperty isFinishedProperty() {
+	public ReadOnlyBooleanProperty getFinishedProperty() {
 		return (ReadOnlyBooleanProperty) finished;
 	}
 
 	public GameMode getGameMode() {
 		return gameMode;
+	}
+
+	public long getTime() {
+		return timeCounter.getTime();
 	}
 
 	public boolean isMoving() {

@@ -44,15 +44,11 @@ public class PointsCounter {
 		gameplay.sendComboNotifications();
 	}
 
-	public String getComboAsString() {
-		return "x" + combo;
+	public static String getFormattedCombo(int combo) {
+		return "x " + combo;
 	}
 	
-	public int getCombo() {
-		return combo;
-	}
-	
-	public String getPoints() {
+	public static String getFormattedPoints(long points) {
 		DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.getDefault());
 		DecimalFormatSymbols symbols = formatter.getDecimalFormatSymbols();
 		symbols.setGroupingSeparator(' ');
@@ -62,6 +58,14 @@ public class PointsCounter {
 
 	public int getMinimumCombo() {
 		return 1 + gameplay.getBubblesTab().getNumberOfColors() - DifficultyLevel.EASY.getNumberOfColors();
+	}
+	
+	public int getCombo() {
+		return combo;
+	}
+	
+	public long getPoints() {
+		return points;
 	}
 
 }
