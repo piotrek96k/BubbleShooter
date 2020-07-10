@@ -156,7 +156,7 @@ public class BubblesTab {
 	}
 
 	private void initBubbles() {
-		for (int i = 0; i < ROWS /10; i++) {
+		for (int i = 0; i < ROWS /2; i++) {
 			double yCoordinate = getCenterY(i);
 			for (int j = 0; j < COLUMNS; j++) {
 				double xCoordinate = getCenterX(i, j);
