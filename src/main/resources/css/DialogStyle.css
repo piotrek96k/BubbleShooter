@@ -1,0 +1,33 @@
+.dialog-pane {
+	-fx-background-color:linear-gradient(to right,rgba(0.0,0.0,0.0,1.0),rgba(16.0,16.0,16.0,1.0));
+}
+.custom-dialog,
+.dialog-pane > .button-bar > .container {
+  	-fx-background-color:linear-gradient(to right,rgba(200.0, 178.0, 128.0,1.0),rgba(255.0,226.0,163.0,1.0));
+}
+.dialog-pane .label {
+  	-fx-text-fill:white;
+ 	-fx-font-size:16.0px;
+}
+.dialog-pane:header .header-panel {
+	-fx-background-color:linear-gradient(to right,rgba(0.0,0.0,0.0,1.0),rgba(16.0,16.0,16.0,1.0));
+	-fx-text-fill:white;
+ 	-fx-font-size:16.0px;
+}
+.dialog-pane .text-field,
+.dialog-pane .button{
+  	-fx-base: rgba(16.0,16.0,16.0,1.0);
+	-fx-background-radius: 100.0px;
+	-fx-background-color: -fx-color;
+	-fx-background-insets: 0.0;
+	-fx-text-fill: white;
+	-fx-font-size:16.0px;
+ }
+ .dialog-pane .text-input {
+    -fx-highlight-fill: rgba(32.0,32.0,32.0,1.0);
+    -fx-highlight-text-fill: white;
+}
+.custom-dialog > .content .label {
+    -fx-font-size: 16.0px;
+    -fx-text-fill: black;    
+}

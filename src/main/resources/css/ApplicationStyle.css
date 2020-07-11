@@ -1,0 +1,100 @@
+.button{
+	-fx-base: rgba(16.0,16.0,16.0,1.0);
+	-fx-background-radius: 100.0px;
+	-fx-background-color: -fx-color;
+	-fx-background-insets: 0.0;
+	-fx-text-fill: white;
+	-fx-font-size:36.0px;
+}
+.text-field,
+.button-gameplay{
+		-fx-base: rgba(16.0,16.0,16.0,1.0);
+	-fx-background-radius: 100.0px;
+	-fx-background-color: -fx-color;
+	-fx-background-insets: 0.0;
+	-fx-text-fill: white;
+	-fx-font-size:24.0px;
+}
+.label{
+	-fx-base: white;
+	-fx-text-fill: -fx-color;
+	-fx-font-size: 36.0px;
+}
+.choice-box {
+	-fx-base: rgba(16.0,16.0,16.0,1.0);
+	-fx-background-radius: 100.0px;
+	-fx-background-color: -fx-color;
+	-fx-text-fill: white;
+	-fx-font-size:36.0px;
+}
+.choice-box .context-menu {
+	-fx-base: rgba(16.0,16.0,16.0,1.0);
+	-fx-background-color: -fx-color;
+	-fx-text-fill: white;
+	-fx-font-size:36.0px;
+}
+.choice-box .menu-item:focused { 
+	-fx-background-color: rgba(32.0,32.0,32.0,1.0);
+}
+.slider .thumb{
+	-fx-background-color: white,rgba(16.0,16.0,16.0,1.0),white;
+	-fx-background-insets: 0.0,4.0,8.0;
+	-fx-background-radius: 16.0,12.0,8.0;
+	-fx-pref-height: 16.0px;
+    -fx-pref-width: 16.0px;
+}
+.slider .track{
+	-fx-background-color: rgba(16.0,16.0,16.0,1.0);
+	-fx-pref-height: 8.0px;
+	-fx-background-radius:8.0px;
+}
+.radio-button{
+	-fx-text-fill:white;
+	-fx-font-size:24.0px;
+}
+.radio-button .radio {
+    -fx-border-width: 0.0px;
+    -fx-background-color: white;
+    -fx-background-image: null;
+    -fx-border-radius: 16.0px;
+    -fx-padding: 4.0px;
+    -fx-background-insets: 0.0;
+}
+.radio-button .radio:selected {
+    -fx-background-color: white;
+    -fx-background-image: null;
+}
+.radio-button .dot{
+	-fx-background-insets: 0.0;
+	-fx-background-radius: 12.0px;
+    -fx-padding: 4.0px;
+}
+.radio-button:selected .dot{
+	-fx-background-color: rgba(16.0,16.0,16.0,1.0);
+	-fx-background-insets: 0.0;
+	-fx-background-radius: 12.0px;
+    -fx-padding: 4.0px;
+}
+.table-view{
+	-fx-background-color:gray;
+	-fx-font-size:16.0px;
+	-fx-text-fill:white;
+}
+.table-view .column-header {
+	-fx-background-color: linear-gradient(to bottom,rgba(64.0,64.0,64.0,1.0),rgba(16.0,16.0,16.0,1.0));
+}
+.table-view .column-header-background .label{
+    -fx-font-size:24.0px;
+	-fx-text-fill:white;
+}
+.table-row-cell{
+    -fx-background-color: linear-gradient(to bottom, rgba(16.0,16.0,16.0,1.0),rgba(32.0,32.0,32.0,1.0));
+    -fx-background-insets: 0.0 0.0 1.0 0.0;
+    -fx-table-cell-border-color: gray;
+}
+.table-row-cell:odd{
+    -fx-background-color: linear-gradient(to bottom, rgba(48.0,48.0,48.0,1.0),rgba(64.0,64.0,64.0,1.0));
+}
+.table-view .table-cell{
+    -fx-text-fill: white;
+}

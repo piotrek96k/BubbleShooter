@@ -2,7 +2,7 @@ package com.project.fxml;
 
 public enum FxmlDocument {
 
-	GAMEPLAY_VIEW("/fxml/GameplayView.fxml"),
+	GAMEPLAY_MENU("/fxml/GameplayMenu.fxml"),
 
 	MAIN_MENU("/fxml/MainMenu.fxml"),
 

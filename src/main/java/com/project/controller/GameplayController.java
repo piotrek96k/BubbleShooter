@@ -9,6 +9,7 @@ import com.project.model.bubble.Bubble;
 import com.project.model.gameplay.Gameplay;
 import com.project.model.gameplay.PointsCounter;
 import com.project.model.gameplay.TimeCounter;
+import com.project.model.mode.GameMode;
 import com.project.model.player.Player;
 import com.project.view.GameplayView;
 import com.project.view.Painter;
@@ -20,7 +21,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
@@ -49,18 +50,25 @@ public class GameplayController {
 	private Button pauseButton;
 
 	@FXML
-	private Label timeLabel;
+	private TextField timeField;
 
 	@FXML
-	private Label pointsLabel;
+	private TextField pointsField;
 
 	@FXML
-	private Label comboLabel;
+	private TextField comboField;
+
+	@FXML
+	private TextField gameModeField;
+
+	@FXML
+	private TextField levelField;
 
 	@FXML
 	private void initialize() {
 		gridPane.setBackground(new Background(new BackgroundFill(
 				Painter.getLinearGradientPaint(Color.rgb(200, 178, 128)), CornerRadii.EMPTY, new Insets(0.0))));
+		pauseButton.getStyleClass().add("button-gameplay");
 	}
 
 	public void setGameplay(Gameplay gameplay) {
@@ -68,13 +76,21 @@ public class GameplayController {
 		view = new GameplayView();
 		view.setController(this);
 		initGameplay();
+		initViewElements();
+	}
+
+	private void initViewElements() {
 		gridPane.add(view.getPane(), 0, 0, 1, 1);
-		timeLabel.setText(TimeCounter.getFormattedTime(gameplay.getTime()));
-		pointsLabel.setText(PointsCounter.getFormattedPoints(gameplay.getPoints()));
-		comboLabel.setText(PointsCounter.getFormattedCombo(gameplay.getCombo()));
+		timeField.setText(TimeCounter.getFormattedTime(gameplay.getTime()));
+		pointsField.setText(PointsCounter.getFormattedPoints(gameplay.getPoints()));
+		comboField.setText(PointsCounter.getFormattedCombo(gameplay.getCombo()));
 		keyEventHandler = this::handleKeyEvents;
 		gridPane.addEventFilter(KeyEvent.KEY_PRESSED, keyEventHandler);
 		pauseButton.setOnAction(event -> pauseOrResumeGame());
+		GameMode gameMode = gameplay.getGameMode();
+		gameModeField.setText(gameMode.toString());
+		if (gameMode.equals(GameMode.ARCADE_MODE))
+			levelField.setText(gameplay.getGameMode().getDifficultyLevel().toString());
 	}
 
 	private void initGameplay() {
@@ -83,11 +99,11 @@ public class GameplayController {
 		gameplay.addBubbleRemovedListener(bubble -> Platform.runLater(() -> removeBubble(bubble)));
 		gameplay.addMoveListener(() -> Platform.runLater(() -> view.updateBubblesTab()));
 		gameplay.addTimeListener(
-				() -> Platform.runLater(() -> timeLabel.setText(TimeCounter.getFormattedTime(gameplay.getTime()))));
+				() -> Platform.runLater(() -> timeField.setText(TimeCounter.getFormattedTime(gameplay.getTime()))));
 		gameplay.addPointsListener(() -> Platform
-				.runLater(() -> pointsLabel.setText(PointsCounter.getFormattedPoints(gameplay.getPoints()))));
+				.runLater(() -> pointsField.setText(PointsCounter.getFormattedPoints(gameplay.getPoints()))));
 		gameplay.addComboListener(() -> Platform
-				.runLater(() -> comboLabel.setText(PointsCounter.getFormattedCombo(gameplay.getCombo()))));
+				.runLater(() -> comboField.setText(PointsCounter.getFormattedCombo(gameplay.getCombo()))));
 		gameplay.getFinishedProperty().addListener(this::handleFinishingGame);
 	}
 

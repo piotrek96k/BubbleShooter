@@ -2,6 +2,7 @@ package com.project.controller;
 
 import java.util.List;
 
+import com.project.image.GameImage;
 import com.project.model.mode.DifficultyLevel;
 import com.project.model.mode.GameMode;
 import com.project.model.player.Player;
@@ -14,8 +15,12 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
 
 public class StatisticsMenuController implements Returnable {
+
+	@FXML
+	private GridPane gridPane;
 
 	@FXML
 	private ChoiceBox<GameMode> modeChoiceBox;
@@ -31,6 +36,7 @@ public class StatisticsMenuController implements Returnable {
 
 	@FXML
 	private void initialize() {
+		gridPane.setStyle(GameImage.getRandomWallpaperStyle());
 		modeChoiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue.equals(GameMode.ARCADE_MODE) && levelChoiceBox.getSelectionModel().getSelectedItem() != null)
 				loadTableView(Player.getArcadeModePlayers(levelChoiceBox.getSelectionModel().getSelectedItem()));

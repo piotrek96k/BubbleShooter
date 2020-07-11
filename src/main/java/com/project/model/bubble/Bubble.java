@@ -15,7 +15,7 @@ public abstract class Bubble {
 	public final int BUBBLE_NUMBER;
 	
 	static {
-		DIAMETER = 25.0;
+		DIAMETER = 30.0;
 	}
 
 	public Bubble(double centerX, double centerY) {

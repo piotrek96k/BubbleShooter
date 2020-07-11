@@ -15,6 +15,12 @@ import javafx.stage.Stage;
 
 public class ApplicationMain extends Application {
 
+	private static final String APPLICATION_STYLE_CSS;
+	
+	static {
+		APPLICATION_STYLE_CSS = "/css/ApplicationStyle.css";
+	}
+
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -23,6 +29,7 @@ public class ApplicationMain extends Application {
 	public void start(Stage stage) throws Exception {
 		StackPane stackPane = new StackPane();
 		Scene scene = new Scene(stackPane);
+		scene.getStylesheets().add(APPLICATION_STYLE_CSS);
 		stage.setScene(scene);
 		SoundPlayer.getInstance().init(stackPane);
 		Loader<MainMenuController,Pane> loader = new Loader<MainMenuController, Pane>(FxmlDocument.MAIN_MENU);

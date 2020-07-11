@@ -21,6 +21,8 @@ import com.project.model.mode.GameMode;
 
 public class Player implements Serializable {
 
+	private static final String PLAYERS_PATH;
+
 	private static final String PLAYERS_FILE;
 
 	private static final long serialVersionUID;
@@ -42,14 +44,15 @@ public class Player implements Serializable {
 	private long time;
 
 	static {
-		PLAYERS_FILE = "gracze.gr";
+		PLAYERS_PATH = System.getProperty("user.home") + "/AppData/Local/BubbleShooter";
+		PLAYERS_FILE = PLAYERS_PATH + "/gracze.gr";
 		serialVersionUID = 2383760553340651268L;
 		survivalModePlayers = new ArrayList<Player>();
 		arcadeModePlayers = new HashMap<DifficultyLevel, List<Player>>();
 		for (DifficultyLevel level : DifficultyLevel.values())
 			arcadeModePlayers.put(level, new ArrayList<Player>());
-		Comparator<Player> timeComparator = Comparator.comparing(Player::getTime).reversed();
-		Comparator<Player> pointsComparator = Comparator.comparing(Player::getPoints);
+		Comparator<Player> timeComparator = Comparator.comparing(Player::getUnmodifiedTime).reversed();
+		Comparator<Player> pointsComparator = Comparator.comparing(Player::getUnmodifiedPoints);
 		survivalModeComparator = pointsComparator.thenComparing(timeComparator);
 		arcadeModeComparator = timeComparator.thenComparing(pointsComparator);
 		read();
@@ -115,9 +118,10 @@ public class Player implements Serializable {
 	private static boolean comparePlayers(Player newPlayer, List<Player> players, Comparator<Player> comparator) {
 		if (players.size() < 10)
 			return true;
-		for (Player player : players)
+		for (Player player : players) {
 			if (comparator.compare(newPlayer, player) > 0)
 				return true;
+		}
 		return false;
 	}
 
@@ -157,6 +161,9 @@ public class Player implements Serializable {
 	}
 
 	private static void write() {
+		File file = new File(PLAYERS_PATH);
+		if (!file.exists())
+			file.mkdirs();
 		try (ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(PLAYERS_FILE))) {
 			List<Object> toWrite = new ArrayList<Object>(2);
 			toWrite.add(arcadeModePlayers);
@@ -181,6 +188,14 @@ public class Player implements Serializable {
 
 	public String getPoints() {
 		return PointsCounter.getFormattedPoints(points);
+	}
+	
+	private long getUnmodifiedTime() {
+		return time;
+	}
+	
+	private long getUnmodifiedPoints(){
+		return points;
 	}
 
 	public String getTime() {

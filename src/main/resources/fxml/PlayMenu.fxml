@@ -26,29 +26,29 @@
    <children>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
          <children>
-            <Label prefHeight="50.0" prefWidth="100.0" text="Tryb gry">
+            <Label prefWidth="200.0" text="Tryb gry">
                <font>
                   <Font size="24.0" />
                </font></Label>
-            <ChoiceBox fx:id="modeChoiceBox" prefHeight="50.0" prefWidth="225.0" />
+            <ChoiceBox fx:id="modeChoiceBox" prefWidth="300.0" />
          </children>
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
          <children>
-            <Label prefHeight="50.0" prefWidth="100.0" text="Poziom">
+            <Label prefWidth="200.0" text="Poziom">
                <font>
                   <Font size="24.0" />
                </font></Label>
-            <ChoiceBox fx:id="levelChoiceBox" prefHeight="50.0" prefWidth="225.0" />
+            <ChoiceBox fx:id="levelChoiceBox" prefWidth="300.0" />
          </children>
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="25.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
          <children>
-            <Button fx:id="playButton" mnemonicParsing="false" prefHeight="50.0" prefWidth="150.0" text="Graj">
+            <Button fx:id="playButton" mnemonicParsing="false" prefWidth="300.0" text="Graj">
                <font>
                   <Font size="24.0" />
                </font></Button>
-            <Button fx:id="backButton" mnemonicParsing="false" prefHeight="50.0" prefWidth="150.0" text="Powrót">
+            <Button fx:id="backButton" mnemonicParsing="false" prefWidth="300.0" text="Powrót">
                <font>
                   <Font size="24.0" />
                </font></Button>

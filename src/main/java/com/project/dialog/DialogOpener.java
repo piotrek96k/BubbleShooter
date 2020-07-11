@@ -11,12 +11,20 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
 
 public class DialogOpener {
+	
+	private static final String DIALOG_STYLE_CSS;
+	
+	static {
+		DIALOG_STYLE_CSS = "/css/DialogStyle.css";
+	}
 
 	private DialogOpener() {
 	}
 
 	public static Optional<String> openTextInputDialog() {
 		TextInputDialog dialog = new TextInputDialog("Imiê Gracza");
+		dialog.getDialogPane().getStylesheets().add(DIALOG_STYLE_CSS);
+		dialog.getDialogPane().getStyleClass().add("custom-dialog");
 		dialog.setTitle("WprowadŸ imiê");
 		dialog.setHeaderText("Podaj swoje imiê");
 		dialog.setContentText("Gratulacje, twój wynik zakwalifikowa³ ciê do tabeli najlepszych graczy");
@@ -47,6 +55,7 @@ public class DialogOpener {
 
 	private static void openConfirmationAlert(String title, String header, String content, Action action) {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.getDialogPane().getStylesheets().add(DIALOG_STYLE_CSS);
 		alert.setTitle(title);
 		alert.setHeaderText(header);
 		alert.setContentText(content);

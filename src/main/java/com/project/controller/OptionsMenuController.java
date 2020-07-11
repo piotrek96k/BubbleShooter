@@ -1,5 +1,6 @@
 package com.project.controller;
 
+import com.project.image.GameImage;
 import com.project.sound.SoundPlayer;
 
 import javafx.event.ActionEvent;
@@ -52,6 +53,7 @@ public class OptionsMenuController implements Returnable{
 
 	@FXML
 	private void initialize() {
+		gridPane.setStyle(GameImage.getWallpaperStyle(GameImage.OPTIONS_MENU_BACKGROUND));
 		initMuteRadioButtons();
 		initVolumeSlider();
 	}

@@ -3,6 +3,7 @@ package com.project.controller;
 import com.project.dialog.DialogOpener;
 import com.project.fxml.FxmlDocument;
 import com.project.fxml.Loader;
+import com.project.image.GameImage;
 import com.project.model.mode.DifficultyLevel;
 import com.project.model.mode.GameMode;
 
@@ -31,6 +32,7 @@ public class MainMenuController {
 
 	@FXML
 	private void initialize() {
+		gridPane.setStyle(GameImage.getRandomWallpaperStyle());
 		playButton.setOnAction(event -> loadFxml(FxmlDocument.PLAY_MENU, gridPane));
 		optionsButton.setOnAction(event -> loadAndInitReturnButton(FxmlDocument.OPTIONS_MENU));
 		bestPlayersButton.setOnAction(event -> loadAndInitReturnButton(FxmlDocument.STATISTICS_MENU));

@@ -2,6 +2,7 @@ package com.project.controller;
 
 import com.project.fxml.FxmlDocument;
 import com.project.fxml.Loader;
+import com.project.image.GameImage;
 import com.project.model.gameplay.Gameplay;
 import com.project.model.mode.DifficultyLevel;
 import com.project.model.mode.GameMode;
@@ -32,6 +33,7 @@ public class PlayMenuController {
 
 	@FXML
 	private void initialize() {
+		gridPane.setStyle(GameImage.getRandomWallpaperStyle());
 		MainMenuController.initChoiceBoxes(levelChoiceBox, modeChoiceBox);
 		initPlayButton();
 		backButton.setOnAction(event -> MainMenuController.loadFxml(FxmlDocument.MAIN_MENU, gridPane));
@@ -39,7 +41,7 @@ public class PlayMenuController {
 
 	private void initPlayButton() {
 		playButton.setOnAction(event -> {
-			Loader<GameplayController, Pane> loader = MainMenuController.loadFxml(FxmlDocument.GAMEPLAY_VIEW, gridPane);
+			Loader<GameplayController, Pane> loader = MainMenuController.loadFxml(FxmlDocument.GAMEPLAY_MENU, gridPane);
 			GameMode mode = modeChoiceBox.getSelectionModel().getSelectedItem();
 			if (mode.equals(GameMode.ARCADE_MODE))
 				mode.setDifficultyLevel(levelChoiceBox.getSelectionModel().getSelectedItem());

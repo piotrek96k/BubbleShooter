@@ -20,7 +20,7 @@ public class RestartMenuController {
 
 	public void setGameplayController(GameplayController gameplayController) {
 		restartButton.setOnAction(event -> ((GameplayController) (MainMenuController
-				.loadFxml(FxmlDocument.GAMEPLAY_VIEW, gameplayController.getGridPane()).getController()))
+				.loadFxml(FxmlDocument.GAMEPLAY_MENU, gameplayController.getGridPane()).getController()))
 						.setGameplay(new Gameplay(gameplayController.getGameplay().getGameMode())));
 		menuButton.setOnAction(
 				event -> MainMenuController.loadFxml(FxmlDocument.PLAY_MENU, gameplayController.getGridPane()));

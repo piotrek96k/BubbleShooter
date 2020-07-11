@@ -86,7 +86,7 @@ public class Remover {
 			return true;
 		return false;
 	}
-	
+
 	public void simpleRemove(Coordinate coordinate) {
 		Bubble bubble = gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()];
 		if (bubble != null) {
@@ -110,7 +110,7 @@ public class Remover {
 		}
 		neighbor.clear();
 		toDelete.clear();
-		if(isEmpty)
+		if (isEmpty)
 			gameplay.getPointsCounter().resetCombo();
 		else
 			gameplay.getPointsCounter().increaseCombo();
@@ -215,11 +215,14 @@ public class Remover {
 		Runnable[] runnable = { null };
 		runnable[0] = () -> {
 			synchronized (locker) {
-				SoundPlayer.getInstance().playGameplaySoundEffect(GameplaySoundEffect.EXPLOSION);
-				for (Coordinate coordinate : toDelete) {
-					Bubble bubble = gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()];
-					gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] = null;
-					removeBubble(bubble);
+				if (!toDelete.isEmpty()) {
+					SoundPlayer.getInstance().playGameplaySoundEffect(GameplaySoundEffect.EXPLOSION);
+					for (Coordinate coordinate : toDelete) {
+						Bubble bubble = gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate
+								.getColumn()];
+						gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] = null;
+						removeBubble(bubble);
+					}
 				}
 				removed[0] = true;
 				gameplay.getTimer().cancelTask(runnable[0]);
