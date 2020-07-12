@@ -35,17 +35,20 @@ public class MainMenuController {
 		gridPane.setStyle(GameImage.getRandomWallpaperStyle());
 		playButton.setOnAction(event -> loadFxml(FxmlDocument.PLAY_MENU, gridPane));
 		optionsButton.setOnAction(event -> loadAndInitReturnButton(FxmlDocument.OPTIONS_MENU));
-		bestPlayersButton.setOnAction(event -> loadAndInitReturnButton(FxmlDocument.STATISTICS_MENU));
+		bestPlayersButton
+				.setOnAction(event -> ((StatisticsMenuController) loadAndInitReturnButton(FxmlDocument.STATISTICS_MENU)
+						.getController()).init());
 		exitButton.setOnAction(event -> DialogOpener.openExitConfirmationAlert());
 	}
 
-	private  void loadAndInitReturnButton(FxmlDocument document) {
-		Loader<Returnable, Pane> loader = loadFxml(document, gridPane);
+	private <T extends Returnable> Loader<T, Pane> loadAndInitReturnButton(FxmlDocument document) {
+		Loader<T, Pane> loader = loadFxml(document, gridPane);
 		loader.getController().setReturnButtonAction(event -> {
 			Pane pane = (Pane) loader.getView().getParent();
 			pane.getChildren().remove(loader.getView());
 			pane.getChildren().add(new Loader<MainMenuController, Pane>(FxmlDocument.MAIN_MENU).getView());
 		});
+		return loader;
 	}
 
 	public static <T> Loader<T, Pane> loadFxml(FxmlDocument document, Pane child) {
@@ -57,14 +60,12 @@ public class MainMenuController {
 	}
 
 	private static void initModeChoiceBox(ChoiceBox<GameMode> choiceBox) {
-		choiceBox.setStyle("-fx-font-size:24;");
 		for (GameMode mode : GameMode.values())
 			choiceBox.getItems().add(mode);
 		choiceBox.getSelectionModel().select(GameMode.ARCADE_MODE);
 	}
 
 	public static void initChoiceBoxes(ChoiceBox<DifficultyLevel> levelChoiceBox, ChoiceBox<GameMode> modeChoiceBox) {
-		levelChoiceBox.setStyle("-fx-font-size:24;");
 		for (DifficultyLevel level : DifficultyLevel.values())
 			levelChoiceBox.getItems().add(level);
 		levelChoiceBox.getSelectionModel().select(DifficultyLevel.EASY);

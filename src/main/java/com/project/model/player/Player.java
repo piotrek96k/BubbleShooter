@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.project.exception.ReadingFileException;
+import com.project.exception.WritingFileException;
 import com.project.model.gameplay.Gameplay;
 import com.project.model.gameplay.PointsCounter;
 import com.project.model.gameplay.TimeCounter;
@@ -22,11 +24,11 @@ import com.project.model.mode.GameMode;
 
 public class Player implements Serializable {
 
+	private static final long serialVersionUID;
+
 	private static final String PLAYERS_PATH;
 
 	private static final String PLAYERS_FILE;
-
-	private static final long serialVersionUID;
 
 	private static List<Player> survivalModePlayers;
 
@@ -45,18 +47,9 @@ public class Player implements Serializable {
 	private long time;
 
 	static {
+		serialVersionUID = 2383760553340651268L;
 		PLAYERS_PATH = System.getProperty("user.home") + "/AppData/Local/BubbleShooter";
 		PLAYERS_FILE = PLAYERS_PATH + "/gracze.gr";
-		serialVersionUID = 2383760553340651268L;
-		survivalModePlayers = new ArrayList<Player>();
-		arcadeModePlayers = new HashMap<DifficultyLevel, List<Player>>();
-		for (DifficultyLevel level : DifficultyLevel.values())
-			arcadeModePlayers.put(level, new ArrayList<Player>());
-		Comparator<Player> timeComparator = Comparator.comparing(Player::getUnmodifiedTime).reversed();
-		Comparator<Player> pointsComparator = Comparator.comparing(Player::getUnmodifiedPoints);
-		survivalModeComparator = pointsComparator.thenComparing(timeComparator);
-		arcadeModeComparator = timeComparator.thenComparing(pointsComparator);
-		read();
 	}
 
 	private Player(long points, long time) {
@@ -69,7 +62,8 @@ public class Player implements Serializable {
 		this.time = time;
 	}
 
-	public static void addPlayer(Gameplay gameplay, Optional<String> name) {
+	public static void addPlayer(Gameplay gameplay, Optional<String> name) throws ReadingFileException, WritingFileException {
+		readIfNull();
 		if (!name.isPresent() || name.isEmpty())
 			return;
 		GameMode gameMode = gameplay.getGameMode();
@@ -80,7 +74,7 @@ public class Player implements Serializable {
 			addPlayerToSet(newPlayer, arcadeModePlayers.get(gameMode.getDifficultyLevel()), arcadeModeComparator);
 	}
 
-	private static void addPlayerToSet(Player newPlayer, List<Player> players, Comparator<Player> comparator) {
+	private static void addPlayerToSet(Player newPlayer, List<Player> players, Comparator<Player> comparator) throws WritingFileException {
 		for (int i = 0; i < players.size(); i++) {
 			if (comparator.compare(newPlayer, players.get(i)) > 0) {
 				newPlayer.setId(i + 1);
@@ -105,7 +99,8 @@ public class Player implements Serializable {
 		}
 	}
 
-	public static int willBeAddedToList(Gameplay gameplay) {
+	public static int willBeAddedToList(Gameplay gameplay) throws ReadingFileException {
+		readIfNull();
 		GameMode gameMode = gameplay.getGameMode();
 		Player newPlayer = new Player(gameplay.getPoints(), gameplay.getTime());
 		if (gameMode.equals(GameMode.SURVIVAL_MODE))
@@ -126,18 +121,34 @@ public class Player implements Serializable {
 		return -1;
 	}
 
-	public static List<Player> getSurvivalModePlayers() {
+	public static List<Player> getSurvivalModePlayers() throws ReadingFileException {
+		readIfNull();
 		return survivalModePlayers;
 	}
 
-	public static List<Player> getArcadeModePlayers(DifficultyLevel level) {
+	public static List<Player> getArcadeModePlayers(DifficultyLevel level) throws ReadingFileException {
+		readIfNull();
 		return arcadeModePlayers.get(level);
 	}
 
-	private static void read() {
+	private static void readIfNull() throws ReadingFileException {
+		if (survivalModePlayers == null || arcadeModePlayers == null) {
+			survivalModePlayers = new ArrayList<Player>();
+			arcadeModePlayers = new HashMap<DifficultyLevel, List<Player>>();
+			for (DifficultyLevel level : DifficultyLevel.values())
+				arcadeModePlayers.put(level, new ArrayList<Player>());
+			Comparator<Player> timeComparator = Comparator.comparing(Player::getUnmodifiedTime).reversed();
+			Comparator<Player> pointsComparator = Comparator.comparing(Player::getUnmodifiedPoints);
+			survivalModeComparator = pointsComparator.thenComparing(timeComparator);
+			arcadeModeComparator = timeComparator.thenComparing(pointsComparator);
+			read();
+		}
+	}
+
+	private static void read() throws ReadingFileException {
 		File file = new File(PLAYERS_FILE);
 		if (file.exists())
-			try (ObjectInputStream stream = new ObjectInputStream(new FileInputStream(file))) {
+			try(ObjectInputStream stream = new ObjectInputStream(new FileInputStream(file))) {
 				Object object = stream.readObject();
 				if (object instanceof List<?>)
 					for (Object obj : (List<?>) object) {
@@ -157,11 +168,11 @@ public class Player implements Serializable {
 						}
 					}
 			} catch (IOException | ClassNotFoundException e) {
-				e.printStackTrace();
+				throw new ReadingFileException();
 			}
 	}
 
-	private static void write() {
+	private static void write() throws WritingFileException {
 		File file = new File(PLAYERS_PATH);
 		if (!file.exists())
 			file.mkdirs();
@@ -171,7 +182,7 @@ public class Player implements Serializable {
 			toWrite.add(survivalModePlayers);
 			stream.writeObject(toWrite);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new WritingFileException();
 		}
 	}
 

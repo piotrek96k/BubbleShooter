@@ -3,6 +3,8 @@ package com.project.controller;
 import java.util.List;
 
 import com.project.dialog.DialogOpener;
+import com.project.exception.ReadingFileException;
+import com.project.exception.WritingFileException;
 import com.project.fxml.FxmlDocument;
 import com.project.fxml.Loader;
 import com.project.main.ApplicationMain;
@@ -89,7 +91,7 @@ public class GameplayController {
 		iconifingListener = this::handleStageIconizing;
 		((Stage) gridPane.getScene().getWindow()).iconifiedProperty().addListener(iconifingListener);
 		EventHandler<WindowEvent> windowCloseHandler = event -> {
-			if (!gameplay.isPaused())
+			if (!gameplay.getFinishedProperty().get() && !gameplay.isPaused())
 				pauseOrResumeGame();
 			ApplicationMain.DEFAULT_WINDOW_CLOSE_HANDLER.handle(event);
 		};
@@ -140,10 +142,14 @@ public class GameplayController {
 			return;
 		gridPane.removeEventFilter(KeyEvent.KEY_PRESSED, keyEventHandler);
 		Platform.runLater(() -> {
-			int number = Player.willBeAddedToList(gameplay);
-			if (number >= 0)
-				Player.addPlayer(gameplay,
-						DialogOpener.openTextInputDialog(number, gameplay.getPoints(), gameplay.getTime()));
+			try {
+				int number = Player.willBeAddedToList(gameplay);
+				if (number >= 0)
+					Player.addPlayer(gameplay,
+							DialogOpener.openTextInputDialog(number, gameplay.getPoints(), gameplay.getTime()));
+			} catch (ReadingFileException | WritingFileException e) {
+				DialogOpener.openErrorDialog(e.getMessage());
+			}
 			Loader<RestartMenuController, Pane> loader = new Loader<RestartMenuController, Pane>(
 					FxmlDocument.RESTART_MENU);
 			gridPane.add(loader.getView(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);

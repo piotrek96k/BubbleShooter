@@ -2,11 +2,14 @@ package com.project.controller;
 
 import java.util.List;
 
+import com.project.dialog.DialogOpener;
+import com.project.exception.ReadingFileException;
 import com.project.image.GameImage;
 import com.project.model.mode.DifficultyLevel;
 import com.project.model.mode.GameMode;
 import com.project.model.player.Player;
 
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -37,18 +40,39 @@ public class StatisticsMenuController implements Returnable {
 	@FXML
 	private void initialize() {
 		gridPane.setStyle(GameImage.getRandomWallpaperStyle());
-		modeChoiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+		MainMenuController.initChoiceBoxes(levelChoiceBox, modeChoiceBox);
+		initTableView();
+		modeChoiceBox.getSelectionModel().selectedItemProperty().addListener(this::modeChoiceBoxSelectionChanged);
+		levelChoiceBox.getSelectionModel().selectedItemProperty().addListener(this::levelChoiceBoxSelectionChanged);
+	}
+
+	public void init() {
+		modeChoiceBoxSelectionChanged(modeChoiceBox.getSelectionModel().selectedItemProperty(), null,
+				modeChoiceBox.getSelectionModel().getSelectedItem());
+		levelChoiceBoxSelectionChanged(levelChoiceBox.getSelectionModel().selectedItemProperty(), null,
+				levelChoiceBox.getSelectionModel().getSelectedItem());
+	}
+
+	private void modeChoiceBoxSelectionChanged(ObservableValue<? extends GameMode> obsevable, GameMode oldValue,
+			GameMode newValue) {
+		try {
 			if (newValue.equals(GameMode.ARCADE_MODE) && levelChoiceBox.getSelectionModel().getSelectedItem() != null)
 				loadTableView(Player.getArcadeModePlayers(levelChoiceBox.getSelectionModel().getSelectedItem()));
 			else if (newValue.equals(GameMode.SURVIVAL_MODE))
 				loadTableView(Player.getSurvivalModePlayers());
-		});
-		levelChoiceBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-			if (newValue != null)
+		} catch (ReadingFileException e) {
+			DialogOpener.openErrorDialog(e.getMessage());
+		}
+	}
+
+	private void levelChoiceBoxSelectionChanged(ObservableValue<? extends DifficultyLevel> obsevable,
+			DifficultyLevel oldValue, DifficultyLevel newValue) {
+		if (newValue != null)
+			try {
 				loadTableView(Player.getArcadeModePlayers(newValue));
-		});
-		MainMenuController.initChoiceBoxes(levelChoiceBox, modeChoiceBox);
-		initTableView();
+			} catch (ReadingFileException e) {
+				DialogOpener.openErrorDialog(e.getMessage());
+			}
 	}
 
 	@Override
