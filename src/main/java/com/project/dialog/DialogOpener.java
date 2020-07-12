@@ -3,6 +3,8 @@ package com.project.dialog;
 import java.util.Optional;
 
 import com.project.function.Action;
+import com.project.model.gameplay.PointsCounter;
+import com.project.model.gameplay.TimeCounter;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -11,9 +13,9 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
 
 public class DialogOpener {
-	
+
 	private static final String DIALOG_STYLE_CSS;
-	
+
 	static {
 		DIALOG_STYLE_CSS = "/css/DialogStyle.css";
 	}
@@ -21,13 +23,21 @@ public class DialogOpener {
 	private DialogOpener() {
 	}
 
-	public static Optional<String> openTextInputDialog() {
+	public static Optional<String> openTextInputDialog(int number, long points, long time) {
 		TextInputDialog dialog = new TextInputDialog("Imiê Gracza");
 		dialog.getDialogPane().getStylesheets().add(DIALOG_STYLE_CSS);
 		dialog.getDialogPane().getStyleClass().add("custom-dialog");
 		dialog.setTitle("WprowadŸ imiê");
 		dialog.setHeaderText("Podaj swoje imiê");
-		dialog.setContentText("Gratulacje, twój wynik zakwalifikowa³ ciê do tabeli najlepszych graczy");
+		StringBuilder builder = new StringBuilder();
+		builder.append("Gratulacje, podaj swoje imiê, aby zapisaæ siê jako nr ");
+		builder.append(number + 1);
+		builder.append(" wœród 10 najlepszych\n");
+		builder.append("Twój wynik wynosi ");
+		builder.append(PointsCounter.getFormattedPoints(points));
+		builder.append(" punktów\nCzas twojej gry wynosi ");
+		builder.append(TimeCounter.getFullFormattedTime(time));
+		dialog.setContentText(builder.toString());
 		return dialog.showAndWait();
 	}
 

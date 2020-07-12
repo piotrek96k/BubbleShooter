@@ -10,15 +10,19 @@ public enum GameImage {
 	BOMB("/image/bomb.png"),
 
 	GHOST("/image/ghost.png"),
+	
+	ICON("/image/icon.png"),
+
+	OPTIONS_MENU_BACKGROUND("/image/optionsMenuWallpaper.png"),
+
+	REPLACE("/image/replace.png"),
 
 	TWO_COLORED_CIRCLE("/image/twoColoredCircle.png"),
 
-	THREE_COLORED_CIRCLE("/image/threeColoredCircle.png"),
-
-	OPTIONS_MENU_BACKGROUND("/image/optionsMenuWallpaper.png");
+	THREE_COLORED_CIRCLE("/image/threeColoredCircle.png");
 
 	private static final int NUMBER_OF_WALLPAPERS;
-	
+
 	static {
 		NUMBER_OF_WALLPAPERS = 3;
 	}

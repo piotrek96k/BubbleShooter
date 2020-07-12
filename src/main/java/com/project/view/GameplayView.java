@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.project.controller.GameplayController;
 import com.project.image.GameImage;
@@ -15,6 +17,7 @@ import com.project.model.bubble.DestroyingBubble;
 import com.project.model.bubble.TransparentBubble;
 import com.project.model.gameplay.BubblesTab;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
@@ -39,11 +42,15 @@ public class GameplayView {
 
 	private Pane pane;
 
+	private Circle replaceCircle;
+
 	private List<Line> lines;
 
 	private Map<Integer, Circle> circlesMap;
 
 	private Map<Integer, Painter> paintersMap;
+
+	private Timer timer;
 
 	static {
 		BUBBLE_RADIUS_REDUCE = 1.0;
@@ -54,6 +61,21 @@ public class GameplayView {
 		circlesMap = new HashMap<Integer, Circle>();
 		paintersMap = new HashMap<Integer, Painter>();
 		pane = new Pane();
+		timer = new Timer(true);
+	}
+
+	private class Rotator extends TimerTask {
+
+		private double rotation;
+
+		@Override
+		public void run() {
+			if (rotation == 0)
+				rotation += 360;
+			rotation -= 1;
+			Platform.runLater(() -> replaceCircle.setRotate(rotation));
+		}
+
 	}
 
 	public void setController(GameplayController gameplayController) {
@@ -71,6 +93,17 @@ public class GameplayView {
 		updateBubblesTab();
 		addBubble(controller.getGameplay().getBubblesTab().getBubbleToThrow());
 		addBubble(controller.getGameplay().getBubblesTab().getNextBubble());
+		addBubble(controller.getGameplay().getBubblesTab().getReplaceBubble());
+		initReplaceCircle();
+	}
+
+	private void initReplaceCircle() {
+		Bubble replaceBubble = controller.getGameplay().getBubblesTab().getReplaceBubble();
+		replaceCircle = new Circle(replaceBubble.getCenterX(), replaceBubble.getCenterY(), Bubble.DIAMETER);
+		pane.getChildren().add(replaceCircle);
+		replaceCircle.setOpacity(0.5);
+		replaceCircle.setFill(new ImagePattern(GameImage.REPLACE.getImage()));
+		timer.schedule(new Rotator(), 10, 10);
 	}
 
 	private void addRectangle() {
@@ -238,6 +271,9 @@ public class GameplayView {
 
 	private void handleMouseClicking(MouseEvent event) {
 		controller.throwBubble(event.getX(), event.getY());
+		Point2D point = new Point2D(event.getX(), event.getSceneY());
+		if(replaceCircle.contains(point))
+			controller.replaceBubble();
 	}
 
 	private void removeLine(int i) {
@@ -260,6 +296,10 @@ public class GameplayView {
 		setLineStyle(line);
 		lines.add(line);
 		pane.getChildren().add(1, line);
+	}
+
+	public void cancelTimer() {
+		timer.cancel();
 	}
 
 	public Pane getPane() {

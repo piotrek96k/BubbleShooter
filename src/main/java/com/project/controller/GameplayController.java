@@ -5,6 +5,7 @@ import java.util.List;
 import com.project.dialog.DialogOpener;
 import com.project.fxml.FxmlDocument;
 import com.project.fxml.Loader;
+import com.project.main.ApplicationMain;
 import com.project.model.bubble.Bubble;
 import com.project.model.gameplay.Gameplay;
 import com.project.model.gameplay.PointsCounter;
@@ -16,6 +17,8 @@ import com.project.view.Painter;
 
 import javafx.application.Platform;
 import javafx.beans.Observable;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -30,6 +33,8 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class GameplayController {
 
@@ -42,6 +47,8 @@ public class GameplayController {
 	private Pane pauseMenuPane;
 
 	private EventHandler<KeyEvent> keyEventHandler;
+
+	private ChangeListener<? super Boolean> iconifingListener;
 
 	@FXML
 	private GridPane gridPane;
@@ -64,6 +71,8 @@ public class GameplayController {
 	@FXML
 	private TextField levelField;
 
+	private boolean wasPaused;
+
 	@FXML
 	private void initialize() {
 		gridPane.setBackground(new Background(new BackgroundFill(
@@ -77,11 +86,19 @@ public class GameplayController {
 		view.setController(this);
 		initGameplay();
 		initViewElements();
+		iconifingListener = this::handleStageIconizing;
+		((Stage) gridPane.getScene().getWindow()).iconifiedProperty().addListener(iconifingListener);
+		EventHandler<WindowEvent> windowCloseHandler = event -> {
+			if (!gameplay.isPaused())
+				pauseOrResumeGame();
+			ApplicationMain.DEFAULT_WINDOW_CLOSE_HANDLER.handle(event);
+		};
+		gridPane.getScene().getWindow().setOnCloseRequest(windowCloseHandler);
 	}
 
 	private void initViewElements() {
 		gridPane.add(view.getPane(), 0, 0, 1, 1);
-		timeField.setText(TimeCounter.getFormattedTime(gameplay.getTime()));
+		timeField.setText(TimeCounter.getSimpleFormattedTime(gameplay.getTime()));
 		pointsField.setText(PointsCounter.getFormattedPoints(gameplay.getPoints()));
 		comboField.setText(PointsCounter.getFormattedCombo(gameplay.getCombo()));
 		keyEventHandler = this::handleKeyEvents;
@@ -98,8 +115,8 @@ public class GameplayController {
 		gameplay.addBubbleChangedListener(bubble -> Platform.runLater(() -> view.updateBubble(bubble)));
 		gameplay.addBubbleRemovedListener(bubble -> Platform.runLater(() -> removeBubble(bubble)));
 		gameplay.addMoveListener(() -> Platform.runLater(() -> view.updateBubblesTab()));
-		gameplay.addTimeListener(
-				() -> Platform.runLater(() -> timeField.setText(TimeCounter.getFormattedTime(gameplay.getTime()))));
+		gameplay.addTimeListener(() -> Platform
+				.runLater(() -> timeField.setText(TimeCounter.getSimpleFormattedTime(gameplay.getTime()))));
 		gameplay.addPointsListener(() -> Platform
 				.runLater(() -> pointsField.setText(PointsCounter.getFormattedPoints(gameplay.getPoints()))));
 		gameplay.addComboListener(() -> Platform
@@ -107,13 +124,26 @@ public class GameplayController {
 		gameplay.getFinishedProperty().addListener(this::handleFinishingGame);
 	}
 
+	private void handleStageIconizing(ObservableValue<? extends Boolean> observable, Boolean oldValue,
+			Boolean newValue) {
+		if (newValue.booleanValue()) {
+			wasPaused = gameplay.isPaused();
+			if (!gameplay.isPaused())
+				gameplay.pauseOrResume();
+		} else if (!wasPaused)
+			gameplay.pauseOrResume();
+
+	}
+
 	private void handleFinishingGame(Observable observable) {
 		if (gameplay.isPaused())
 			return;
 		gridPane.removeEventFilter(KeyEvent.KEY_PRESSED, keyEventHandler);
 		Platform.runLater(() -> {
-			if (Player.willBeAddedToList(gameplay))
-				Player.addPlayer(gameplay, DialogOpener.openTextInputDialog());
+			int number = Player.willBeAddedToList(gameplay);
+			if (number >= 0)
+				Player.addPlayer(gameplay,
+						DialogOpener.openTextInputDialog(number, gameplay.getPoints(), gameplay.getTime()));
 			Loader<RestartMenuController, Pane> loader = new Loader<RestartMenuController, Pane>(
 					FxmlDocument.RESTART_MENU);
 			gridPane.add(loader.getView(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
@@ -124,6 +154,10 @@ public class GameplayController {
 	private void handleKeyEvents(KeyEvent keyEvent) {
 		if (keyEvent.getCode().equals(KeyCode.ESCAPE))
 			pauseOrResumeGame();
+		else if (keyEvent.getCode().equals(KeyCode.SPACE)) {
+			keyEvent.consume();
+			gameplay.replaceBubbble();
+		}
 	}
 
 	public void pauseOrResumeGame() {
@@ -163,12 +197,22 @@ public class GameplayController {
 		gameplay.throwBubble(x, y);
 	}
 
+	public void replaceBubble() {
+		gameplay.replaceBubbble();
+	}
+
 	public Gameplay getGameplay() {
 		return gameplay;
 	}
 
 	public GridPane getGridPane() {
 		return gridPane;
+	}
+
+	public void dispose() {
+		view.cancelTimer();
+		((Stage) gridPane.getScene().getWindow()).iconifiedProperty().removeListener(iconifingListener);
+		gridPane.getScene().getWindow().setOnCloseRequest(ApplicationMain.DEFAULT_WINDOW_CLOSE_HANDLER);
 	}
 
 }

@@ -29,10 +29,22 @@ public class TimeCounter {
 		gameplay.sendTimeNotifications();
 	}
 	
-	public static String getFormattedTime(long time) {
+	public static String getSimpleFormattedTime(long time) {
 		StringBuilder builder = new StringBuilder();
 		appendTime(builder, time/1000, 0);
 		return builder.toString();
+	}
+	
+	public static String getFullFormattedTime(long time) {
+		time/= 1000;
+		int seconds = (int) time % 60;
+		time /= 60;
+		int minutes = (int) time % 60;
+		time /= 60;
+		int hours = (int) time % 24;
+		time /= 24;
+		int days = (int) time;
+		return String.format("%02dd %02dh %02dm %02ds", days, hours, minutes, seconds);
 	}
 
 	private static void appendTime(StringBuilder builder, long time, int number) {

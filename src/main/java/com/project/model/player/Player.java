@@ -16,6 +16,7 @@ import java.util.Optional;
 
 import com.project.model.gameplay.Gameplay;
 import com.project.model.gameplay.PointsCounter;
+import com.project.model.gameplay.TimeCounter;
 import com.project.model.mode.DifficultyLevel;
 import com.project.model.mode.GameMode;
 
@@ -104,7 +105,7 @@ public class Player implements Serializable {
 		}
 	}
 
-	public static boolean willBeAddedToList(Gameplay gameplay) {
+	public static int willBeAddedToList(Gameplay gameplay) {
 		GameMode gameMode = gameplay.getGameMode();
 		Player newPlayer = new Player(gameplay.getPoints(), gameplay.getTime());
 		if (gameMode.equals(GameMode.SURVIVAL_MODE))
@@ -112,17 +113,17 @@ public class Player implements Serializable {
 		else if (gameplay.isVictorious())
 			return comparePlayers(newPlayer, arcadeModePlayers.get(gameMode.getDifficultyLevel()),
 					arcadeModeComparator);
-		return false;
+		return -1;
 	}
 
-	private static boolean comparePlayers(Player newPlayer, List<Player> players, Comparator<Player> comparator) {
-		if (players.size() < 10)
-			return true;
-		for (Player player : players) {
-			if (comparator.compare(newPlayer, player) > 0)
-				return true;
+	private static int comparePlayers(Player newPlayer, List<Player> players, Comparator<Player> comparator) {
+		for (int i = 0; i < players.size(); i++) {
+			if (comparator.compare(newPlayer, players.get(i)) > 0)
+				return i;
 		}
-		return false;
+		if (players.size() < 10)
+			return players.size();
+		return -1;
 	}
 
 	public static List<Player> getSurvivalModePlayers() {
@@ -189,25 +190,17 @@ public class Player implements Serializable {
 	public String getPoints() {
 		return PointsCounter.getFormattedPoints(points);
 	}
-	
+
 	private long getUnmodifiedTime() {
 		return time;
 	}
-	
-	private long getUnmodifiedPoints(){
+
+	private long getUnmodifiedPoints() {
 		return points;
 	}
 
 	public String getTime() {
-		long time = this.time / 1000;
-		int seconds = (int) time % 60;
-		time /= 60;
-		int minutes = (int) time % 60;
-		time /= 60;
-		int hours = (int) time % 24;
-		time /= 24;
-		int days = (int) time;
-		return String.format("%02dd %02dh %02dm %02ds", days, hours, minutes, seconds);
+		return TimeCounter.getFullFormattedTime(time);
 	}
 
 	@Override

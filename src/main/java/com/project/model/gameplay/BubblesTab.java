@@ -29,6 +29,8 @@ public class BubblesTab {
 
 	public static final double BUBBLES_HEIGHT;
 
+	private int throwsCounter;
+
 	private int rowOffset;
 
 	private int numberOfColors[];
@@ -42,6 +44,8 @@ public class BubblesTab {
 	private Bubble bubbleToThrow;
 
 	private Bubble nextBubble;
+
+	private Bubble replaceBubble;
 
 	private Gameplay gameplay;
 
@@ -78,6 +82,7 @@ public class BubblesTab {
 		nextBubble = getRandomBubbleType(WIDTH / 2, BUBBLES_HEIGHT + (HEIGHT - BUBBLES_HEIGHT) / 2, 0.2,
 				suppliers.get(1));
 		setNextBubbleAsBubbleToThrow();
+		setReplaceBubble();
 		createNewTask();
 		if (gameplay.getGameMode().equals(GameMode.SURVIVAL_MODE))
 			scheduleColorsIncerementRunnable();
@@ -156,7 +161,7 @@ public class BubblesTab {
 	}
 
 	private void initBubbles() {
-		for (int i = 0; i < ROWS /2; i++) {
+		for (int i = 0; i < ROWS / 2; i++) {
 			double yCoordinate = getCenterY(i);
 			for (int j = 0; j < COLUMNS; j++) {
 				double xCoordinate = getCenterX(i, j);
@@ -194,6 +199,19 @@ public class BubblesTab {
 		double centerY = BUBBLES_HEIGHT + (HEIGHT - BUBBLES_HEIGHT) / 2;
 		nextBubble = getRandomBubbleType(centerX, centerY, 0.2, suppliers.get(1));
 		gameplay.sendBubbleAddedNotifications(nextBubble);
+	}
+
+	private void setReplaceBubble() {
+		if (throwsCounter == 0) {
+			throwsCounter = 10;
+			double centerX = WIDTH * 2 / 3;
+			double centerY = BUBBLES_HEIGHT + (HEIGHT - BUBBLES_HEIGHT) / 2;
+			if (replaceBubble != null)
+				gameplay.sendBubbleRemovedNotifications(replaceBubble);
+			replaceBubble = getRandomBubbleType(centerX, centerY, 1, suppliers.get(1));
+			gameplay.sendBubbleAddedNotifications(replaceBubble);
+		}
+		throwsCounter--;
 	}
 
 	private Bubble getRandomBubbleType(double centerX, double centerY, double probability,
@@ -246,11 +264,25 @@ public class BubblesTab {
 	}
 
 	public void setBubbleToThrow() {
-		if (gameplay.getGameMode().equals(GameMode.ARCADE_MODE))
-			changeNextBubbleIfNeed();
-		else
+		setReplaceBubble();
+		if (gameplay.getGameMode().equals(GameMode.ARCADE_MODE)) {
+			changeBubbleIfNeed(nextBubble);
+			changeBubbleIfNeed(replaceBubble);
+		} else
 			addColorsAndBubblesIfNeed();
 		setNextBubbleAsBubbleToThrow();
+	}
+
+	public void replaceBubble() {
+		if (!gameplay.getFinishedProperty().get() && !gameplay.getTimer().isPaused() && !gameplay.isMoving()
+				&& replaceBubble != null) {
+			replaceBubble.setCenterX(bubbleToThrow.getCenterX());
+			replaceBubble.setCenterY(bubbleToThrow.getCenterY());
+			gameplay.sendBubbleRemovedNotifications(bubbleToThrow);
+			bubbleToThrow = replaceBubble;
+			gameplay.sendBubbleChangedNotifications(bubbleToThrow);
+			replaceBubble = null;
+		}
 	}
 
 	private void addColorsAndBubblesIfNeed() {
@@ -259,27 +291,27 @@ public class BubblesTab {
 				goDown.run();
 	}
 
-	private void changeNextBubbleIfNeed() {
-		if (nextBubble instanceof ColoredBubble) {
-			ColoredBubble bubble = (ColoredBubble) nextBubble;
+	private void changeBubbleIfNeed(Bubble bubbleToChange) {
+		if (bubbleToChange instanceof ColoredBubble) {
+			ColoredBubble bubble = (ColoredBubble) bubbleToChange;
 			int activeColorsNumber = gameplay.getColorsCounter().getActiveBubblesNumber();
 			if (bubble.getColorsQuantity() > 1 && bubble.getColorsQuantity() > activeColorsNumber)
-				setNewNextBubble(bubble, activeColorsNumber);
+				setNewBubble(bubble, activeColorsNumber);
 			else
-				changeNextBubble(bubble);
-		} else if (nextBubble instanceof TransparentBubble)
-			changeTransparentBubble();
+				changeBubble(bubble);
+		} else if (bubbleToChange instanceof TransparentBubble)
+			changeTransparentBubble(bubbleToChange);
 	}
 
-	private void changeTransparentBubble() {
-		TransparentBubble transparentBubble = (TransparentBubble) nextBubble;
+	private void changeTransparentBubble(Bubble bubbleToChange) {
+		TransparentBubble transparentBubble = (TransparentBubble) bubbleToChange;
 		if (gameplay.getColorsCounter().getQuantity(transparentBubble.getColor()) == 0) {
 			transparentBubble.setColor(getRandomBubbleColorIfColorExists());
 			gameplay.sendBubbleChangedNotifications(transparentBubble);
 		}
 	}
 
-	private void changeNextBubble(ColoredBubble bubble) {
+	private void changeBubble(ColoredBubble bubble) {
 		boolean changed = false;
 		for (int i = 0; i < bubble.getColorsQuantity(); i++) {
 			if (gameplay.getColorsCounter().getQuantity(bubble.getColors().get(i)) == 0) {
@@ -297,18 +329,18 @@ public class BubblesTab {
 			}
 		}
 		if (changed)
-			gameplay.sendBubbleChangedNotifications(nextBubble);
+			gameplay.sendBubbleChangedNotifications(bubble);
 	}
 
-	private void setNewNextBubble(ColoredBubble bubble, int colorsNumber) {
+	private void setNewBubble(ColoredBubble bubble, int colorsNumber) {
 		BubbleColor[] activeColors = new BubbleColor[colorsNumber];
 		int counter = 0;
 		for (BubbleColor color : bubble.getColors())
 			if (gameplay.getColorsCounter().getQuantity(color) != 0)
 				activeColors[counter++] = color;
 		gameplay.sendBubbleRemovedNotifications(bubble);
-		nextBubble = new ColoredBubble(nextBubble.getCenterX(), nextBubble.getCenterY(), activeColors);
-		gameplay.sendBubbleAddedNotifications(nextBubble);
+		bubble = new ColoredBubble(bubble.getCenterX(), bubble.getCenterY(), activeColors);
+		gameplay.sendBubbleAddedNotifications(bubble);
 	}
 
 	private BubbleColor getRandomBubbleColorIfColorExists() {
@@ -346,6 +378,10 @@ public class BubblesTab {
 
 	public Bubble getNextBubble() {
 		return nextBubble;
+	}
+
+	public Bubble getReplaceBubble() {
+		return replaceBubble;
 	}
 
 	public Object getLocker() {

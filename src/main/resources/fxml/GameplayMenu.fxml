@@ -33,12 +33,12 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="ALWAYS" />
         </rowConstraints>
          <children>
-            <TextField fx:id="gameModeField" alignment="CENTER" editable="false" mouseTransparent="true" GridPane.columnIndex="1">
+            <TextField fx:id="gameModeField" alignment="CENTER" editable="false" focusTraversable="false" mouseTransparent="true" GridPane.columnIndex="1">
                <GridPane.margin>
                   <Insets left="10.0" right="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField alignment="CENTER" editable="false" maxWidth="-Infinity" mouseTransparent="true" prefWidth="150.0" text="Czas" GridPane.rowIndex="3">
+            <TextField alignment="CENTER" editable="false" focusTraversable="false" maxWidth="-Infinity" mouseTransparent="true" prefWidth="150.0" text="Czas" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
@@ -51,42 +51,42 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </Button>
-            <TextField alignment="CENTER" editable="false" maxWidth="-Infinity" mouseTransparent="true" prefWidth="150.0" text="Punkty" GridPane.rowIndex="4">
+            <TextField alignment="CENTER" editable="false" focusTraversable="false" maxWidth="-Infinity" mouseTransparent="true" prefWidth="150.0" text="Punkty" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField alignment="CENTER" editable="false" maxWidth="-Infinity" mouseTransparent="true" prefWidth="150.0" text="Combo" GridPane.rowIndex="5">
+            <TextField alignment="CENTER" editable="false" focusTraversable="false" maxWidth="-Infinity" mouseTransparent="true" prefWidth="150.0" text="Combo" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField fx:id="timeField" alignment="CENTER_RIGHT" editable="false" mouseTransparent="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <TextField fx:id="timeField" alignment="CENTER_RIGHT" editable="false" focusTraversable="false" mouseTransparent="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="10.0" right="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField fx:id="pointsField" alignment="CENTER_RIGHT" editable="false" mouseTransparent="true" GridPane.columnIndex="1" GridPane.rowIndex="4">
+            <TextField fx:id="pointsField" alignment="CENTER_RIGHT" editable="false" focusTraversable="false" mouseTransparent="true" GridPane.columnIndex="1" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" right="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField fx:id="comboField" alignment="CENTER_RIGHT" editable="false" mouseTransparent="true" GridPane.columnIndex="1" GridPane.rowIndex="5">
+            <TextField fx:id="comboField" alignment="CENTER_RIGHT" editable="false" focusTraversable="false" mouseTransparent="true" GridPane.columnIndex="1" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="10.0" right="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField alignment="CENTER" editable="false" mouseTransparent="true" prefWidth="150.0" text="Tryb Gry">
+            <TextField alignment="CENTER" editable="false" focusTraversable="false" mouseTransparent="true" prefWidth="150.0" text="Tryb Gry">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField alignment="CENTER" editable="false" mouseTransparent="true" prefWidth="150.0" text="Poziom" GridPane.rowIndex="1">
+            <TextField alignment="CENTER" editable="false" focusTraversable="false" mouseTransparent="true" prefWidth="150.0" text="Poziom" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField fx:id="levelField" alignment="CENTER" editable="false" mouseTransparent="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <TextField fx:id="levelField" alignment="CENTER" editable="false" focusTraversable="false" mouseTransparent="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets left="10.0" right="10.0" />
                </GridPane.margin>

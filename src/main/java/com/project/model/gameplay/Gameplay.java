@@ -126,6 +126,10 @@ public class Gameplay {
 		}
 	}
 
+	public void replaceBubbble() {
+		bubblesTab.replaceBubble();
+	}
+
 	public List<Point2D> getLinePoints(double x, double y) {
 		return shooter.getLinePoints(x, y);
 	}
