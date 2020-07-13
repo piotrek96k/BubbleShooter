@@ -1,16 +1,18 @@
 package com.project.model.mode;
 
+import com.project.resources.Resources;
+
 public enum DifficultyLevel {
 
-	EASY(6, "£atwy"),
+	EASY(6, Resources.RESOURCE_BUNDLE.getString("DifficultyLevel.EASY")),
 
-	MEDIUM(7, "Œredni"),
+	MEDIUM(7, Resources.RESOURCE_BUNDLE.getString("DifficultyLevel.MEDIUM")),
 
-	HARD(8, "Trudny"),
+	HARD(8, Resources.RESOURCE_BUNDLE.getString("DifficultyLevel.HARD")),
 
-	EXTREME(9, "Ekstremalny"),
+	EXTREME(9, Resources.RESOURCE_BUNDLE.getString("DifficultyLevel.EXTREME")),
 
-	HARDCORE(10, "Hardkorowy");
+	HARDCORE(10, Resources.RESOURCE_BUNDLE.getString("DifficultyLevel.HARDCORE"));
 
 	private int numberOfColors;
 

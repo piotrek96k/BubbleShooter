@@ -6,8 +6,8 @@ import java.util.Random;
 import java.util.Set;
 
 import com.project.exception.IllegalValueException;
-import com.project.preferences.PreferencesKey;
-import com.project.preferences.UserProperties;
+import com.project.resources.PreferencesKey;
+import com.project.resources.Resources;
 
 import javafx.application.Platform;
 import javafx.scene.layout.Pane;
@@ -49,10 +49,10 @@ public class SoundPlayer {
 
 	{
 		gameplayEffectsPlayers = new HashSet<MediaPlayer>();
-		effectsMuted = UserProperties.PREFERENCES.getBoolean(PreferencesKey.EFFECTS_MUTED.getKey(), false);
-		musicMuted = UserProperties.PREFERENCES.getBoolean(PreferencesKey.MUSIC_MUTED.getKey(), false);
-		effectsVolume = UserProperties.PREFERENCES.getDouble(PreferencesKey.EFFECTS_VOLUME.getKey(), 0.5);
-		musicVolume = UserProperties.PREFERENCES.getDouble(PreferencesKey.MUSIC_VOLUME.getKey(), 0.5);
+		effectsMuted = Resources.PREFERENCES.getBoolean(PreferencesKey.EFFECTS_MUTED.getKey(), false);
+		musicMuted = Resources.PREFERENCES.getBoolean(PreferencesKey.MUSIC_MUTED.getKey(), false);
+		effectsVolume = Resources.PREFERENCES.getDouble(PreferencesKey.EFFECTS_VOLUME.getKey(), 0.5);
+		musicVolume = Resources.PREFERENCES.getDouble(PreferencesKey.MUSIC_VOLUME.getKey(), 0.5);
 	}
 
 	private class GameplayMusicPlayer implements Runnable {
@@ -252,10 +252,10 @@ public class SoundPlayer {
 	}
 
 	public void saveUserPreferences() {
-		UserProperties.PREFERENCES.putBoolean(PreferencesKey.EFFECTS_MUTED.getKey(), effectsMuted);
-		UserProperties.PREFERENCES.putBoolean(PreferencesKey.MUSIC_MUTED.getKey(), musicMuted);
-		UserProperties.PREFERENCES.putDouble(PreferencesKey.EFFECTS_VOLUME.getKey(), effectsVolume);
-		UserProperties.PREFERENCES.putDouble(PreferencesKey.MUSIC_VOLUME.getKey(), musicVolume);
+		Resources.PREFERENCES.putBoolean(PreferencesKey.EFFECTS_MUTED.getKey(), effectsMuted);
+		Resources.PREFERENCES.putBoolean(PreferencesKey.MUSIC_MUTED.getKey(), musicMuted);
+		Resources.PREFERENCES.putDouble(PreferencesKey.EFFECTS_VOLUME.getKey(), effectsVolume);
+		Resources.PREFERENCES.putDouble(PreferencesKey.MUSIC_VOLUME.getKey(), musicVolume);
 	}
 
 }

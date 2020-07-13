@@ -26,7 +26,7 @@
    <children>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
          <children>
-            <Label prefWidth="200.0" text="Tryb gry">
+            <Label prefWidth="200.0" text="%PlayMenu.gameModeLabel">
                <font>
                   <Font size="24.0" />
                </font></Label>
@@ -35,7 +35,7 @@
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
          <children>
-            <Label prefWidth="200.0" text="Poziom">
+            <Label prefWidth="200.0" text="%PlayMenu.levelLabel">
                <font>
                   <Font size="24.0" />
                </font></Label>
@@ -44,11 +44,11 @@
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="25.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
          <children>
-            <Button fx:id="playButton" mnemonicParsing="false" prefWidth="300.0" text="Graj">
+            <Button fx:id="playButton" mnemonicParsing="false" prefWidth="300.0" text="%PlayMenu.playButton">
                <font>
                   <Font size="24.0" />
                </font></Button>
-            <Button fx:id="backButton" mnemonicParsing="false" prefWidth="300.0" text="Powrót">
+            <Button fx:id="backButton" mnemonicParsing="false" prefWidth="300.0" text="%PlayMenu.returnButton">
                <font>
                   <Font size="24.0" />
                </font></Button>

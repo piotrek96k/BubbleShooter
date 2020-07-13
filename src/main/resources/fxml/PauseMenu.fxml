@@ -6,27 +6,27 @@
 
 <VBox fx:id="vBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="25.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.controller.PauseMenuController">
    <children>
-      <Button fx:id="resumeButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="300.0" text="Wznów">
+      <Button fx:id="resumeButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="300.0" text="%PauseMenu.resumeButton">
          <font>
             <Font size="24.0" />
          </font>
       </Button>
-      <Button fx:id="restartButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="300.0" text="Restart">
+      <Button fx:id="restartButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="300.0" text="%PauseMenu.restartButton">
          <font>
             <Font size="24.0" />
          </font>
       </Button>
-      <Button fx:id="optionsButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="300.0" text="Opcje">
+      <Button fx:id="optionsButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="300.0" text="%PauseMenu.optionsButton">
          <font>
             <Font size="24.0" />
          </font>
       </Button>
-      <Button fx:id="bestPlayersButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="300.0" text="Najlepsi Gracze">
+      <Button fx:id="bestPlayersButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="300.0" text="%PauseMenu.bestPlayersButton">
          <font>
             <Font size="24.0" />
          </font>
       </Button>
-      <Button fx:id="menuButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="300.0" text="Menu ">
+      <Button fx:id="menuButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefWidth="300.0" text="%PauseMenu.menuButton">
          <font>
             <Font size="24.0" />
          </font>

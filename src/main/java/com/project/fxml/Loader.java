@@ -2,6 +2,8 @@ package com.project.fxml;
 
 import java.io.IOException;
 
+import com.project.resources.Resources;
+
 import javafx.fxml.FXMLLoader;
 
 public class Loader<T, U> {
@@ -13,6 +15,7 @@ public class Loader<T, U> {
 	public Loader(FxmlDocument document) {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(document.getDocument()));
 		try {
+			loader.setResources(Resources.RESOURCE_BUNDLE);
 			view = loader.load();
 			controller = loader.getController();
 		} catch (IOException e) {

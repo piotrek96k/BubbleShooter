@@ -21,22 +21,22 @@
       <RowConstraints minHeight="10.0" percentHeight="10.0" vgrow="SOMETIMES" />
    </rowConstraints>
    <children>
-      <Button fx:id="exitButton" minWidth="200.0" mnemonicParsing="false" prefWidth="300.0" text="Wyjście" GridPane.columnIndex="1" GridPane.rowIndex="4">
+      <Button fx:id="exitButton" minWidth="200.0" mnemonicParsing="false" prefWidth="300.0" text="%MainMenu.exitButton" GridPane.columnIndex="1" GridPane.rowIndex="4">
          <font>
             <Font size="24.0" />
          </font>
       </Button>
-      <Button fx:id="playButton" minWidth="200.0" mnemonicParsing="false" prefWidth="300.0" text="Graj" GridPane.columnIndex="1" GridPane.rowIndex="1">
+      <Button fx:id="playButton" minWidth="200.0" mnemonicParsing="false" prefWidth="300.0" text="%MainMenu.playButton" GridPane.columnIndex="1" GridPane.rowIndex="1">
          <font>
             <Font size="24.0" />
          </font>
       </Button>
-      <Button fx:id="optionsButton" minWidth="200.0" mnemonicParsing="false" prefWidth="300.0" text="Opcje" GridPane.columnIndex="1" GridPane.rowIndex="2">
+      <Button fx:id="optionsButton" minWidth="200.0" mnemonicParsing="false" prefWidth="300.0" text="%MainMenu.optionsButton" GridPane.columnIndex="1" GridPane.rowIndex="2">
          <font>
             <Font size="24.0" />
          </font>
       </Button>
-      <Button fx:id="bestPlayersButton" minWidth="200.0" mnemonicParsing="false" prefWidth="300.0" text="Najlepsi Gracze" GridPane.columnIndex="1" GridPane.rowIndex="3">
+      <Button fx:id="bestPlayersButton" minWidth="200.0" mnemonicParsing="false" prefWidth="300.0" text="%MainMenu.bestPlayersButton" GridPane.columnIndex="1" GridPane.rowIndex="3">
          <font>
             <Font size="24.0" />
          </font>

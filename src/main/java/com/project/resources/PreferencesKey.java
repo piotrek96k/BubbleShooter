@@ -1,4 +1,4 @@
-package com.project.preferences;
+package com.project.resources;
 
 public enum PreferencesKey {
 

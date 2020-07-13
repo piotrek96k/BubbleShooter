@@ -6,6 +6,7 @@ import com.project.fxml.FxmlDocument;
 import com.project.fxml.Loader;
 import com.project.image.GameImage;
 import com.project.model.gameplay.BubblesTab;
+import com.project.resources.Resources;
 import com.project.sound.SoundPlayer;
 
 import javafx.application.Application;
@@ -19,6 +20,8 @@ import javafx.stage.WindowEvent;
 
 public class ApplicationMain extends Application {
 
+	private static final String APPLICATION_TITLE;
+
 	public static final EventHandler<WindowEvent> DEFAULT_WINDOW_CLOSE_HANDLER;
 
 	private static final String APPLICATION_STYLE_CSS;
@@ -30,6 +33,7 @@ public class ApplicationMain extends Application {
 	static {
 		DEFAULT_WINDOW_CLOSE_HANDLER = ApplicationMain::handleCloseRequest;
 		APPLICATION_STYLE_CSS = "/css/ApplicationStyle.css";
+		APPLICATION_TITLE = Resources.RESOURCE_BUNDLE.getString("ApplicationMain.APPLICATION_TITLE");
 	}
 
 	public static void main(String[] args) {
@@ -49,7 +53,7 @@ public class ApplicationMain extends Application {
 		stackPane.getChildren().add(pane);
 		stage.setOnCloseRequest(DEFAULT_WINDOW_CLOSE_HANDLER);
 		stage.iconifiedProperty().addListener(this::handleStageIconizing);
-		stage.setTitle("Bubble Shooter");
+		stage.setTitle(APPLICATION_TITLE);
 		stage.getIcons().add(GameImage.ICON.getImage());
 		stage.setResizable(false);
 		stage.show();

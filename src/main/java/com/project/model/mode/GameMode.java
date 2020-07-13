@@ -1,8 +1,10 @@
 package com.project.model.mode;
 
+import com.project.resources.Resources;
+
 public enum GameMode {
 
-	ARCADE_MODE(DifficultyLevel.EASY, "Zrêcznoœciowy") {
+	ARCADE_MODE(DifficultyLevel.EASY, Resources.RESOURCE_BUNDLE.getString("GameMode.ARCADE_MODE")) {
 
 		@Override
 		public void setDifficultyLevel(DifficultyLevel difficultyLevel) {
@@ -11,7 +13,7 @@ public enum GameMode {
 
 	},
 
-	SURVIVAL_MODE(DifficultyLevel.EASY, "Przetrwanie") {
+	SURVIVAL_MODE(DifficultyLevel.EASY, Resources.RESOURCE_BUNDLE.getString("GameMode.SURVIVAL_MODE")) {
 		@Override
 		public void setDifficultyLevel(DifficultyLevel difficultyLevel) {
 		}

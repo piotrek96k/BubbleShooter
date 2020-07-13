@@ -8,6 +8,7 @@ import com.project.image.GameImage;
 import com.project.model.mode.DifficultyLevel;
 import com.project.model.mode.GameMode;
 import com.project.model.player.Player;
+import com.project.resources.Resources;
 
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -87,10 +88,10 @@ public class StatisticsMenuController implements Returnable {
 	}
 
 	private void initTableView() {
-		addColumn("Id", "id");
-		addColumn("Imiê", "name");
-		addColumn("Punkty", "points");
-		addColumn("Czas", "time");
+		addColumn(Resources.RESOURCE_BUNDLE.getString("StatisticsMenu.Controller.initTableView.id"), "id");
+		addColumn(Resources.RESOURCE_BUNDLE.getString("StatisticsMenu.Controller.initTableView.name"), "name");
+		addColumn(Resources.RESOURCE_BUNDLE.getString("StatisticsMenu.Controller.initTableView.points"), "points");
+		addColumn(Resources.RESOURCE_BUNDLE.getString("StatisticsMenu.Controller.initTableView.time"), "time");
 	}
 
 	private void addColumn(String name, String pointer) {

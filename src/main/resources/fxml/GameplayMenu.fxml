@@ -38,12 +38,12 @@
                   <Insets left="10.0" right="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField alignment="CENTER" editable="false" focusTraversable="false" maxWidth="-Infinity" mouseTransparent="true" prefWidth="150.0" text="Czas" GridPane.rowIndex="3">
+            <TextField alignment="CENTER" editable="false" focusTraversable="false" maxWidth="-Infinity" mouseTransparent="true" prefWidth="150.0" text="%GameplayMenu.timeField" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <Button fx:id="pauseButton" mnemonicParsing="false" prefWidth="150.0" text="Pauza" GridPane.halignment="LEFT" GridPane.rowIndex="7">
+            <Button fx:id="pauseButton" mnemonicParsing="false" prefWidth="150.0" text="%GameplayMenu.pauseButton" GridPane.halignment="LEFT" GridPane.rowIndex="7">
                <font>
                   <Font size="24.0" />
                </font>
@@ -51,12 +51,12 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </Button>
-            <TextField alignment="CENTER" editable="false" focusTraversable="false" maxWidth="-Infinity" mouseTransparent="true" prefWidth="150.0" text="Punkty" GridPane.rowIndex="4">
+            <TextField alignment="CENTER" editable="false" focusTraversable="false" maxWidth="-Infinity" mouseTransparent="true" prefWidth="150.0" text="%GameplayMenu.pointsField" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField alignment="CENTER" editable="false" focusTraversable="false" maxWidth="-Infinity" mouseTransparent="true" prefWidth="150.0" text="Combo" GridPane.rowIndex="5">
+            <TextField alignment="CENTER" editable="false" focusTraversable="false" maxWidth="-Infinity" mouseTransparent="true" prefWidth="150.0" text="%GameplayMenu.comboField" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
@@ -76,12 +76,12 @@
                   <Insets left="10.0" right="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField alignment="CENTER" editable="false" focusTraversable="false" mouseTransparent="true" prefWidth="150.0" text="Tryb Gry">
+            <TextField alignment="CENTER" editable="false" focusTraversable="false" mouseTransparent="true" prefWidth="150.0" text="%GameplayMenu.gameModeField">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField alignment="CENTER" editable="false" focusTraversable="false" mouseTransparent="true" prefWidth="150.0" text="Poziom" GridPane.rowIndex="1">
+            <TextField alignment="CENTER" editable="false" focusTraversable="false" mouseTransparent="true" prefWidth="150.0" text="%GameplayMenu.levelModeField" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>

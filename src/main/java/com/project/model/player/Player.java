@@ -49,7 +49,7 @@ public class Player implements Serializable {
 	static {
 		serialVersionUID = 2383760553340651268L;
 		PLAYERS_PATH = System.getProperty("user.home") + "/AppData/Local/BubbleShooter";
-		PLAYERS_FILE = PLAYERS_PATH + "/gracze.gr";
+		PLAYERS_FILE = PLAYERS_PATH + "/scores.sc";
 	}
 
 	private Player(long points, long time) {
@@ -62,7 +62,8 @@ public class Player implements Serializable {
 		this.time = time;
 	}
 
-	public static void addPlayer(Gameplay gameplay, Optional<String> name) throws ReadingFileException, WritingFileException {
+	public static void addPlayer(Gameplay gameplay, Optional<String> name)
+			throws ReadingFileException, WritingFileException {
 		readIfNull();
 		if (!name.isPresent() || name.isEmpty())
 			return;
@@ -74,7 +75,8 @@ public class Player implements Serializable {
 			addPlayerToSet(newPlayer, arcadeModePlayers.get(gameMode.getDifficultyLevel()), arcadeModeComparator);
 	}
 
-	private static void addPlayerToSet(Player newPlayer, List<Player> players, Comparator<Player> comparator) throws WritingFileException {
+	private static void addPlayerToSet(Player newPlayer, List<Player> players, Comparator<Player> comparator)
+			throws WritingFileException {
 		for (int i = 0; i < players.size(); i++) {
 			if (comparator.compare(newPlayer, players.get(i)) > 0) {
 				newPlayer.setId(i + 1);
@@ -148,7 +150,7 @@ public class Player implements Serializable {
 	private static void read() throws ReadingFileException {
 		File file = new File(PLAYERS_FILE);
 		if (file.exists())
-			try(ObjectInputStream stream = new ObjectInputStream(new FileInputStream(file))) {
+			try (ObjectInputStream stream = new ObjectInputStream(new FileInputStream(file))) {
 				Object object = stream.readObject();
 				if (object instanceof List<?>)
 					for (Object obj : (List<?>) object) {

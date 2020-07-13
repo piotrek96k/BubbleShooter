@@ -10,47 +10,32 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<GridPane fx:id="gridPane"
-	xmlns="http://javafx.com/javafx/11.0.1"
-	xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="com.project.controller.StatisticsMenuController">
+<GridPane fx:id="gridPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.controller.StatisticsMenuController">
 	<columnConstraints>
-		<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
-			prefWidth="100.0" />
-		<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
-			percentWidth="15.0" />
-		<ColumnConstraints halignment="RIGHT"
-			percentWidth="27.5" />
-		<ColumnConstraints halignment="CENTER"
-			hgrow="SOMETIMES" percentWidth="2.5" />
+		<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+		<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="15.0" />
+		<ColumnConstraints halignment="RIGHT" percentWidth="27.5" />
+		<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" percentWidth="2.5" />
 	</columnConstraints>
 	<rowConstraints>
-		<RowConstraints minHeight="10.0" percentHeight="40.0"
-			prefHeight="30.0" vgrow="SOMETIMES" />
-		<RowConstraints minHeight="10.0" prefHeight="30.0"
-			vgrow="SOMETIMES" />
-		<RowConstraints minHeight="10.0" prefHeight="30.0"
-			vgrow="SOMETIMES" />
-		<RowConstraints minHeight="10.0" prefHeight="30.0"
-			valignment="CENTER" vgrow="SOMETIMES" />
-		<RowConstraints minHeight="10.0" percentHeight="10.0"
-			prefHeight="30.0" vgrow="SOMETIMES" />
+		<RowConstraints minHeight="10.0" percentHeight="40.0" prefHeight="30.0" vgrow="SOMETIMES" />
+		<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+		<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+		<RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+		<RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 	</rowConstraints>
 	<children>
-		<ChoiceBox fx:id="modeChoiceBox" prefWidth="300.0"
-			GridPane.columnIndex="2" GridPane.rowIndex="1">
+		<ChoiceBox fx:id="modeChoiceBox" prefWidth="300.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
 			<GridPane.margin>
 				<Insets />
 			</GridPane.margin>
 		</ChoiceBox>
-		<ChoiceBox fx:id="levelChoiceBox" prefWidth="300.0"
-			GridPane.columnIndex="2" GridPane.rowIndex="2">
+		<ChoiceBox fx:id="levelChoiceBox" prefWidth="300.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
 			<GridPane.margin>
 				<Insets />
 			</GridPane.margin>
 		</ChoiceBox>
-		<Label text="Tryb Gry" GridPane.columnIndex="1"
-			GridPane.rowIndex="1">
+		<Label text="%StatisticsMenu.gameModeLabel" GridPane.columnIndex="1" GridPane.rowIndex="1">
 			<font>
 				<Font size="24.0" />
 			</font>
@@ -58,8 +43,7 @@
 				<Insets left="20.0" />
 			</GridPane.margin>
 		</Label>
-		<Label text="Poziom" GridPane.columnIndex="1"
-			GridPane.rowIndex="2">
+		<Label text="%StatisticsMenu.levelLabel" GridPane.columnIndex="1" GridPane.rowIndex="2">
 			<font>
 				<Font size="24.0" />
 			</font>
@@ -67,10 +51,9 @@
 				<Insets left="20.0" />
 			</GridPane.margin>
 		</Label>
-		<TableView fx:id="tableView" maxHeight="366.5"
-			GridPane.rowSpan="2147483647">
+		<TableView fx:id="tableView" maxHeight="366.5" GridPane.rowSpan="2147483647">
 			<placeholder>
-				<Label text="Brak rozgrywek" />
+				<Label text="%StatisticsMenu.placeholderLabel" />
 			</placeholder>
 			<GridPane.margin>
 				<Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -79,9 +62,7 @@
 				<TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
 			</columnResizePolicy>
 		</TableView>
-		<Button fx:id="returnButton" mnemonicParsing="false"
-			prefWidth="300.0" text="Powrót" GridPane.columnIndex="2"
-			GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+		<Button fx:id="returnButton" mnemonicParsing="false" prefWidth="300.0" text="%StatisticsMenu.returnButton" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
 			<font>
 				<Font size="24.0" />
 			</font>
