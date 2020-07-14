@@ -152,6 +152,9 @@ public class GameplayController {
 			}
 			Loader<RestartMenuController, Pane> loader = new Loader<RestartMenuController, Pane>(
 					FxmlDocument.RESTART_MENU);
+			Pane pane = loader.getView();
+			pane.setPrefWidth(gridPane.getWidth());
+			pane.setPrefHeight(gridPane.getHeight());
 			gridPane.add(loader.getView(), 0, 0, GridPane.REMAINING, GridPane.REMAINING);
 			loader.getController().setGameplayController(this);
 		});
