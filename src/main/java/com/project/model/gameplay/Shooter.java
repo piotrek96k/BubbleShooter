@@ -88,7 +88,8 @@ public class Shooter {
 				gameplay.sendBubbleRemovedNotifications(gameplay.getBubblesTab().getBubbleToThrow());
 			}
 			for (Coordinate coordinate : getCoordinates(point, Bubble.DIAMETER / 4))
-				gameplay.getRemover().simpleRemove(coordinate);
+				if (coordinate.getColumn() >= 0 && coordinate.getColumn() < BubblesTab.COLUMNS)
+					gameplay.getRemover().simpleRemove(coordinate);
 		}
 
 		private Void restartTimer(Point2D point, Point2D coefficients,

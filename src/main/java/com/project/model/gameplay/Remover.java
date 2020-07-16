@@ -158,7 +158,6 @@ public class Remover {
 		if (isTransparent)
 			return 2;
 		return 3;
-
 	}
 
 	private void runFindingBombedBubbles() {
@@ -207,7 +206,6 @@ public class Remover {
 		if (!newBombs.isEmpty())
 			toDelete.addAll(repeatFindingBombedBubbles(newBombs));
 		return toDelete;
-
 	}
 
 	private void removeBombedBubbles() {

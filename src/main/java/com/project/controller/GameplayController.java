@@ -134,7 +134,6 @@ public class GameplayController {
 				gameplay.pauseOrResume();
 		} else if (!wasPaused)
 			gameplay.pauseOrResume();
-
 	}
 
 	private void handleFinishingGame(Observable observable) {
