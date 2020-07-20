@@ -266,8 +266,8 @@ public class BubblesTab {
 	public void setBubbleToThrow() {
 		setReplaceBubble();
 		if (gameplay.getGameMode().equals(GameMode.ARCADE_MODE)) {
-			changeBubbleIfNeed(nextBubble);
-			changeBubbleIfNeed(replaceBubble);
+			nextBubble=changeBubbleIfNeed(nextBubble);
+			replaceBubble=changeBubbleIfNeed(replaceBubble);
 		} else
 			addColorsAndBubblesIfNeed();
 		setNextBubbleAsBubbleToThrow();
@@ -291,27 +291,29 @@ public class BubblesTab {
 				goDown.run();
 	}
 
-	private void changeBubbleIfNeed(Bubble bubbleToChange) {
+	private Bubble changeBubbleIfNeed(Bubble bubbleToChange) {
 		if (bubbleToChange instanceof ColoredBubble) {
 			ColoredBubble bubble = (ColoredBubble) bubbleToChange;
 			int activeColorsNumber = gameplay.getColorsCounter().getActiveBubblesNumber();
-			if (bubble.getColorsQuantity() > 1 && bubble.getColorsQuantity() > activeColorsNumber)
-				setNewBubble(bubble, activeColorsNumber);
+			if (bubble.getColorsQuantity() > activeColorsNumber)
+				return setNewBubble(bubble, activeColorsNumber);
 			else
-				changeBubble(bubble);
+				return changeBubble(bubble);
 		} else if (bubbleToChange instanceof TransparentBubble)
-			changeTransparentBubble(bubbleToChange);
+			return changeTransparentBubble(bubbleToChange);
+		return bubbleToChange;
 	}
 
-	private void changeTransparentBubble(Bubble bubbleToChange) {
+	private Bubble changeTransparentBubble(Bubble bubbleToChange) {
 		TransparentBubble transparentBubble = (TransparentBubble) bubbleToChange;
 		if (gameplay.getColorsCounter().getQuantity(transparentBubble.getColor()) == 0) {
 			transparentBubble.setColor(getRandomBubbleColorIfColorExists());
 			gameplay.sendBubbleChangedNotifications(transparentBubble);
 		}
+		return transparentBubble;
 	}
 
-	private void changeBubble(ColoredBubble bubble) {
+	private Bubble changeBubble(ColoredBubble bubble) {
 		boolean changed = false;
 		for (int i = 0; i < bubble.getColorsQuantity(); i++) {
 			if (gameplay.getColorsCounter().getQuantity(bubble.getColors().get(i)) == 0) {
@@ -330,9 +332,10 @@ public class BubblesTab {
 		}
 		if (changed)
 			gameplay.sendBubbleChangedNotifications(bubble);
+		return bubble;
 	}
 
-	private void setNewBubble(ColoredBubble bubble, int colorsNumber) {
+	private Bubble setNewBubble(ColoredBubble bubble, int colorsNumber) {
 		BubbleColor[] activeColors = new BubbleColor[colorsNumber];
 		int counter = 0;
 		for (BubbleColor color : bubble.getColors())
@@ -341,6 +344,7 @@ public class BubblesTab {
 		gameplay.sendBubbleRemovedNotifications(bubble);
 		bubble = new ColoredBubble(bubble.getCenterX(), bubble.getCenterY(), activeColors);
 		gameplay.sendBubbleAddedNotifications(bubble);
+		return bubble;
 	}
 
 	private BubbleColor getRandomBubbleColorIfColorExists() {

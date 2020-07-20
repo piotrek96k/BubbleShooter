@@ -128,12 +128,13 @@ public class GameplayController {
 
 	private void handleStageIconizing(ObservableValue<? extends Boolean> observable, Boolean oldValue,
 			Boolean newValue) {
-		if (newValue.booleanValue()) {
-			wasPaused = gameplay.isPaused();
-			if (!gameplay.isPaused())
+		if (!gameplay.getFinishedProperty().get())
+			if (newValue.booleanValue()) {
+				wasPaused = gameplay.isPaused();
+				if (!gameplay.isPaused())
+					gameplay.pauseOrResume();
+			} else if (!wasPaused)
 				gameplay.pauseOrResume();
-		} else if (!wasPaused)
-			gameplay.pauseOrResume();
 	}
 
 	private void handleFinishingGame(Observable observable) {
@@ -181,13 +182,13 @@ public class GameplayController {
 			gridPane.getChildren().remove(pauseMenuPane);
 	}
 
-	private void addBubble(Bubble ball) {
-		view.addBubble(ball);
+	private void addBubble(Bubble bubble) {
+		view.addBubble(bubble);
 		refreshLines();
 	}
 
-	private void removeBubble(Bubble ball) {
-		view.removeBubble(ball);
+	private void removeBubble(Bubble bubble) {
+		view.removeBubble(bubble);
 		refreshLines();
 	}
 
