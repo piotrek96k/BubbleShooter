@@ -62,18 +62,23 @@ public class PausableTimer {
 
 	private void createTimerTask(Runnable runnable, long initDelay, long delay) {
 		timesMap.put(runnable, System.currentTimeMillis());
+		PausableTimer pausableTimer = this;
 		TimerTask timerTask = new TimerTask() {
 			@Override
 			public void run() {
-				runnable.run();
-				TimerTask task = timerTasks.get(runnable);
-				if (task == null) {
-					timesMap.remove(runnable, timesMap.get(runnable));
-					return;
+				synchronized (pausableTimer) {
+					if (!paused.get()) {
+						runnable.run();
+						TimerTask task = timerTasks.get(runnable);
+						if (task == null) {
+							timesMap.remove(runnable, timesMap.get(runnable));
+							return;
+						}
+						if (initDelaysMap.get(runnable) != 0L)
+							initDelaysMap.put(runnable, 0L);
+						timesMap.put(runnable, System.currentTimeMillis());
+					}
 				}
-				if (initDelaysMap.get(runnable) != 0L)
-					initDelaysMap.put(runnable, 0L);
-				timesMap.put(runnable, System.currentTimeMillis());
 			}
 		};
 		timerTasks.put(runnable, timerTask);
