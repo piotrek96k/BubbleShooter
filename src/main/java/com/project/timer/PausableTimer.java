@@ -40,8 +40,10 @@ public class PausableTimer {
 	public synchronized void schedule(Runnable runnable, long delay) {
 		if (canceled)
 			throw new IllegalStateException();
-		if (!paused.get()) {
-			delaysMap.put(runnable, delay);
+		delaysMap.put(runnable, delay);
+		if (paused.get())
+			timesMap.put(runnable, 0L);
+		else {
 			initDelaysMap.put(runnable, 0L);
 			createTimerTask(runnable, delay, delay);
 		}
@@ -54,10 +56,10 @@ public class PausableTimer {
 		if (timerTask != null) {
 			timerTasks.remove(runnable, timerTask);
 			timerTask.cancel();
-			timesMap.remove(runnable, timesMap.get(runnable));
-			delaysMap.remove(runnable, delaysMap.get(runnable));
-			initDelaysMap.remove(runnable, initDelaysMap.get(runnable));
 		}
+		timesMap.remove(runnable, timesMap.get(runnable));
+		delaysMap.remove(runnable, delaysMap.get(runnable));
+		initDelaysMap.remove(runnable, initDelaysMap.get(runnable));
 	}
 
 	private void createTimerTask(Runnable runnable, long initDelay, long delay) {
@@ -67,13 +69,12 @@ public class PausableTimer {
 			@Override
 			public void run() {
 				synchronized (pausableTimer) {
-					if (!paused.get()) {
+					if (paused.get())
+						timesMap.put(runnable, 0L);
+					else {
 						runnable.run();
-						TimerTask task = timerTasks.get(runnable);
-						if (task == null) {
-							timesMap.remove(runnable, timesMap.get(runnable));
+						if (timerTasks.get(runnable) == null)
 							return;
-						}
 						if (initDelaysMap.get(runnable) != 0L)
 							initDelaysMap.put(runnable, 0L);
 						timesMap.put(runnable, System.currentTimeMillis());
