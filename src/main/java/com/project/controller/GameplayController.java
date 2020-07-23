@@ -116,7 +116,10 @@ public class GameplayController {
 		gameplay.addBubbleAddedListener(bubble -> Platform.runLater(() -> addBubble(bubble)));
 		gameplay.addBubbleChangedListener(bubble -> Platform.runLater(() -> view.updateBubble(bubble)));
 		gameplay.addBubbleRemovedListener(bubble -> Platform.runLater(() -> removeBubble(bubble)));
-		gameplay.addMoveListener(() -> Platform.runLater(() -> view.updateBubblesTab()));
+		gameplay.addMoveListener(() -> Platform.runLater(() -> {
+			view.updateBubblesTab();
+			refreshLines();
+		}));
 		gameplay.addTimeListener(() -> Platform
 				.runLater(() -> timeField.setText(TimeCounter.getSimpleFormattedTime(gameplay.getTime()))));
 		gameplay.addPointsListener(() -> Platform
