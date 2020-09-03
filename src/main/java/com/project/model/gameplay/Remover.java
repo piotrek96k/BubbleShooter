@@ -171,10 +171,8 @@ public class Remover {
 	}
 
 	private void findBombedBubbles() {
-//		Set<Coordinate> toDelete = new LinkedHashSet<Coordinate>();
 		bombs.add(coordinate);
 		toDelete = repeatFindingBombedBubbles(this.bombs);
-//		this.toDelete = toDelete;
 		synchronized (locker) {
 			removeBombedBubbles();
 			findNeighbors();
@@ -188,15 +186,11 @@ public class Remover {
 		Set<Coordinate> oldBombs = new LinkedHashSet<Coordinate>(this.bombs);
 		for (Coordinate coordinate : bombs) {
 			if (gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] != null) {
-//				for(int i =0; i< 2; i++) {
 				this.toDelete.add(coordinate);
 				toDelete.add(coordinate);
 				findNeighborAndBombs();
 				neighbor.removeAll(toDelete);
-//				this.toDelete.clear();
-//				this.toDelete.addAll(neighbor);
 				toDelete.addAll(neighbor);
-//				}
 				neighbor.clear();
 				this.toDelete.clear();
 			}
