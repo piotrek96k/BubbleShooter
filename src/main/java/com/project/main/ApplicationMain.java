@@ -32,7 +32,7 @@ public class ApplicationMain extends Application {
 
 	static {
 		DEFAULT_WINDOW_CLOSE_HANDLER = ApplicationMain::handleCloseRequest;
-		APPLICATION_STYLE_CSS = "/css/ApplicationStyle.css";
+		APPLICATION_STYLE_CSS = "/css/application-style.css";
 		APPLICATION_TITLE = Resources.RESOURCE_BUNDLE.getString("ApplicationMain.APPLICATION_TITLE");
 	}
 

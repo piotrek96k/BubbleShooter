@@ -58,7 +58,7 @@ public class TimeCounter {
 		}
 		builder.append(String.format("%02d", time));
 		if (number != 0)
-			builder.append(':');
+			builder.append('\u2236');
 	}
 	
 	public long getTime() {

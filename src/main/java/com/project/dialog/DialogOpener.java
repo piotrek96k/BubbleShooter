@@ -20,7 +20,7 @@ public class DialogOpener {
 	private static final String DIALOG_STYLE_CSS;
 
 	static {
-		DIALOG_STYLE_CSS = "/css/DialogStyle.css";
+		DIALOG_STYLE_CSS = "/css/dialog-style.css";
 	}
 
 	private DialogOpener() {
