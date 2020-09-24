@@ -69,6 +69,18 @@ public class Remover {
 		gameplay.setStopMoving();
 	}
 
+	public void removeAll() {
+		Set<Coordinate> toDrop = new LinkedHashSet<Coordinate>();
+		for (int i = 0; i < BubblesTab.ROWS; i++)
+			for (int j = 0; j < BubblesTab.COLUMNS; j++)
+				if (gameplay.getBubblesTab().getBubbles()[i][j] != null)
+					toDrop.add(new Coordinate(i, j));
+		synchronized (locker) {
+			dropBubbles(toDrop);
+		}
+		gameplay.setStopMoving();
+	}
+
 	public boolean shouldBeAReaction(Coordinate coordinate, boolean isTransparent) {
 		if (!(gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate
 				.getColumn()] instanceof ColoredBubble))
@@ -300,6 +312,10 @@ public class Remover {
 				ended = false;
 			}
 		});
+		dropBubbles(toDrop);
+	}
+
+	private void dropBubbles(Set<Coordinate> toDrop) {
 		if (!toDrop.isEmpty()) {
 			SoundPlayer.getInstance().playGameplaySoundEffect(GameplaySoundEffect.FALLING);
 			try {

@@ -266,8 +266,8 @@ public class BubblesTab {
 	public void setBubbleToThrow() {
 		setReplaceBubble();
 		if (gameplay.getGameMode().equals(GameMode.ARCADE_MODE)) {
-			nextBubble=changeBubbleIfNeed(nextBubble);
-			replaceBubble=changeBubbleIfNeed(replaceBubble);
+			nextBubble = changeBubbleIfNeed(nextBubble);
+			replaceBubble = changeBubbleIfNeed(replaceBubble);
 		} else
 			addColorsAndBubblesIfNeed();
 		setNextBubbleAsBubbleToThrow();

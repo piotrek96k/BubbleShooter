@@ -78,6 +78,11 @@ public class Gameplay {
 	}
 
 	public void setStopMoving() {
+		if (gameMode.equals(GameMode.ARCADE_MODE) && colorsCounter.getActiveBubblesNumber() <= 3
+				&& colorsCounter.getActiveBubblesNumber() > 0) {
+			remover.removeAll();
+			return;
+		}
 		if (checkIfGameEnded())
 			finishGame();
 		else
