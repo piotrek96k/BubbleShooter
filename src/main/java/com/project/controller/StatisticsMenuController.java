@@ -54,7 +54,7 @@ public class StatisticsMenuController implements Returnable {
 				levelChoiceBox.getSelectionModel().getSelectedItem());
 	}
 
-	private void modeChoiceBoxSelectionChanged(ObservableValue<? extends GameMode> obsevable, GameMode oldValue,
+	private void modeChoiceBoxSelectionChanged(ObservableValue<? extends GameMode> observable, GameMode oldValue,
 			GameMode newValue) {
 		try {
 			if (newValue.equals(GameMode.ARCADE_MODE) && levelChoiceBox.getSelectionModel().getSelectedItem() != null)

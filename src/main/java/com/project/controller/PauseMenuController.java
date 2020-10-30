@@ -38,9 +38,9 @@ public class PauseMenuController {
 		resumeButton.setOnAction(event -> gameplayController.pauseOrResumeGame());
 		restartButton.setOnAction(event -> DialogOpener.openStartNewGameConfirmationAlert(this::startNewGame));
 		optionsButton.setOnAction(event -> loadAndInitReturnButton(FxmlDocument.OPTIONS_MENU));
-		bestPlayersButton
-				.setOnAction(event -> ((StatisticsMenuController) loadAndInitReturnButton(FxmlDocument.STATISTICS_MENU)
-						.getController()).init());
+		bestPlayersButton.setOnAction(
+				event -> this.<StatisticsMenuController>loadAndInitReturnButton(FxmlDocument.STATISTICS_MENU)
+						.getController().init());
 		menuButton.setOnAction(event -> DialogOpener.openBackToMenuConfirmationAlert(this::loadPlayMenu));
 	}
 

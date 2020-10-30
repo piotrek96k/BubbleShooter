@@ -35,9 +35,9 @@ public class MainMenuController {
 		gridPane.setStyle(GameImage.getRandomWallpaperStyle());
 		playButton.setOnAction(event -> loadFxml(FxmlDocument.PLAY_MENU, gridPane));
 		optionsButton.setOnAction(event -> loadAndInitReturnButton(FxmlDocument.OPTIONS_MENU));
-		bestPlayersButton
-				.setOnAction(event -> ((StatisticsMenuController) loadAndInitReturnButton(FxmlDocument.STATISTICS_MENU)
-						.getController()).init());
+		bestPlayersButton.setOnAction(
+				event -> this.<StatisticsMenuController>loadAndInitReturnButton(FxmlDocument.STATISTICS_MENU)
+						.getController().init());
 		exitButton.setOnAction(event -> DialogOpener.openExitConfirmationAlert());
 	}
 

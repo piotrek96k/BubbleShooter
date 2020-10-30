@@ -33,6 +33,8 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
 
 public class GameplayView {
 
@@ -51,6 +53,8 @@ public class GameplayView {
 	private Map<Integer, Painter> paintersMap;
 
 	private Timer timer;
+
+	private int offset;
 
 	static {
 		BUBBLE_RADIUS_REDUCE = 1.0;
@@ -95,13 +99,14 @@ public class GameplayView {
 		addBubble(controller.getGameplay().getBubblesTab().getNextBubble());
 		addBubble(controller.getGameplay().getBubblesTab().getReplaceBubble());
 		initReplaceCircle();
+		startLineAnimation();
 	}
 
 	private void initReplaceCircle() {
 		Bubble replaceBubble = controller.getGameplay().getBubblesTab().getReplaceBubble();
 		replaceCircle = new Circle(replaceBubble.getCenterX(), replaceBubble.getCenterY(), Bubble.DIAMETER);
 		pane.getChildren().add(replaceCircle);
-		replaceCircle.setOpacity(0.5);
+		replaceCircle.setOpacity(0.75);
 		replaceCircle.setFill(new ImagePattern(GameImage.REPLACE.getImage()));
 		timer.schedule(new Rotator(), 10, 10);
 	}
@@ -220,12 +225,29 @@ public class GameplayView {
 		}
 		return false;
 	}
+	
+	private void startLineAnimation() {
+		TimerTask timerTask = new TimerTask() {
+			@Override
+			public void run() {
+				Platform.runLater(() -> {
+					if (--offset < 0)
+						offset = 25;
+					lines.forEach(line -> line.setStrokeDashOffset(offset));
+				});
+			}
+		};
+		timer.schedule(timerTask, 25, 25);
+	}
 
 	private void setLineStyle(Line line) {
 		line.setStroke(Color.WHITE);
-		line.setStrokeWidth(3);
-		line.setOpacity(0.5);
+		line.setStrokeWidth(3.0);
+		line.setOpacity(0.75);
 		line.getStrokeDashArray().addAll(10.0, 15.0);
+		line.setStrokeDashOffset(offset);
+		line.setStrokeLineCap(StrokeLineCap.ROUND);
+		line.setStrokeLineJoin(StrokeLineJoin.BEVEL);
 	}
 
 	private void handleMouseEntering(MouseEvent event) {
@@ -272,7 +294,7 @@ public class GameplayView {
 	private void handleMouseClicking(MouseEvent event) {
 		controller.throwBubble(event.getX(), event.getY());
 		Point2D point = new Point2D(event.getX(), event.getSceneY());
-		if(replaceCircle.contains(point))
+		if (replaceCircle.contains(point))
 			controller.replaceBubble();
 	}
 
