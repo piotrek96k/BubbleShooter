@@ -11,6 +11,7 @@ import com.project.resources.Resources;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
@@ -82,14 +83,18 @@ public class DialogOpener {
 	}
 
 	private static void openConfirmationAlert(String title, String header, String content, Action action) {
-		Alert alert = new Alert(AlertType.CONFIRMATION);
+		ButtonType okButton = new ButtonType(
+				Resources.RESOURCE_BUNDLE.getString("DialogOpener.openConfirmationAlert.ok"), ButtonData.OK_DONE);
+		ButtonType cancelButton = new ButtonType(
+				Resources.RESOURCE_BUNDLE.getString("DialogOpener.openConfirmationAlert.cancel"),
+				ButtonData.CANCEL_CLOSE);
+		Alert alert = new Alert(AlertType.CONFIRMATION, content, okButton, cancelButton);
 		alert.getDialogPane().getStylesheets().add(DIALOG_STYLE_CSS);
 		((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(GameImage.ICON.getImage());
 		alert.setTitle(title);
 		alert.setHeaderText(header);
-		alert.setContentText(content);
 		alert.showAndWait().ifPresent(response -> {
-			if (response.equals(ButtonType.OK))
+			if (response.equals(okButton))
 				action.execute();
 		});
 	}
