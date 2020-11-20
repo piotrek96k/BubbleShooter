@@ -29,6 +29,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -127,6 +128,7 @@ public class GameplayController {
 		gameplay.addComboListener(() -> Platform
 				.runLater(() -> comboField.setText(PointsCounter.getFormattedCombo(gameplay.getCombo()))));
 		gameplay.getFinishedProperty().addListener(this::handleFinishingGame);
+		view.getPane().addEventHandler(MouseEvent.MOUSE_EXITED, event -> clickPoint = null);
 	}
 
 	private void handleStageIconizing(ObservableValue<? extends Boolean> observable, Boolean oldValue,
