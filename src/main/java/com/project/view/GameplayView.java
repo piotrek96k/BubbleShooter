@@ -225,7 +225,7 @@ public class GameplayView {
 		}
 		return false;
 	}
-	
+
 	private void startLineAnimation() {
 		TimerTask timerTask = new TimerTask() {
 			@Override
@@ -285,9 +285,11 @@ public class GameplayView {
 		} else {
 			for (int i = 0; i < points.size() - 1; i++)
 				setline(points, i);
-			if (points.size() > 0)
-				for (int i = points.size() - 1; i < lines.size(); i++)
+			if (points.size() > 0) {
+				int i = points.size() - 1;
+				while (i < lines.size())
 					removeLine(i);
+			}
 		}
 	}
 
