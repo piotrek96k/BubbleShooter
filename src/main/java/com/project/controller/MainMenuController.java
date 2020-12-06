@@ -15,6 +15,10 @@ import javafx.scene.layout.Pane;
 
 public class MainMenuController {
 
+	private static DifficultyLevel difficultyLevel;
+
+	private static GameMode gameMode;
+
 	@FXML
 	private GridPane gridPane;
 
@@ -29,6 +33,11 @@ public class MainMenuController {
 
 	@FXML
 	private Button exitButton;
+
+	static {
+		difficultyLevel = DifficultyLevel.EASY;
+		gameMode = GameMode.ARCADE_MODE;
+	}
 
 	@FXML
 	private void initialize() {
@@ -60,15 +69,17 @@ public class MainMenuController {
 	}
 
 	private static void initModeChoiceBox(ChoiceBox<GameMode> choiceBox) {
-		for (GameMode mode : GameMode.values())
-			choiceBox.getItems().add(mode);
-		choiceBox.getSelectionModel().select(GameMode.ARCADE_MODE);
+		choiceBox.getItems().addAll(GameMode.values());
+		choiceBox.getSelectionModel().select(gameMode);
+		choiceBox.getSelectionModel().selectedItemProperty()
+				.addListener((observable, oldMode, newMode) -> gameMode = newMode);
 	}
 
 	public static void initChoiceBoxes(ChoiceBox<DifficultyLevel> levelChoiceBox, ChoiceBox<GameMode> modeChoiceBox) {
-		for (DifficultyLevel level : DifficultyLevel.values())
-			levelChoiceBox.getItems().add(level);
-		levelChoiceBox.getSelectionModel().select(DifficultyLevel.EASY);
+		levelChoiceBox.getItems().addAll(DifficultyLevel.values());
+		levelChoiceBox.getSelectionModel().select(difficultyLevel);
+		levelChoiceBox.getSelectionModel().selectedItemProperty()
+				.addListener((observable, oldLevel, newLevel) -> difficultyLevel = newLevel);
 		levelChoiceBox.disableProperty()
 				.bind(modeChoiceBox.getSelectionModel().selectedItemProperty().isNotEqualTo(GameMode.ARCADE_MODE));
 		initModeChoiceBox(modeChoiceBox);

@@ -282,6 +282,7 @@ public class BubblesTab {
 			bubbleToThrow = replaceBubble;
 			gameplay.sendBubbleChangedNotifications(bubbleToThrow);
 			replaceBubble = null;
+			throwsCounter = 9;
 		}
 	}
 
