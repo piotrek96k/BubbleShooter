@@ -22,6 +22,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.effect.GaussianBlur;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -294,10 +295,14 @@ public class GameplayView {
 	}
 
 	private void handleMouseClicking(MouseEvent event) {
-		controller.throwBubble(event.getX(), event.getY());
-		Point2D point = new Point2D(event.getX(), event.getSceneY());
-		if (replaceCircle.contains(point))
+		if (event.getButton() == MouseButton.SECONDARY)
 			controller.replaceBubble();
+		else if (event.getButton() == MouseButton.PRIMARY) {
+			controller.throwBubble(event.getX(), event.getY());
+			Point2D point = new Point2D(event.getX(), event.getSceneY());
+			if (replaceCircle.contains(point))
+				controller.replaceBubble();
+		}
 	}
 
 	private void removeLine(int i) {
@@ -307,10 +312,11 @@ public class GameplayView {
 	}
 
 	private void setline(List<Point2D> points, int i) {
-		lines.get(i).setStartX(points.get(i).getX());
-		lines.get(i).setStartY(points.get(i).getY());
-		lines.get(i).setEndX(points.get(i + 1).getX());
-		lines.get(i).setEndY(points.get(i + 1).getY());
+		Line line = lines.get(i);
+		line.setStartX(points.get(i).getX());
+		line.setStartY(points.get(i).getY());
+		line.setEndX(points.get(i + 1).getX());
+		line.setEndY(points.get(i + 1).getY());
 	}
 
 	private void addLine(List<Point2D> points, int i) {

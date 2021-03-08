@@ -1,4 +1,4 @@
-# Bubble Shooter
+﻿# Bubble Shooter
 Nowa odsłona gry Bubble Shooter  
 
 Minimalna wersja javy: 12  
@@ -16,8 +16,8 @@ Za pomocą konsoli (wymagana instalacja mavena)
 O grze  
 
 Sterowanie:  
--Celujemy i strzelamy myszką  
--Zmiana kulki jest możliwa poprzez kliknięcie na kulkę do zmiany, lub za pomocą spacji  
+-Celujemy myszką, strzelamy lewym przyciskiem myszys  
+-Zmiana kulki jest możliwa poprzez kliknięcie na kulkę do zmiany, za pomocą spacji, prawym przyciskiem myszy  
 -pauza gry za pomocą przycisku z napisem pauza lub klawiszem esc  
 
 Gra posiada dwa tryby:  
