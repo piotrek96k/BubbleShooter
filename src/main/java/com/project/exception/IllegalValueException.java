@@ -2,10 +2,10 @@ package com.project.exception;
 
 public class IllegalValueException extends RuntimeException {
 
-	private static final long serialVersionUID = -4947697994166503072L;
+    private static final long serialVersionUID = -4947697994166503072L;
 
-	public IllegalValueException(String message) {
-		super(message);
-	}
+    public IllegalValueException(String message) {
+        super(message);
+    }
 
 }

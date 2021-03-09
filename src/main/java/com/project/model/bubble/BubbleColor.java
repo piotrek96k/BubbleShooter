@@ -4,38 +4,38 @@ import javafx.scene.paint.Color;
 
 public enum BubbleColor {
 
-	YELLOW(Color.YELLOW),
+    YELLOW(Color.YELLOW),
 
-	RED(Color.RED),
+    RED(Color.RED),
 
-	PURPLE(Color.PURPLE.brighter()),
+    PURPLE(Color.PURPLE.brighter()),
 
-	GREEN(Color.LIME.darker()),
+    GREEN(Color.LIME.darker()),
 
-	BLUE(Color.ROYALBLUE),
+    BLUE(Color.ROYALBLUE),
 
-	TURQUOISE(Color.TURQUOISE),
+    TURQUOISE(Color.TURQUOISE),
 
-	ORANGE(Color.ORANGE),
+    ORANGE(Color.ORANGE),
 
-	GRAY(Color.GRAY),
+    GRAY(Color.GRAY),
 
-	DARKGREEN(Color.GREEN.darker()),
-	
-	BLUEVIOLET(Color.BLUEVIOLET),
-	
-	WHITE(Color.WHITE),
-	
-	PINK(Color.HOTPINK);
+    DARK_GREEN(Color.GREEN.darker()),
 
-	private Color color;
+    BLUE_VIOLET(Color.BLUEVIOLET),
 
-	private BubbleColor(Color color) {
-		this.color = color;
-	}
+    WHITE(Color.WHITE),
 
-	public Color getColor() {
-		return color;
-	}
+    PINK(Color.HOTPINK);
+
+    private final Color color;
+
+    BubbleColor(Color color) {
+        this.color = color;
+    }
+
+    public Color getColor() {
+        return color;
+    }
 
 }

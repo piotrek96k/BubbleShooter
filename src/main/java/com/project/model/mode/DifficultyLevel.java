@@ -4,32 +4,32 @@ import com.project.resources.Resources;
 
 public enum DifficultyLevel {
 
-	EASY(6, Resources.RESOURCE_BUNDLE.getString("DifficultyLevel.EASY")),
+    EASY(6, Resources.RESOURCE_BUNDLE.getString("DifficultyLevel.EASY")),
 
-	MEDIUM(7, Resources.RESOURCE_BUNDLE.getString("DifficultyLevel.MEDIUM")),
+    MEDIUM(7, Resources.RESOURCE_BUNDLE.getString("DifficultyLevel.MEDIUM")),
 
-	HARD(8, Resources.RESOURCE_BUNDLE.getString("DifficultyLevel.HARD")),
+    HARD(8, Resources.RESOURCE_BUNDLE.getString("DifficultyLevel.HARD")),
 
-	EXTREME(9, Resources.RESOURCE_BUNDLE.getString("DifficultyLevel.EXTREME")),
+    EXTREME(9, Resources.RESOURCE_BUNDLE.getString("DifficultyLevel.EXTREME")),
 
-	HARDCORE(10, Resources.RESOURCE_BUNDLE.getString("DifficultyLevel.HARDCORE"));
+    HARDCORE(10, Resources.RESOURCE_BUNDLE.getString("DifficultyLevel.HARDCORE"));
 
-	private int numberOfColors;
+    private final int numberOfColors;
 
-	private String name;
+    private final String name;
 
-	private DifficultyLevel(int numberOfColors, String name) {
-		this.numberOfColors = numberOfColors;
-		this.name = name;
-	}
+    DifficultyLevel(int numberOfColors, String name) {
+        this.numberOfColors = numberOfColors;
+        this.name = name;
+    }
 
-	public int getNumberOfColors() {
-		return numberOfColors;
-	}
+    public int getNumberOfColors() {
+        return numberOfColors;
+    }
 
-	@Override
-	public String toString() {
-		return name;
-	}
+    @Override
+    public String toString() {
+        return name;
+    }
 
 }

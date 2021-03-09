@@ -5,8 +5,8 @@ import java.util.prefs.Preferences;
 
 public class Resources {
 
-	public static final Preferences PREFERENCES = Preferences.userNodeForPackage(Resources.class);
-	
-	public static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("string.stringResources");
+    public static final Preferences PREFERENCES = Preferences.userNodeForPackage(Resources.class);
+
+    public static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("string.stringResources");
 
 }

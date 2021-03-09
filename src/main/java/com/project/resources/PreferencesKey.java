@@ -2,22 +2,22 @@ package com.project.resources;
 
 public enum PreferencesKey {
 
-	EFFECTS_MUTED("effectsMute"),
+    EFFECTS_MUTED("effectsMute"),
 
-	MUSIC_MUTED("musicMute"),
+    MUSIC_MUTED("musicMute"),
 
-	EFFECTS_VOLUME("effectsVolume"),
+    EFFECTS_VOLUME("effectsVolume"),
 
-	MUSIC_VOLUME("musicVolume");
+    MUSIC_VOLUME("musicVolume");
 
-	private String key;
+    private final String key;
 
-	private PreferencesKey(String key) {
-		this.key = key;
-	}
+    PreferencesKey(String key) {
+        this.key = key;
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public String getKey() {
+        return key;
+    }
 
 }

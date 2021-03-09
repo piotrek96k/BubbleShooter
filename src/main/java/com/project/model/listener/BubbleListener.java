@@ -4,6 +4,6 @@ import com.project.model.bubble.Bubble;
 
 public interface BubbleListener {
 
-	public void bubbleChanged(Bubble bubble);
-	
+    void bubbleChanged(Bubble bubble);
+
 }

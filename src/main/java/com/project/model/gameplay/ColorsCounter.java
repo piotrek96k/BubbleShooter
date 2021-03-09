@@ -7,52 +7,52 @@ import com.project.model.bubble.BubbleColor;
 
 public class ColorsCounter {
 
-	private Map<BubbleColor, Integer> quantities;
+    private final Map<BubbleColor, Integer> quantities;
 
-	private int activeBubblesNumber;
-	
-	private int colorsSum;
+    private int activeBubblesNumber;
 
-	public ColorsCounter() {
-		quantities = new HashMap<BubbleColor, Integer>();
-		for (BubbleColor value : BubbleColor.values())
-			quantities.put(value, 0);
-	}
+    private int colorsSum;
 
-	public void increment(BubbleColor color) {
-		int value = quantities.get(color);
-		if (value == 0)
-			activeBubblesNumber++;
-		quantities.put(color, ++value);
-		colorsSum++;
-	}
+    public ColorsCounter() {
+        quantities = new HashMap<>();
+        for (BubbleColor value : BubbleColor.values())
+            quantities.put(value, 0);
+    }
 
-	public void decrement(BubbleColor color) {
-		int value = quantities.get(color);
-		if (value == 1)
-			activeBubblesNumber--;
-		quantities.put(color, --value);
-		colorsSum--;
-	}
+    public void increment(BubbleColor color) {
+        int value = quantities.get(color);
+        if (value == 0)
+            activeBubblesNumber++;
+        quantities.put(color, ++value);
+        colorsSum++;
+    }
 
-	public int getQuantity(BubbleColor color) {
-		return quantities.get(color);
-	}
+    public void decrement(BubbleColor color) {
+        int value = quantities.get(color);
+        if (value == 1)
+            activeBubblesNumber--;
+        quantities.put(color, --value);
+        colorsSum--;
+    }
 
-	public int getActiveBubblesNumber() {
-		return activeBubblesNumber;
-	}
-	
-	public int getColorsSum() {
-		return colorsSum;
-	}
+    public int getQuantity(BubbleColor color) {
+        return quantities.get(color);
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder stringBuilder = new StringBuilder();
-		quantities.forEach((k, v) -> stringBuilder.append(k + " " + v + '\n'));
-		stringBuilder.append('\n');
-		return stringBuilder.toString();
-	}
+    public int getActiveBubblesNumber() {
+        return activeBubblesNumber;
+    }
+
+    public int getColorsSum() {
+        return colorsSum;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        quantities.forEach((k, v) -> stringBuilder.append(k).append(" ").append(v).append('\n'));
+        stringBuilder.append('\n');
+        return stringBuilder.toString();
+    }
 
 }

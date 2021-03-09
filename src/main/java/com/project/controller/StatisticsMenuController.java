@@ -66,7 +66,7 @@ public class StatisticsMenuController implements Returnable {
 		}
 	}
 
-	private void levelChoiceBoxSelectionChanged(ObservableValue<? extends DifficultyLevel> obsevable,
+	private void levelChoiceBoxSelectionChanged(ObservableValue<? extends DifficultyLevel> observable,
 			DifficultyLevel oldValue, DifficultyLevel newValue) {
 		if (newValue != null)
 			try {
@@ -95,8 +95,8 @@ public class StatisticsMenuController implements Returnable {
 	}
 
 	private void addColumn(String name, String pointer) {
-		TableColumn<Player, String> column = new TableColumn<Player, String>(name);
-		column.setCellValueFactory(new PropertyValueFactory<Player, String>(pointer));
+		TableColumn<Player, String> column = new TableColumn<>(name);
+		column.setCellValueFactory(new PropertyValueFactory<>(pointer));
 		tableView.getColumns().add(column);
 	}
 
