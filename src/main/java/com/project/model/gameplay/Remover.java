@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.project.model.bubble.BombBubble;
 import com.project.model.bubble.Bubble;
@@ -314,33 +315,50 @@ public class Remover {
     }
 
     private void dropBubbles(Set<Coordinate> toDrop) {
-        if (!toDrop.isEmpty()) {
-            SoundPlayer.getInstance().playGameplaySoundEffect(GameplaySoundEffect.FALLING);
-            try {
-                initDroppers(toDrop);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (toDrop.isEmpty())
+            return;
+        SoundPlayer.getInstance().playGameplaySoundEffect(GameplaySoundEffect.FALLING);
+        try {
+            initDroppers(toDrop);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
     private void initDroppers(Set<Coordinate> toDrop) throws InterruptedException {
-        List<Bubble> list = new LinkedList<>();
-        toDrop.forEach(coordinate -> {
-            list.add(gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()]);
-            gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] = null;
-        });
-        Collections.reverse(list);
         Map<Bubble, Dropper> droppersMap = new HashMap<>();
         int delay = 10;
-        for (int i = 0; i < list.size(); i++) {
-            Bubble bubble = list.get(i);
+        int index = 0;
+        List<Bubble> bubbles = mapCoordinatesToBubbles(toDrop);
+        for (Bubble bubble : bubbles) {
             double startHeight = Dropper.convertHeight(bubble.getCenterY(),
                     BubblesTab.BUBBLES_HEIGHT + Bubble.DIAMETER);
-            Dropper dropper = new Dropper(startHeight, delay + delay * i);
+            Dropper dropper = new Dropper(startHeight, delay + delay * index++);
             droppersMap.put(bubble, dropper);
         }
-        dropBubbles(list, droppersMap);
+        dropBubbles(bubbles, droppersMap);
+    }
+
+    private List<Bubble> mapCoordinatesToBubbles(Set<Coordinate> coordinates) {
+        List<Coordinate> shuffledCoordinates = new ArrayList<>(coordinates.size());
+        shuffledCoordinates.addAll(coordinates);
+        Collections.reverse(shuffledCoordinates);
+        int lastRow = shuffledCoordinates.get(0).getRow();
+        int lastIndex = 0;
+        for (int i = 1; i < shuffledCoordinates.size(); i++) {
+            int row = shuffledCoordinates.get(i).getRow();
+            if (lastRow != row) {
+                Collections.shuffle(shuffledCoordinates.subList(lastIndex, i));
+                lastRow = row;
+                lastIndex = i;
+            }
+        }
+        Collections.shuffle(shuffledCoordinates.subList(lastIndex, shuffledCoordinates.size()));
+        return shuffledCoordinates.stream().map(coordinate -> {
+            Bubble bubble = gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()];
+            gameplay.getBubblesTab().getBubbles()[coordinate.getRow()][coordinate.getColumn()] = null;
+            return bubble;
+        }).collect(Collectors.toList());
     }
 
     private void dropBubbles(List<Bubble> toDrop, Map<Bubble, Dropper> droppersMap) throws InterruptedException {
