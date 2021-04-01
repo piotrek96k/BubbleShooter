@@ -242,7 +242,8 @@ public class Shooter {
             point = function.apply(point, coefficients, 1.0);
             if (checkIfNeedToChangePath(point)) {
                 result.add(point);
-                if (!(gameplay.getBubblesTab().getBubbleToThrow() instanceof DestroyingBubble))
+                if (!(!gameplay.isMoving() && gameplay.getBubblesTab().getBubbleToThrow() instanceof DestroyingBubble ||
+                        gameplay.isMoving() && gameplay.getBubblesTab().getNextBubble() instanceof DestroyingBubble))
                     result.addAll(changePath(point, coefficients, this::getLinePoints));
                 return result;
             }

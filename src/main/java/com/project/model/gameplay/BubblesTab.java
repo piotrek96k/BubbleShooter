@@ -217,16 +217,14 @@ public class BubblesTab {
     private Bubble getRandomBubbleType(double centerX, double centerY, double probability,
                                        Supplier<BubbleColor> supplier) {
         double randomNumber = random.nextDouble();
-        if (randomNumber <= 0.1) {
-            randomNumber = random.nextDouble();
-            if (randomNumber <= 0.49)
-                return new BombBubble(centerX, centerY);
-            else if (randomNumber <= 0.98)
-                return new TransparentBubble(centerX, centerY, getRandomBubbleColorIfColorExists());
-            else
-                return new DestroyingBubble(centerX, centerY);
-        } else
+        if (randomNumber > 0.1)
             return getColoredBubble(centerX, centerY, probability, supplier);
+        randomNumber = random.nextDouble();
+        if (randomNumber <= 0.49)
+            return new BombBubble(centerX, centerY);
+        if (randomNumber <= 0.98)
+            return new TransparentBubble(centerX, centerY, getRandomBubbleColorIfColorExists());
+        return new DestroyingBubble(centerX, centerY);
     }
 
     private Bubble getRandomNotThrowableTypeBubble(double centerX, double centerY,
