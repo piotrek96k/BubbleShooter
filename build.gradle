@@ -14,8 +14,8 @@ version = '1.0'
 jar.archiveName = 'Bubble Shooter.jar'
 description = 'Bubble Shooter'
 mainClassName = 'com.project.main.Main'
-sourceCompatibility = 12
-targetCompatibility = 12
+sourceCompatibility = '12'
+targetCompatibility = '12'
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
