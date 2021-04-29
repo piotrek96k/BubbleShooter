@@ -3,7 +3,7 @@ Nowa odsłona gry Bubble Shooter
 
 Minimalna wersja javy: 12  
 
-Uruchomienie:  
+Uruchomienie Maven:  
 Przy wykorzystaniu IDE  
 -Eclipse: w ProjectExplorer wybrać BubbleShooter -> prawy przycisk myszy -> Run As -> Maven Build.. -> w polu goals wpisać: javafx:run -> Run  
 -IntelliJ: run.. -> Edit Configurations -> Add New Configuration (znaczek +) ->  
@@ -11,7 +11,18 @@ Maven -> w polu Working Directory wpisać ścieżkę do projektu, w polu Command
 
 Za pomocą konsoli (wymagana instalacja mavena)  
 -przejść do folderu /BubbleShooter -> uruchomić aplikację poleceniem: mvn javafx:run  
--zbudować projekt, w folderze /PokemonCards wywołać polecenie mvn package -> przejść do /BubbleShooter/target -> uruchomić aplikację poleceniem java -jar BubbleShooter-0.0.1-SNAPSHOT-jar-with-dependencies.jar 
+-zbudować projekt, w folderze /BubbleShooter wywołać polecenie mvn package -> przejść do /BubbleShooter/target -> uruchomić aplikację poleceniem java -jar "Bubble Shooter".jar 
+
+Uruchomienie Gradle:  
+Przy wykorzystaniu IDE  
+-Eclipse: w ProjectExplorer wybrać BubbleShooter -> prawy przycisk myszy -> Run As ->Run Configurations... -> Gradle Task -> w polu Gradle Tasks wpisać: run -> Run  
+-IntelliJ: run.. -> Edit Configurations -> Add New Configuration (znaczek +) ->  
+Gradle -> w polu Gradle project wpisać ścieżkę do projektu, w polu Tasks wpisać: run -> Run
+
+Za pomocą konsoli (wymagana instalacja gradlea)  
+-przejść do folderu /BubbleShooter -> uruchomić aplikację poleceniem: gradle run  
+-zbudować projekt, w folderze /BubbleShooter wywołać polecenie gradle jar -> przejść do /BubbleShooter/build/libs -> uruchomić aplikację poleceniem java -jar "Bubble Shooter".jar
+
 
 O grze  
 
