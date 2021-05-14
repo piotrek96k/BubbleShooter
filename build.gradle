@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.9'
+    id 'com.dua3.javafxgradle7plugin' version '0.0.9'
 }
 
 javafx {
@@ -37,6 +37,8 @@ jar {
         attributes "Main-Class": mainClassName
     }
     from {
+        exclude '**/module-info.class'
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
+
