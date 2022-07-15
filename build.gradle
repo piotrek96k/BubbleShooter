@@ -14,8 +14,8 @@ version = '1.0'
 jar.archiveName = 'Bubble Shooter.jar'
 description = 'Bubble Shooter'
 mainClassName = 'com.project.main.Main'
-sourceCompatibility = '12'
-targetCompatibility = '12'
+sourceCompatibility = '11'
+targetCompatibility = '11'
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
@@ -27,9 +27,9 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.openjfx:javafx-controls:14.0.1'
-    implementation 'org.openjfx:javafx-fxml:14.0.1'
-    implementation 'org.openjfx:javafx-media:14.0.1'
+    implementation 'org.openjfx:javafx-controls:18.0.1'
+    implementation 'org.openjfx:javafx-fxml:18.0.1'
+    implementation 'org.openjfx:javafx-media:18.0.1'
 }
 
 jar {
