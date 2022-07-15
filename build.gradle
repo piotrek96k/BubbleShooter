@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'com.dua3.javafxgradle7plugin' version '0.0.9'
+    id 'edu.sc.seis.launch4j' version '2.5.3'
 }
 
 javafx {
@@ -11,15 +12,14 @@ javafx {
 
 group = 'com.project'
 version = '1.0'
-jar.archiveName = 'Bubble Shooter.jar'
-description = 'Bubble Shooter'
+def appName = 'Bubble Shooter'
+jar.archiveName = "${appName}.jar"
+description = appName
 mainClassName = 'com.project.main.Main'
 sourceCompatibility = '11'
 targetCompatibility = '11'
 
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
+tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
 
 repositories {
     mavenLocal()
@@ -32,13 +32,28 @@ dependencies {
     implementation 'org.openjfx:javafx-media:18.0.1'
 }
 
+clean.doLast { ['target', "${appName}.exe"].collect { file it }.each { it.isDirectory() ? it.deleteDir() : it.delete() } }
+
 jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    manifest {
-        attributes "Main-Class": mainClassName
-    }
+    manifest { attributes "Main-Class": mainClassName }
     from {
         exclude '**/module-info.class'
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
+}
+
+createExe {
+    headerType = 'gui'
+    outputDir = '/'
+    outfile = "${appName}.exe"
+    libraryDir = 'build/libs'
+    dontWrapJar = true
+    errTitle = 'Error'
+    downloadUrl = 'https://www.oracle.com/java/technologies/downloads/'
+    icon = "$project.rootDir/icon.ico"
+    jreMinVersion = '11.0.15'
+    bundledJrePath = '%JAVA_HOME%'
+    jarTask = jar
+    doLast { ant.move file: "$buildDir/${appName}.exe", todir: project.rootDir }
 }
