@@ -5,7 +5,7 @@ plugins {
 }
 
 javafx {
-    version = "14.0.1"
+    version = "18.0.1"
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.media']
 }
 
@@ -33,6 +33,7 @@ dependencies {
 }
 
 jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes "Main-Class": mainClassName
     }
@@ -41,4 +42,3 @@ jar {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
-
