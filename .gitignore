@@ -15,6 +15,7 @@ buildNumber.properties
 .classpath
 .project
 BubbleShooter.iml
+Bubble Shooter.exe
 .idea
 .settings
 .gradle
