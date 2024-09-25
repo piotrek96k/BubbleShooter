@@ -13,7 +13,7 @@ javafx {
 group = 'com.project'
 version = '1.0'
 def appName = 'Bubble Shooter'
-jar.archiveName = "${appName}.jar"
+jar.archiveBaseName = "${appName}.jar"
 description = appName
 mainClassName = 'com.piotrek.main.Main'
 sourceCompatibility = '11'
