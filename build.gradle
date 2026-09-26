@@ -52,5 +52,5 @@ createExe {
     jreMinVersion = '25'
     bundledJrePath = '%JAVA_HOME%'
     jarTask = jar
-    doLast { ant.move file: "$buildDir/${appName}.exe", todir: project.rootDir }
+    doLast { ant.move file: "$layout.buildDirectory.orNull/${appName}.exe", todir: project.rootDir }
 }
