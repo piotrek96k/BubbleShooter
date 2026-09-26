@@ -22,10 +22,7 @@ repositories {
     mavenCentral()
 }
 
-java {
-    sourceCompatibility = '25'
-    targetCompatibility = '25'
-}
+java { toolchain { languageVersion = JavaLanguageVersion.of(25) } }
 
 application { mainClass = 'com.piotrek.main.Main' }
 
